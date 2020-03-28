@@ -16,6 +16,7 @@
         - jb_id
         - jb_locations
         - jb_description
+        - jb_last_payment_days
     }
 
     class job_listings {
@@ -38,6 +39,7 @@
         - en_id
         - en_ap_id
         - en_li_id
+        - en_is_paid
     }
 
     class announcement {
@@ -76,6 +78,8 @@
     class review {
         - re_id
         - re_en_id
+        - re_type
+        ' re_type can be of 'comment' or 'violation' or 'abnormality'
         - re_receive_ur_id
         - re_send_ur_id
         - re_comment
