@@ -6,6 +6,7 @@
 @startuml
     class business_users {
         - bu_id
+        - bu_pw
     }
 
     class individual_users {
