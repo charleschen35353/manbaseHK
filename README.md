@@ -7,6 +7,11 @@
     class business_users {
         - bu_id
         - bu_pw
+        - bu_name
+        - getName()
+        - peter()
+        
+        
     }
 
     class individual_users {
