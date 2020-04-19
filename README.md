@@ -6,15 +6,10 @@
 @startuml
     class business_users {
         - bu_id
-        - bu_password_hash
-        - bu_name
         - bu_address
-        - bu_pic_firstName_english
-        - bu_pic_middleName_english
-        - bu_pic_lastName_english
-        - bu_pic_firstName_chinese
-        - bu_pic_lastName_chinese
-            'should we store both english and chinese name?
+        - bu_CName
+        - bu_EName
+            'english and chinese name
         - bu_phone
         - bu_isSMSVerified
         - bu_businessLogo
@@ -23,19 +18,18 @@
         - bu_isBusinessVerified
             'verification: True or False
 
+'function
         - createBusinessProfile()
             'register business user
         - viewBusinessProfile()
         - updateBusinessProfile()
         - deleteBusinessProfile()
-        
+        - updateBusinessPhone()
     }
 
     class individual_users {
     'attributes
         - iu_id
-        - iu_account
-        - iu_password_hash
         - iu_phone
         - iu_isSMSVerified
             'for SMS verification
@@ -46,14 +40,10 @@
             'for real identity verification [opt]
         - iu_isIdentityVerified
             'real identity verification: True or False
-        - iu_firstName_chinese
-        - iu_LastName_chinese
-        - iu_firstName_english
-        - iu_middleName_english
-        - iu_lastName_english
-            'store both chinese and english name?
-        - iu_alias_chinese
-        - iu_alias_english
+        - iu_CName
+        - iu_EName
+        - iu_alias
+            'one name
         - iu_gender
         - iu_birthday
         - iu_educationLevel
@@ -69,7 +59,6 @@
 
     'functions
         - uploadProfilePicture()
-        - updateProfilePicture()
         - viewProfilePicture()
         - deleteProfilePicture()
             'profile pic
@@ -90,11 +79,13 @@
         - showIndividualReview()
         - viewApplicant()
             'view job applicant: personal info., rating stat, comment, 
+        - updateIndividualPhone()
  
     }
 
     class jobs {
     'attributes
+        - jb_creationTime
         - jb_id
         '- jb_type
             'added a new job_type class
@@ -123,11 +114,16 @@
 
     }
 
-    class job_abnomality{
+    class job_abnormality{
     'attribute
+        - jab_creationTime
         - jab_id
-        - jab_time
-        - jab_description
+        - jab_li_id
+            'can be null
+        - jab_job_id
+        - jab_sender
+            'store user id
+        - jab_description   
         - jab_isSolved
         
     'function
@@ -135,7 +131,12 @@
         - view()
        '- update() : should be banned(?)
         - delete()
+
+        - solve()
+            'change jab_isSolved to True
+
     }
+
     class job_type {
     'attirbutes
         - jt_id
@@ -174,18 +175,17 @@
             'view listing detail
         - delete()
             'cancel job post: not allowed when more than one enrolled individual
-        
     }
 
     class job_applications {
     'attribute
+        - ap_creationTime
+            'application time for waitlist
         - ap_id
         - ap_li_id
             'listed job
         - ap_iu_id
             'applicant
-        - ap_time
-            'application time for waitlist
         - ap_status
             'enrollment status, can be waitlist
     
@@ -221,11 +221,12 @@
 
     class enrollments {
     'attribute
+        - en_creationTime
+            'enrollment time
         - en_id
         - en_ap_id
         - en_li_id
         - en_is_paid
-        - en_time
         - en_is_on_time
             'True or False
         - en_is_present
@@ -247,12 +248,12 @@
     'reply & announcement merged, canvas discussion board (?)
 
     'attribute
+        - an_creationTime
         - an_id
         - an_sender_id
         - an_receiver_id
             'how about mass message(?)
         - an_message
-        - an_time
 
     'function
         - create()
@@ -284,6 +285,7 @@
     }
 
     class users {
+        - ur_creationTime
         - ur_id
         - ur_login_name
         - ur_password_hash
@@ -341,9 +343,6 @@
         - deleteReview()
             'for admin(?)
 
-        - viewByAsce()
-        - viewByDesc()
-            'filter
     }
 
     class review_followup{
@@ -380,11 +379,15 @@
 
     jobs "1..1" -- "1..M" job_listings
 
-    jobs "M..0" -- "1..1" job_type
+    jobs "0..M" -- "1..1" job_type
+
+    jobs "1..1" -- "0..M" job_abnormality
 
     job_applications "0..M" -up- "1..1" individual_users
 
     job_listings "1..1" -- "0..M" enrollments
+
+    job_listings "0..1" -- "0..M" job_abnormality
 
     job_applications "1..1" -- "0..M" enrollments
 
