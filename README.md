@@ -11,6 +11,8 @@
 - Server: manbase-api.williswcy.com
 - Account: root
 - Password: eqh49-v3bnb
+- Location: ~/manbase-api
+- Start the testing server with `flask run` after `cd`ing into the directory.
 
 ### MySQL
 
@@ -22,3 +24,5 @@
 ```sql
 UPDATE mysql.user SET Password = PASSWORD('{your_new_password}') WHERE user = '{your_account}';
 ```
+
+- Start the MySQL prompt with `mysql`, or connect remotely.
