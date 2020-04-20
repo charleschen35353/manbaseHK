@@ -73,7 +73,7 @@ CREATE TABLE job_applications(
     ap_status TINYINT() NOT NULL,
     
     FOREIGN KEY(ap_li_id) REFERENCES job_listings(li_id),
-    FOREIGN KEY(ap_iu_id) REFERENCES individual_users(iu_id),
+    FOREIGN KEY(ap_iu_id) REFERENCES individual_users(iu_id)
 )
 
 CREATE TABLE enrollments(
@@ -84,7 +84,7 @@ CREATE TABLE enrollments(
     en_is_present TINYINT(0),
     
     FOREIGN KEY(en_li_id) REFERENCES job_listings(li_id),
-    FOREIGN KEY(en_ap_id) REFERENCES job_applications(ap_id),
+    FOREIGN KEY(en_ap_id) REFERENCES job_applications(ap_id)
 )
 
 CREATE TABLE announcement(
@@ -110,7 +110,7 @@ CREATE TABLE users(
     ur_creationTIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     ur_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     ur_login_name VARCHAR() NOT NULL,
-    ur_password_hash INT() NOT NULL,
+    ur_password_hash INT() NOT NULL
 )
 
 CREATE TABLE rating_category(
