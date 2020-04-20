@@ -12,7 +12,15 @@
 - Account: root
 - Password: eqh49-v3bnb
 - Location: ~/manbase-api
-- Start the testing server with `flask run` after `cd`ing into the directory.
+- Start the testing server by -
+
+```
+cd manbase-api
+. venv/bin/activate
+flask run --host 0.0.0.0
+```
+
+- Note that we will need to use a production WSGI server later.
 
 ### MySQL
 
@@ -26,3 +34,5 @@ UPDATE mysql.user SET Password = PASSWORD('{your_new_password}') WHERE user = '{
 ```
 
 - Start the MySQL prompt with `mysql`, or connect remotely.
+- Note the `public` (currently) has `SELECT`, `UPDATE` and `INSERT` prviledges on all tables of `manbasdb`.
+- The password of `public` is `b05qv-x4xca`.
