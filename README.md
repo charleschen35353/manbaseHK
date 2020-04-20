@@ -33,7 +33,7 @@
         - iu_phone
         - iu_isSMSVerified
             'for SMS verification
-        - iu_profilePicture 
+        - iu_profilePicture
             'profile picture [opt]
         - iu_hkid
         - iu_passport
@@ -78,9 +78,9 @@
             'not sure if need put
         - showIndividualReview()
         - viewApplicant()
-            'view job applicant: personal info., rating stat, comment, 
+            'view job applicant: personal info., rating stat, comment,
         - updateIndividualPhone()
- 
+
     }
 
     class jobs {
@@ -109,7 +109,7 @@
         - displayBySalary()
         - displayByLocation()
             'filter function for job board
-        - showPostedJob() 
+        - showPostedJob()
             'business
 
     }
@@ -123,9 +123,9 @@
         - jab_job_id
         - jab_sender
             'store user id
-        - jab_description   
+        - jab_description
         - jab_isSolved
-        
+
     'function
         - create()
         - view()
@@ -165,7 +165,7 @@
             ' in hr rate or day rate or lump sum: salary structure
         - li_quota
             'the amount for workforce needed
-        - 'jb_expected_payment_days 
+        - 'jb_expected_payment_days
             'put here better (?)
 
         'functions
@@ -188,7 +188,7 @@
             'applicant
         - ap_status
             'enrollment status, can be waitlist
-    
+
     'function
         - create()
             'apply for job
@@ -207,7 +207,7 @@
             'change of status from approved to accepted by individual
         - decline()
             'change of status from approved to declined by individual
-        
+
         }
 
     'class waitlist {
@@ -241,7 +241,7 @@
             'view enrolled individual for a specific job
         - confirmAttendance()
             'change attendance status of individual, by employer
-        - 
+        -
     }
 
     class announcement {
@@ -264,7 +264,7 @@
             'business or individual
         - delete()
             'not allowed after certain time
-    
+
 
     }
 
@@ -317,7 +317,7 @@
             'for admin
         - deleteRating()
             'for admin
-        
+
         - getAverageRating()
             'display on individual profile / job application
     }
@@ -352,7 +352,7 @@
         -rf_expected_time
             'the expected day of salary payment
         -rf_comment
-    
+
     'function
         - viewFollowUp()
         - createFollowUp()
@@ -409,4 +409,23 @@
 
 ```sql
 
+```
+
+## Server Connection Info
+
+### SSH
+
+Server: manbase-api.williswcy.com
+Account: root
+Password: eqh49-v3bnb
+
+### MySQL
+
+Server Host: manbase-api.williswcy.com
+Account: charlescly / lancetpk / williswcy
+Password: Same as the account name
+Note: Please update your password with the following SQL command -
+
+```sql
+UPDATE mysql.user SET Password = PASSWORD('{your_new_password}') WHERE user = '{your_account}';
 ```
