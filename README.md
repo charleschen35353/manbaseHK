@@ -5,6 +5,7 @@
 ```plantuml
 @startuml
     class business_users {
+    'attribute
         - bu_id
         - bu_address
         - bu_CName
@@ -16,7 +17,7 @@
         - bu_brc
             'business registration certification
         - bu_isBusinessVerified
-            'verification: True or False
+            'verification: True or False [opt]
 
 'function
         - createBusinessProfile()
@@ -120,7 +121,7 @@
         - jab_id
         - jab_li_id
             'can be null
-        - jab_job_id
+        - jab_jb_id
         - jab_sender
             'store user id
         - jab_description   
@@ -244,7 +245,7 @@
         - 
     }
 
-    class announcement {
+    class announcements {
     'reply & announcement merged, canvas discussion board (?)
 
     'attribute
