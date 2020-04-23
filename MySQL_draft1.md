@@ -8,6 +8,7 @@ CREATE TABLE business_users(
     bu_isSMSVerified TINYINT(1) DEFAULT 0,
     bu_businessLogo LONGBLOB,
     bu_brc LONGBLOB,
+    bu_isDeleted TINYINT(1) DEFAULT 0,
     bu_isBusinessVerified TINYINT(1) DEFAULT 0
 
 )
@@ -29,6 +30,7 @@ CREATE TABLE individual_users(
     iu_language_Cantonese TINYINT() NOT NULL,
     iu_language_English TINYINT() NOT NULL,
     iu_language_Putonghua TINYINT() NOT NULL,
+    iu_isDeleted TINYINT(1) DEFAULT 0,
     iu_language_Other VARCHAR
 
 )
@@ -38,7 +40,9 @@ CREATE TABLE jobs(
     jb_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     jb_location TINYTEXT() NOT NULL,
     jb_decription TEXT() NOT NULL,
+    jb_isDeleted TINYINT(1) DEFAULT 0,
     jb_expected_payment_period TIME NOT NULL
+    
 
 )
 
@@ -71,6 +75,7 @@ CREATE TABLE job_applications(
     ap_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     ap_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     ap_status TINYINT() NOT NULL,
+    ap_isDeleted TINYINT(1) DEFAULT 0,
     
     FOREIGN KEY(ap_li_id) REFERENCES job_listings(li_id),
     FOREIGN KEY(ap_iu_id) REFERENCES individual_users(iu_id)
@@ -93,6 +98,7 @@ CREATE TABLE announcement(
     an_sender_id INT(8) NOT NULL,
     an_receiver_id INT(8) NOT NULL,
     as_message TINYTEXT() NOT NULL
+    as_isDeleted TINYINT(1) DEFAULT 0,
 )
 
 CREATE TABLE announcement_listings(
@@ -111,6 +117,7 @@ CREATE TABLE users(
     ur_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     ur_login_name VARCHAR() NOT NULL,
     ur_password_hash INT() NOT NULL
+    ur_isDeleted TINYINT(1) DEFAULT 0,
 )
 
 CREATE TABLE rating_category(

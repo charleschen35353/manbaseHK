@@ -13,6 +13,7 @@
             'business registration certification
         - bu_isBusinessVerified
             'verification: True or False
+        - bu_isDeleted
 
 'function
         - createBusinessProfile()
@@ -21,6 +22,18 @@
         - updateBusinessProfile()
         - deleteBusinessProfile()
         - updateBusinessPhone()
+        - viewJobApplicant()
+            'view job applicant: personal info., rating stat, comment,
+        - viewPassedJob()
+        - approveJobApplication()
+            'send job offer
+        - declineJobApplication()
+
+        - rateIndividual()
+
+        - changePhone()
+        - changePIC()
+
     }
 
     class individual_users {
@@ -52,18 +65,19 @@
             'capable work lanuage: ture or false
         - iu_language_Other
             'user specified language: str [opt]
+        - iu_isDeleted
 
     'functions
-        - uploadProfilePicture()
-        - viewProfilePicture()
-        - deleteProfilePicture()
+        - uploadMyProfilePicture()
+        - viewMyProfilePicture()
+        - deleteMyProfilePicture()
             'profile pic
-        - createIndividualProfile()
+        - createMyIndividualProfile()
             'register
-        - viewIndividualProfile()
-        - updateIndividualProfile()
+        - viewMyProfile()
+        - updateMyProfile()
             'for non compulsary attributes
-        - deleteIndividualProfile()
+        - deactivateIndividualProfile()
             'individual account
         - identityVerification()
             'submit hkid/passport
@@ -73,10 +87,21 @@
         - updateSMSVerificationStatus()
             'not sure if need put
         - showIndividualReview()
-        - viewApplicant()
-            'view job applicant: personal info., rating stat, comment,
         - updateIndividualPhone()
 
+        - viewJobBoard()
+        - viewJobBoard_salary()
+        - viewJobBoard_rating()
+        - viewJobBoard_distance()
+
+        - acceptJobOffer()
+        - declineJobOffer()
+
+        - rateBusiness()
+        
+        - changePhone()
+        - changeBitrhday()
+            'once
     }
 
     class jobs {
@@ -91,6 +116,7 @@
             'collapsed with job type description(?)
         - jb_expected_payment_period
             'instead of job payment day (moved to job_listing)
+        - jb_isDeleted
 
     'functions
         - createJob()
@@ -107,7 +133,8 @@
             'filter function for job board
         - showPostedJob()
             'business
-
+        
+        
     }
 
     class job_abnormality{
@@ -123,7 +150,8 @@
         - jab_isSolved
 
     'function
-        - create()
+        - reportAbnormality()
+            'create
         - view()
        '- update() : should be banned(?)
         - delete()
@@ -184,6 +212,7 @@
             'applicant
         - ap_status
             'enrollment status, can be waitlist
+        - ap_isDeleted
 
     'function
         - create()
@@ -197,12 +226,9 @@
 
         - showApplicant(job)
             '(?)
-        - approve()
-            'change of status from applied to approved by business
         - accept()
             'change of status from approved to accepted by individual
-        - decline()
-            'change of status from approved to declined by individual
+
 
         }
 
@@ -227,6 +253,7 @@
             'True or False
         - en_is_present
             'attendance: True or False
+        
     'function
         - create()
         - update()
@@ -250,6 +277,7 @@
         - an_receiver_id
             'how about mass message(?)
         - an_message
+        - an_isDeleted
 
     'function
         - create()
@@ -285,6 +313,12 @@
         - ur_id
         - ur_login_name
         - ur_password_hash
+        - ur_isDeleted
+
+    'function
+        - create()
+        - updatePassword()
+        - delete()
     }
 
     class rating_category {
@@ -343,11 +377,11 @@
 
     class review_followup{
     'attribute
-        -rf_id
-        -rf_re_id
-        -rf_expected_time
+        - rf_id
+        - rf_re_id
+        - rf_expected_time
             'the expected day of salary payment
-        -rf_comment
+        - rf_comment
 
     'function
         - viewFollowUp()
