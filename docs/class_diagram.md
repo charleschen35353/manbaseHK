@@ -57,7 +57,7 @@
         - iu_birthday
         - iu_educationLevel
             'primary secondary school, tertiary...
-        '- (TBC) iu_selfIntroduction
+        - iu_selfIntroduction
             'string data, may be have identity disclosure isuue (?) [opt]
         - iu_language_Cantonese
         - iu_language_English
@@ -77,14 +77,14 @@
         - viewMyProfile()
         - updateMyProfile()
             'for non compulsary attributes
-        - deactivateIndividualProfile()
+        - deleteIndividualProfile()
             'individual account
         - identityVerification()
             'submit hkid/passport
         - changePassword()
-        - updateIdentityVerificationStatus()
+        '- updateIdentityVerificationStatus()
             'not sure if put here (?)
-        - updateSMSVerificationStatus()
+        '- updateSMSVerificationStatus()
             'not sure if need put
         - showIndividualReview()
         - updateIndividualPhone()
@@ -100,22 +100,23 @@
         - rateBusiness()
         
         - changePhone()
-        - changeBitrhday()
+        '- changeBitrhday()
             'once
+
     }
 
     class jobs {
     'attributes
-        - jb_creationTime
         - jb_id
         '- jb_type
             'added a new job_type class
         - jb_location
-            'tuple type (?), or string (?)
+            'district class, area class, + string
+        - jb_creationTime
         - jb_description
             'collapsed with job type description(?)
-        - jb_expected_payment_period
-            'instead of job payment day (moved to job_listing)
+        - jb_expected_payment_days
+            'number, in days
         - jb_isDeleted
 
     'functions
@@ -137,17 +138,21 @@
         
     }
 
-    class job_abnormality{
+    class abnormality{
     'attribute
-        - jab_creationTime
-        - jab_id
-        - jab_li_id
+        - abn_creationTime
+        - abn_id
+        - abn_type
+        - abn_li_id
             'can be null
-        - jab_job_id
-        - jab_sender
+            '[opt]
+        - abn_job_id
+            '[opt]
+        - abn_sender
             'store user id
-        - jab_description
-        - jab_isSolved
+        - abn_description
+        - abn_status
+            'pending, processing, accepted, rejected, deleted, solved
 
     'function
         - reportAbnormality()
@@ -165,8 +170,6 @@
     'attirbutes
         - jt_id
         - jt_name
-        - jt_description
-            'not sure if a good measure(?)
 
     'functions
         - create()
@@ -179,18 +182,16 @@
     'attributes
         - li_id
         - li_jb_id
-        '- li_jb_date
-            'can be represented by start time - end time (?)
         - li_starttime
         - li_endtime
         - li_salary_amt
             ' in number
         - li_salary_type
-            ' in hr rate or day rate or lump sum: salary structure
+            ' salary structure: in hr rate or lump sum
+        - li_ot_salary
+            ' number, in hour rate
         - li_quota
-            'the amount for workforce needed
-        - 'jb_expected_payment_days
-            'put here better (?)
+            ' the amount for workforce needed
 
         'functions
         - create()
@@ -224,8 +225,6 @@
         - view()
             'view my job for individual/ view applicants (?)
 
-        - showApplicant(job)
-            '(?)
         - accept()
             'change of status from approved to accepted by individual
 
@@ -249,10 +248,8 @@
         - en_ap_id
         - en_li_id
         - en_is_paid
-        - en_is_on_time
-            'True or False
-        - en_is_present
-            'attendance: True or False
+        - en_present_status
+            'on_time, late, absence, medical_leave (supporting doc)
         
     'function
         - create()
@@ -268,14 +265,12 @@
     }
 
     class announcement {
-    'reply & announcement merged, canvas discussion board (?)
+    'canvas discussion board
 
     'attribute
         - an_creationTime
         - an_id
         - an_sender_id
-        - an_receiver_id
-            'how about mass message(?)
         - an_message
         - an_isDeleted
 
@@ -325,8 +320,8 @@
     'attrbute
         - rc_id
         - rc_name
-            'Workload, Work Environment, Administration: 1-5 scale
-            '-2, -1, 0, 1, 2 scale for individual performance
+            '1-5 scale
+            'individual performance
     'function
         - create()
         - view()
@@ -339,6 +334,8 @@
         - ra_re_id
         - ra_rc_id
         - ra_rating
+            'Workload, Work Environment, Administration: 1-5 scale
+            'individual performance: -2, -1, 0, 1, 2 scale
 
     'function
         - createRating()
@@ -354,15 +351,15 @@
 
     class review {
     'attribute
+        - re_creationTime
         - re_id
         - re_en_id
-        - re_type
-            're_type can be of 'comment' or 'violation' or 'abnormality'
         - re_receiver_id
         - re_sender_id
         - re_comment
         - re_isFollowUpNeeded
-            'for the payment day later than review day: True or False
+            'for the payment day later than review day: True or False, 追加comment
+        - re_isDeleted
 
     'function
         - viewReview()
@@ -377,9 +374,10 @@
 
     class review_followup{
     'attribute
+        - rf_creationTime
         - rf_id
         - rf_re_id
-        - rf_expected_time
+        - rf_followup_time
             'the expected day of salary payment
         - rf_comment
 

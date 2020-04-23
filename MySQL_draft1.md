@@ -41,17 +41,21 @@ CREATE TABLE jobs(
     jb_location TINYTEXT() NOT NULL,
     jb_decription TEXT() NOT NULL,
     jb_isDeleted TINYINT(1) DEFAULT 0,
-    jb_expected_payment_period TIME NOT NULL
-    
+    jb_expected_payment_days INT() NOT NULL
 
 )
 
-CREATE TABLE job_abnormality(
-    jab_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
-    jab_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE abnormality(
+    abn_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
+    abn_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    abn_type TINYTEXT() NOT NULL
 
-    FOREIGN KEY (jab_li_id) REFERENCES job_listings(li_id),
-    FOREIGN KEY (jab_jb_id) REFERENCES jobs(jb_id)
+    FOREIGN KEY (abn_li_id) REFERENCES job_listings(li_id),
+    FOREIGN KEY (abn_jb_id) REFERENCES jobs(jb_id),
+
+    CONSTRAINT abn_type_check CHECK(
+        abn_type IN ('bug_report','job_abnormality', 'others')
+    )
 )
 
 CREATE TABLE job_type(
@@ -85,8 +89,7 @@ CREATE TABLE enrollments(
     en_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     en_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     en_is_paid TINYINT(1) NOT NULL,
-    en_is_on_time TINYINT(0),
-    en_is_present TINYINT(0),
+    en_present_status TINYTEXT() NOT NULL,
     
     FOREIGN KEY(en_li_id) REFERENCES job_listings(li_id),
     FOREIGN KEY(en_ap_id) REFERENCES job_applications(ap_id)
@@ -96,9 +99,11 @@ CREATE TABLE announcement(
     an_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     an_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     an_sender_id INT(8) NOT NULL,
-    an_receiver_id INT(8) NOT NULL,
-    as_message TINYTEXT() NOT NULL
+    as_message TINYTEXT() NOT NULL,
     as_isDeleted TINYINT(1) DEFAULT 0,
+
+    FOREIGN KEY(an_sender_id) REFERENCES users(ur_id)
+
 )
 
 CREATE TABLE announcement_listings(
@@ -116,8 +121,8 @@ CREATE TABLE users(
     ur_creationTIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     ur_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     ur_login_name VARCHAR() NOT NULL,
-    ur_password_hash INT() NOT NULL
-    ur_isDeleted TINYINT(1) DEFAULT 0,
+    ur_password_hash INT() NOT NULL,
+    ur_isDeleted TINYINT(1) DEFAULT 0
 )
 
 CREATE TABLE rating_category(
@@ -134,18 +139,20 @@ CREATE TABLE rating(
 
 CREATE TABLE review(
     re_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    re_type TINYINT() NOT NULL,
+    re_creationTIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     re_receiver_id INT(8) NOT NULL,
     re_sender_id INT(8) NOT NULL,
     re_comment TINYTEXT() NOT NULL
     re_isFollowUpNeeded TINYINT(1) NOT NULL,
+    re_isDeleted TINYINT(1) DEFAULT 0,
 
     FOREIGN KEY(re_en_id) REFERENCES enrollments(en_id)
 )
 
 CREATE TABLE review_followup(
+    rf_creationTIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     rf_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    rf_expected_time TIME NOT NULL,
+    rf_followup_time TIME NOT NULL,
     rf_comment TINYTEXT NOT NULL,
 
     FOREIGN KEY(rf_re_id) REFERENCES review(re_id),
