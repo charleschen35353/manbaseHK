@@ -9,8 +9,6 @@
         - bu_phone
         - bu_isSMSVerified
         - bu_businessLogo
-        - bu_brc
-            'business registration certification
         - bu_isBusinessVerified
             'verification: True or False
         - bu_isDeleted
@@ -44,9 +42,6 @@
             'for SMS verification
         - iu_profilePicture
             'profile picture [opt]
-        - iu_hkid
-        - iu_passport
-            'for real identity verification [opt]
         - iu_isIdentityVerified
             'real identity verification: True or False
         - iu_CName
@@ -110,8 +105,6 @@
         - jb_id
         '- jb_type
             'added a new job_type class
-        - jb_location
-            'district class, area class, + string
         - jb_creationTime
         - jb_description
             'collapsed with job type description(?)
@@ -138,6 +131,29 @@
         
     }
 
+    class address{
+        - ads_id
+        - ads_creationTime
+        - ads_jb_id
+        - ads_district_id
+        - ads_detail
+
+        -create()
+        -update()
+        -view()
+        -delete()
+
+    }
+
+    class districts{
+        - district_id
+        - district_name
+
+        -create()
+        -update()
+        -view()
+        -delete()
+    }
     class abnormality{
     'attribute
         - abn_creationTime
@@ -316,6 +332,20 @@
         - delete()
     }
 
+    class verification {
+        - veri_creationTime
+        - veri_id
+        - veri_ur_id
+        - veri_type
+            'HKID/Passport/BRC/medical leave etc.
+        - veri_doc
+
+        - create()
+        - update()
+        - view()
+        - delete()
+    }
+
     class rating_category {
     'attrbute
         - rc_id
@@ -399,6 +429,8 @@
 
     users "1..1" -- "1..M" business_users: is
 
+    users "1..1" -- "1..M" verification
+
     industry "1..1" -- "0..M" business_users: in_industry
 
     business_users "1..1" -- "1..M" jobs
@@ -410,6 +442,10 @@
     jobs "0..M" -- "1..1" job_type
 
     jobs "1..1" -- "0..M" job_abnormality
+
+    jobs "1..1" -- "1..M" address
+
+    address "0..M" -- "1..1" job_abnormality
 
     job_applications "0..M" -up- "1..1" individual_users
 
