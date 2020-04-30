@@ -86,7 +86,7 @@ CREATE TABLE job_listings(
     li_endtime TIME NOT NULL,
     li_salary_amt INT(20000) NOT NULL,
     li_salary_type TINYTEXT() NOT NULL,
-    li_quota int() NOT NULL,
+    li_quota int(36) NOT NULL,
 
     FOREIGN KEY(li_jb_id) REFERENCES jobs(jb_id)
     CONSTRAINT li_salary_type CHECK(
@@ -101,7 +101,7 @@ CREATE TABLE job_applications(
     
     FOREIGN KEY(ap_li_id) REFERENCES job_listings(li_id),
     FOREIGN KEY(ap_iu_id) REFERENCES individual_users(iu_id)
-    
+
     CONSTRAINT ap_status CHECK(
         ap_status IN ('pending','offer-released','enrolled','declined by applicant','rejected by applicant','completed','reviewed')
     
