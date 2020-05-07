@@ -16,7 +16,7 @@
 
 ```
 cd manbase-api
-. venv/bin/activate
+pipenv shell
 flask run --host 0.0.0.0
 ```
 
