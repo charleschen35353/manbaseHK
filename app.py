@@ -1,17 +1,13 @@
 from flask import Flask
-from flaskext.mysql import MySQL
-from pymysql.cursors import DictCursor
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-# Configuring the MYSQL
-app.config['MYSQL_DATABASE_USER'] = 'public'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'b05qv-x4xca'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-app.config['MYSQL_DATABASE_DB'] = 'manbasedb'
+# Configuring SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://public:b05qv-x4xca@localhost/manbasedb'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-mysql = MySQL(cursorclass = DictCursor)
-mysql.init_app(app)
+db = SQLAlchemy(app)
 
 @app.route('/')
 def hello_world():
