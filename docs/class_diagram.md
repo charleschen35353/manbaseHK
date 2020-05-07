@@ -9,10 +9,9 @@
         - bu_phone
         - bu_isSMSVerified
         - bu_businessLogo
-        - bu_brc
-            'business registration certification
         - bu_isBusinessVerified
             'verification: True or False
+        - bu_isDeleted
 
 'function
         - createBusinessProfile()
@@ -21,6 +20,18 @@
         - updateBusinessProfile()
         - deleteBusinessProfile()
         - updateBusinessPhone()
+        - viewJobApplicant()
+            'view job applicant: personal info., rating stat, comment,
+        - viewPassedJob()
+        - approveJobApplication()
+            'send job offer
+        - declineJobApplication()
+
+        - rateIndividual()
+
+        - changePhone()
+        - changePIC()
+
     }
 
     class individual_users {
@@ -31,9 +42,6 @@
             'for SMS verification
         - iu_profilePicture
             'profile picture [opt]
-        - iu_hkid
-        - iu_passport
-            'for real identity verification [opt]
         - iu_isIdentityVerified
             'real identity verification: True or False
         - iu_CName
@@ -44,7 +52,7 @@
         - iu_birthday
         - iu_educationLevel
             'primary secondary school, tertiary...
-        '- (TBC) iu_selfIntroduction
+        - iu_selfIntroduction
             'string data, may be have identity disclosure isuue (?) [opt]
         - iu_language_Cantonese
         - iu_language_English
@@ -52,45 +60,57 @@
             'capable work lanuage: ture or false
         - iu_language_Other
             'user specified language: str [opt]
+        - iu_isDeleted
 
     'functions
-        - uploadProfilePicture()
-        - viewProfilePicture()
-        - deleteProfilePicture()
+        - uploadMyProfilePicture()
+        - viewMyProfilePicture()
+        - deleteMyProfilePicture()
             'profile pic
-        - createIndividualProfile()
+        - createMyIndividualProfile()
             'register
-        - viewIndividualProfile()
-        - updateIndividualProfile()
+        - viewMyProfile()
+        - updateMyProfile()
             'for non compulsary attributes
         - deleteIndividualProfile()
             'individual account
         - identityVerification()
             'submit hkid/passport
         - changePassword()
-        - updateIdentityVerificationStatus()
+        '- updateIdentityVerificationStatus()
             'not sure if put here (?)
-        - updateSMSVerificationStatus()
+        '- updateSMSVerificationStatus()
             'not sure if need put
         - showIndividualReview()
-        - viewApplicant()
-            'view job applicant: personal info., rating stat, comment,
         - updateIndividualPhone()
+
+        - viewJobBoard()
+        - viewJobBoard_salary()
+        - viewJobBoard_rating()
+        - viewJobBoard_distance()
+
+        - acceptJobOffer()
+        - declineJobOffer()
+
+        - rateBusiness()
+        
+        - changePhone()
+        '- changeBitrhday()
+            'once
 
     }
 
     class jobs {
     'attributes
-        - jb_creationTime
         - jb_id
         '- jb_type
             'added a new job_type class
-        - jb_location
-            'tuple type (?), or string (?)
+        - jb_creationTime
         - jb_description
             'collapsed with job type description(?)
-        - jb_expected_payment_period
-            'instead of job payment day (moved to job_listing)
+        - jb_expected_payment_days
+            'number, in days
+        - jb_isDeleted
 
     'functions
         - createJob()
@@ -107,23 +127,52 @@
             'filter function for job board
         - showPostedJob()
             'business
+        
+        
+    }
+
+    class address{
+        - ads_id
+        - ads_creationTime
+        - ads_jb_id
+        - ads_district_id
+        - ads_detail
+
+        -create()
+        -update()
+        -view()
+        -delete()
 
     }
 
-    class job_abnormality{
+    class districts{
+        - district_id
+        - district_name
+
+        -create()
+        -update()
+        -view()
+        -delete()
+    }
+    class abnormality{
     'attribute
-        - jab_creationTime
-        - jab_id
-        - jab_li_id
+        - abn_creationTime
+        - abn_id
+        - abn_type
+        - abn_li_id
             'can be null
-        - jab_job_id
-        - jab_sender
+            '[opt]
+        - abn_job_id
+            '[opt]
+        - abn_sender
             'store user id
-        - jab_description
-        - jab_isSolved
+        - abn_description
+        - abn_status
+            'pending, processing, accepted, rejected, deleted, solved
 
     'function
-        - create()
+        - reportAbnormality()
+            'create
         - view()
        '- update() : should be banned(?)
         - delete()
@@ -137,8 +186,6 @@
     'attirbutes
         - jt_id
         - jt_name
-        - jt_description
-            'not sure if a good measure(?)
 
     'functions
         - create()
@@ -151,18 +198,16 @@
     'attributes
         - li_id
         - li_jb_id
-        '- li_jb_date
-            'can be represented by start time - end time (?)
         - li_starttime
         - li_endtime
         - li_salary_amt
             ' in number
         - li_salary_type
-            ' in hr rate or day rate or lump sum: salary structure
+            ' salary structure: in hr rate or lump sum
+        - li_ot_salary
+            ' number, in hour rate
         - li_quota
-            'the amount for workforce needed
-        - 'jb_expected_payment_days
-            'put here better (?)
+            ' the amount for workforce needed
 
         'functions
         - create()
@@ -184,6 +229,7 @@
             'applicant
         - ap_status
             'enrollment status, can be waitlist
+        - ap_isDeleted
 
     'function
         - create()
@@ -195,14 +241,9 @@
         - view()
             'view my job for individual/ view applicants (?)
 
-        - showApplicant(job)
-            '(?)
-        - approve()
-            'change of status from applied to approved by business
         - accept()
             'change of status from approved to accepted by individual
-        - decline()
-            'change of status from approved to declined by individual
+
 
         }
 
@@ -223,10 +264,9 @@
         - en_ap_id
         - en_li_id
         - en_is_paid
-        - en_is_on_time
-            'True or False
-        - en_is_present
-            'attendance: True or False
+        - en_present_status
+            'on_time, late, absence, medical_leave (supporting doc)
+        
     'function
         - create()
         - update()
@@ -241,15 +281,14 @@
     }
 
     class announcement {
-    'reply & announcement merged, canvas discussion board (?)
+    'canvas discussion board
 
     'attribute
         - an_creationTime
         - an_id
         - an_sender_id
-        - an_receiver_id
-            'how about mass message(?)
         - an_message
+        - an_isDeleted
 
     'function
         - create()
@@ -285,14 +324,34 @@
         - ur_id
         - ur_login_name
         - ur_password_hash
+        - ur_isDeleted
+
+    'function
+        - create()
+        - updatePassword()
+        - delete()
+    }
+
+    class verification {
+        - veri_creationTime
+        - veri_id
+        - veri_ur_id
+        - veri_type
+            'HKID/Passport/BRC/medical leave etc.
+        - veri_doc
+
+        - create()
+        - update()
+        - view()
+        - delete()
     }
 
     class rating_category {
     'attrbute
         - rc_id
         - rc_name
-            'Workload, Work Environment, Administration: 1-5 scale
-            '-2, -1, 0, 1, 2 scale for individual performance
+            '1-5 scale
+            'individual performance
     'function
         - create()
         - view()
@@ -305,6 +364,8 @@
         - ra_re_id
         - ra_rc_id
         - ra_rating
+            'Workload, Work Environment, Administration: 1-5 scale
+            'individual performance: -2, -1, 0, 1, 2 scale
 
     'function
         - createRating()
@@ -320,15 +381,15 @@
 
     class review {
     'attribute
+        - re_creationTime
         - re_id
         - re_en_id
-        - re_type
-            're_type can be of 'comment' or 'violation' or 'abnormality'
         - re_receiver_id
         - re_sender_id
         - re_comment
         - re_isFollowUpNeeded
-            'for the payment day later than review day: True or False
+            'for the payment day later than review day: True or False, 追加comment
+        - re_isDeleted
 
     'function
         - viewReview()
@@ -343,11 +404,12 @@
 
     class review_followup{
     'attribute
-        -rf_id
-        -rf_re_id
-        -rf_expected_time
+        - rf_creationTime
+        - rf_id
+        - rf_re_id
+        - rf_followup_time
             'the expected day of salary payment
-        -rf_comment
+        - rf_comment
 
     'function
         - viewFollowUp()
@@ -367,6 +429,8 @@
 
     users "1..1" -- "1..M" business_users: is
 
+    users "1..1" -- "1..M" verification
+
     industry "1..1" -- "0..M" business_users: in_industry
 
     business_users "1..1" -- "1..M" jobs
@@ -378,6 +442,10 @@
     jobs "0..M" -- "1..1" job_type
 
     jobs "1..1" -- "0..M" job_abnormality
+
+    jobs "1..1" -- "1..M" address
+
+    address "0..M" -- "1..1" job_abnormality
 
     job_applications "0..M" -up- "1..1" individual_users
 

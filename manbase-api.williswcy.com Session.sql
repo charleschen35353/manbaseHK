@@ -1,28 +1,31 @@
+
+
 CREATE TABLE business_users(
-    bu_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    bu_id VARCHAR(1000) PRIMARY KEY,
     bu_address VARCHAR(20000) NOT NULL,
     bu_CName VARCHAR(36) NOT NULL,
-    bu_EName VARCHAR(36), 'optional (?)
+    bu_EName VARCHAR(36), #optional (?)
     bu_picName VARCHAR(36) NOT NULL, 
-    bu_phone INT(8) NOT NULL, 'how about region code
+    bu_phone VARCHAR(8) NOT NULL, #how about region code
     bu_isSMSVerified TINYINT(1) DEFAULT 0,
     bu_businessLogo LONGBLOB,
     bu_isDeleted TINYINT(1) DEFAULT 0,
-    bu_isBusinessVerified TINYINT(1) DEFAULT 0
+    bu_isBusinessVerified TINYINT(1) DEFAULT 0,
 
+    FOREIGN KEY(bu_id) REFERENCES users(ur_id)
 )
 
 CREATE TABLE individual_users(
     iu_id INT(8) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    iu_phone INT(8) NOT NULL, 'how about region code
+    iu_phone INT(8) NOT NULL, #how about region code
     iu_isSMSVerified TINYINT(1) DEFAULT 0,
     iu_profilePicture LONGBLOB,
     iu_isIndentityVerified TINYINT(1) DEFAULT 0,
     iu_CName VARCHAR(36) NOT NULL,
     iu_EName VARCHAR(36) NOT NULL,
     iu_alias VARCHAR(36) NOT NULL,
-    iu_gender TINYINT(1) NOT NULL, '0 for female, 1 for male
-    iu_birthday DATE NOT NULL, 'YYYY-MM-DD
+    iu_gender TINYINT(1) NOT NULL, #0 for female, 1 for male
+    iu_birthday DATE NOT NULL, #YYYY-MM-DD
     iu_educationLevel TINYTEXT NOT NULL,
     iu_selfIntroduction VARCHAR(20000),
     iu_language_Cantonese TINYINT(1) NOT NULL,
@@ -31,6 +34,7 @@ CREATE TABLE individual_users(
     iu_isDeleted TINYINT(1) DEFAULT 0,
     iu_language_Other VARCHAR
 
+    FOREIGN KEY(iu_id) REFERENCES users(ur_id)
     CONSTRAINT iu_educationLevel CHECK(
         iu_educationLevel IN ('primary school graduate','secondary school graduate', 'undergraduate or above')
 )
