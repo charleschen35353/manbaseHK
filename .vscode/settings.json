@@ -8,6 +8,15 @@
             "port": 3306,
             "server": "manbase-api.williswcy.com",
             "username": "williswcy"
+        },
+        {
+            "database": "manbasedb",
+            "dialect": "MySQL",
+            "name": "manbase-api",
+            "password": "6490881615",
+            "port": 3306,
+            "server": "manbase-api.williswcy.com",
+            "username": "williswcy"
         }
     ]
 }
