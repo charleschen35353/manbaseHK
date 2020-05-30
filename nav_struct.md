@@ -7,7 +7,7 @@
 * /app
 	* /
 	* /job-list
+	* /new-job
 	* /job/{:id}
 	* /profile
 	* /profile/{:id}
-* /api
