@@ -1,0 +1,33 @@
+html {
+  margin: 0;
+  padding: 0;
+}
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.main {
+  min-height: 95vh;
+  margin: 0;
+  padding: 0;
+}
+
+#header_1 {
+  font-size: 2.5em;
+}
+
+#header_2 {
+  font-size: 5em;
+}
+
+.dimension::before {
+  content: '◆ ';
+}
+
+footer {
+  height: 5vh;
+}
