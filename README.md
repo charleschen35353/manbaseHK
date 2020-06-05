@@ -17,10 +17,10 @@
 ```
 cd manbase
 pipenv shell
-flask run --host 0.0.0.0
+gunicorn run:app
 ```
 
-- Note that we will need to use a production WSGI server later.
+- The website should then be accessible remotely via `https://test.manbasehk.com/`.
 
 ### MySQL
 
