@@ -8,23 +8,23 @@
 
 ### SSH
 
-- Server: manbase-api.williswcy.com
+- Server: `manbase-api.williswcy.com` or `test.manbasehk.com`
 - Account: root
 - Password: eqh49-v3bnb
-- Location: ~/manbase-api
+- Location: ~/manbase
 - Start the testing server by -
 
 ```
-cd manbase-api
+cd manbase
 pipenv shell
-flask run --host 0.0.0.0
+gunicorn run:app
 ```
 
-- Note that we will need to use a production WSGI server later.
+- The website should then be accessible remotely via `https://test.manbasehk.com/`.
 
 ### MySQL
 
-- Server Host: manbase-api.williswcy.com
+- Server Host: `manbase-api.williswcy.com` or `test.manbasehk.com`
 - Account: charlescly / lancetpk / williswcy
 - Password: Same as the account name
 - Note: Please update your password with the following SQL command -
