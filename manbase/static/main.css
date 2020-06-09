@@ -11,7 +11,7 @@ body {
 }
 
 nav {
-  height: 7vh;
+  min-height: 7vh;
 }
 
 .main {
