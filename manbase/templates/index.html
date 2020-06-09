@@ -2,7 +2,7 @@
 <div class="jumbotron p-sm-1 p-md-5">
   <div class="row">
     <div class="col col-12 col-md-7 p-xs-1 p-3">
-      <h1 class="text-center text-md-left" id="header_1">
+      <h1 class="text-center text-md-left mt-3" id="header_1">
         一個屬於所有人的
       </h1>
       <h1 class="text-center text-md-left" id="header_2">
@@ -12,14 +12,21 @@
       <p class="text-center lead p-3">
         我們為大眾及商家建立聯繫，並向勞工市場提供工作管理工具及資源，保障勞資雙方權益，為社會未來發展打下堅定基礎。
       </p>
-      <a href="/">
-        <button class="btn btn-success btn-lg btn-block">
+      <a href="{{ url_for('register') }}">
+        <button class="btn btn-primary btn-lg btn-block">
           立即加入我們
         </button>
       </a>
     </div>
-    <div class="d-none d-md-block col col-md-5">
-      image
+    <div
+      class="col col-md-5 p-3 d-none d-md-flex justify-content-center align-items-center"
+    >
+      <img
+        src="{{ url_for('static', filename='img/stories/business_deal.gif') }}"
+        alt="Business Deal"
+        class="img-fluid rounded"
+        style="max-width: 370px;"
+      />
     </div>
   </div>
 </div>

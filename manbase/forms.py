@@ -41,12 +41,12 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
 
-    email = StringField('Email',
+    email = StringField('電郵',
                         validators=[DataRequired(), Email()])
-    password = PasswordField('Password',
+    password = PasswordField('密碼',
                              validators=[DataRequired(), Length(min=5)])
-    remember = BooleanField('Remember Me')
-    submit = SubmitField('Login')
+    remember = BooleanField('請記住我')
+    submit = SubmitField('登入')
 
 
 class UpdateAccountForm(FlaskForm):

@@ -22,12 +22,12 @@
             {% endif %} !>
     {{form.hidden_tag()}}
     <fieldset>
-      <legend class="h3 mb-3">Login</legend>
+      <legend class="h3 mb-3">登入</legend>
 
       <div class="form-group">
         {{ form.email.label }} {% if form.email.errors %} {{
         render_field(form.email, class="form-control is-invalid",
-        placeholder="Email") }}
+        placeholder="電郵") }}
         <!error style>
         <div>
           {% for error in form.email.errors %}
@@ -35,14 +35,14 @@
           {% endfor %}
         </div>
         {% else %} {{ render_field(form.email, class="form-control",
-        placeholder="Email") }}
+        placeholder="電郵") }}
         <!original style>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.password.label }} {% if form.password.errors %} {{
         render_field(form.password, class="form-control is-invalid",
-        placeholder="Password", style="font-family: sans-serif;") }}
+        placeholder="密碼", style="font-family: sans-serif;") }}
         <!error style>
         <div>
           {% for error in form.password.errors %}
@@ -50,7 +50,7 @@
           {% endfor %}
         </div>
         {% else %} {{ render_field(form.password, class="form-control",
-        placeholder="Password", style="font-family: sans-serif;") }}
+        placeholder="密碼", style="font-family: sans-serif;") }}
         <!original style>
         {% endif %}
       </div>
@@ -64,11 +64,11 @@
       }}
     </div>
     <div class="form-group">
-      <small> <a href="#">Forgot Password?</a> </small>
+      <small> <a href="#">忘記密碼？</a> </small>
     </div>
     <div class="form-group">
       <small>
-        <a href="{{url_for('register')}}">Need an Account?</a>
+        <a href="{{url_for('register')}}">需要賬號？</a>
       </small>
     </div>
   </form>
