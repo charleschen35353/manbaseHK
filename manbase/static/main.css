@@ -10,10 +10,18 @@ body {
   font-family: 'Noto Sans TC', sans-serif;
 }
 
+nav {
+  height: 7vh;
+}
+
 .main {
-  min-height: 95vh;
+  min-height: 93vh;
   margin: 0;
   padding: 0;
+}
+
+.content-switch {
+  min-height: 88vh;
 }
 
 #header_1 {
@@ -30,4 +38,19 @@ body {
 
 footer {
   height: 5vh;
+}
+
+.center-grid {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  justify-self: center;
+}
+
+.transparent-watermark-background {
+  opacity: 0.1;
+  z-index: -1;
+  position: absolute;
+  align-self: center;
+  justify-self: center;
 }

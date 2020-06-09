@@ -13,6 +13,8 @@ flask-wtf = "*"
 flask-bcrypt = "*"
 flask-login = "*"
 email-validator = "*"
+opencv-python = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.8"

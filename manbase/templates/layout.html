@@ -72,12 +72,16 @@
           </div>
         </nav>
       </header>
-      <div>
-        {% with messages = get_flashed_messages(with_categories=true) %} {% if
-        messages %} {% for category, message in messages %}
-        <div>{{message}}</div>
-        {% endfor %} {% endif %} {% endwith %} {% block content %} {% endblock
-        %}
+      
+      <div {% if request.path in [url_for("login"), url_for("register")] %} class="content-switch center-grid" {% else %} class="content-swtich" {% endif %}>
+        {% with messages = get_flashed_messages(with_categories=true) %} 
+        {% if messages %} 
+          {% for category, message in messages %}
+            <div class="alert {{'alert-success' if category == 'success' else 'alert-warning'}}">{{message}}</div>
+          {% endfor %} 
+        {% endif %} 
+      {% endwith %}
+        {% block content %} {% endblock %}
       </div>
     </div>
 
