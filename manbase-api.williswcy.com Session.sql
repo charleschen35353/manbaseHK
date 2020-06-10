@@ -1,25 +1,34 @@
+SET foreign_key_checks = 0;
+-- Drop tables
+drop table if exists users, business_users, individual_users, jobs, job_listings, business_address, districts, abormality, job_type, job_applications, enrollments, announcement, announcement_listingsk, industry, rating_category, rating, review, review_followup;
+SET foreign_key_checks = 1;
+
+DROP TABLE job_listings;
 
 CREATE TABLE users(
     ur_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     ur_id VARCHAR(1000) PRIMARY KEY,
-    ur_login_name VARCHAR(36) NOT NULL,
+    ur_login VARCHAR(36) NOT NULL,
     ur_password_hash INT(36) NOT NULL,
     ur_isDeleted TINYINT(1) DEFAULT 0
 )
+
 
 CREATE TABLE business_users(
     bu_id VARCHAR(1000) PRIMARY KEY,
     bu_address VARCHAR(20000) NOT NULL,
     bu_CName VARCHAR(36) NOT NULL,
-    bu_EName VARCHAR(36), #optional (?)
+    bu_EName VARCHAR(36), #optional
     bu_picName VARCHAR(36) NOT NULL, 
-    bu_phone VARCHAR(8) NOT NULL, #how about region code
+    bu_phone VARCHAR(8) NOT NULL, 
     bu_isSMSVerified TINYINT(1) DEFAULT 0,
     bu_businessLogo LONGBLOB,
     bu_isDeleted TINYINT(1) DEFAULT 0,
-    bu_isBusinessVerified TINYINT(1) DEFAULT 0,
+    bu_BusinessVerificationStatus TINYTEXT DEFAULT 'not verified',
 
     FOREIGN KEY(bu_id) REFERENCES users(ur_id)
+    CONSTRAINT bu_BusinessVerificationStatus CHECK
+    (bu_BusinessVerificationStatus IN ('not verified','pending', 'verified'))
 )
 
 CREATE TABLE individual_users(
@@ -31,7 +40,9 @@ CREATE TABLE individual_users(
     iu_CName VARCHAR(36) NOT NULL,
     iu_EName VARCHAR(36) NOT NULL,
     iu_alias VARCHAR(36) NOT NULL,
-    iu_gender TINYINT(1) NOT NULL, #0 for female, 1 for male
+    iu_HKID_head VARCHAR(1) NOT NULL,
+    iu_HKID_tail VARCHAR(3) NOT NULL,
+    iu_gender TINYINT(1) NOT NULL, #0 for female, 1 for male, 2 for others
     iu_birthday DATE NOT NULL, #YYYY-MM-DD
     iu_educationLevel TINYTEXT NOT NULL,
     iu_selfIntroduction VARCHAR(20000),
@@ -44,6 +55,7 @@ CREATE TABLE individual_users(
     FOREIGN KEY(iu_id) REFERENCES users(ur_id),
     CONSTRAINT iu_educationLevel CHECK
         (iu_educationLevel IN ('primary school graduate','secondary school graduate', 'undergraduate or above'))
+
 )
 
 CREATE TABLE jobs(
