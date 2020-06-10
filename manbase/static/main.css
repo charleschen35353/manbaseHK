@@ -1,0 +1,56 @@
+html {
+  margin: 0;
+  padding: 0;
+}
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+nav {
+  min-height: 7vh;
+}
+
+.main {
+  min-height: 93vh;
+  margin: 0;
+  padding: 0;
+}
+
+.content-switch {
+  min-height: 88vh;
+}
+
+#header_1 {
+  font-size: 2.5em;
+}
+
+#header_2 {
+  font-size: 5em;
+}
+
+.dimension::before {
+  content: '◆ ';
+}
+
+footer {
+  height: 5vh;
+}
+
+.center-grid {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  justify-self: center;
+}
+
+.transparent-watermark-background {
+  opacity: 0.1;
+  z-index: -1;
+  position: absolute;
+  align-self: center;
+  justify-self: center;
+}

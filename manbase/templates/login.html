@@ -1,56 +1,77 @@
-{% extends "layout.html" %}
-
+{% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
 {% block content %}
-    <div>
-        <form method="POST" action="">
-            <!
+<div class="transparent-watermark-background p-3 m-3">
+  <img
+    src="{{url_for('static', filename='img/stories/login.gif')}}"
+    alt="Login Animation"
+  />
+</div>
+<div
+  class="center-grid text-center animate__animated animate__fadeIn"
+  style="flex-grow: 1; align-items: center; justify-content: center;"
+>
+  <form
+    method="POST"
+    action=""
+    class="p-3 m-3 shadow"
+    style="min-width: 30vw; background-color: rgba(255, 255, 255, 0.3);"
+  >
+    <!
             {% if form.errors %}
                 {{ form.errors }}
             {% endif %} !>
-            {{form.hidden_tag()}}
-            <fieldset>
-                <legend>Login</legend>
-               
-                <div>
-                    {{ form.email.label }}
-                    {% if form.email.errors %}
-                        {{ form.email }} <!error style>
-                        <div> 
-                            {% for error in form.email.errors %}
-                            <span> {{ error }} </span>                 
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.email }} <!original style>
-                    {% endif %}
-                </div>
-                <div>
-                    {{ form.password.label }}
-                    {% if form.password.errors %}
-                        {{ form.password }} <!error style>
-                        <div> 
-                            {% for error in form.password.errors %}
-                            <span> {{error}} </span>                 
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.password }} <!original style>
-                    {% endif %}
-                </div>
-                <div>
-                    {{ form.remember }}
-                    {{ form.remember.label }}
-                </div>
-            </fieldset>
-            <div>
-                {{form.submit}}
-           </div>
-           <small> <a href="#">Forgot Password?</small>
-        </form>
+    {{form.hidden_tag()}}
+    <fieldset>
+      <legend class="h3 mb-3">登入</legend>
+
+      <div class="form-group">
+        {{ form.email.label }} {% if form.email.errors %} {{
+        render_field(form.email, class="form-control is-invalid",
+        placeholder="電郵") }}
+        <!error style>
         <div>
-            <small>
-                <a href="{{url_for('register')}}">Need an Account?</a>
-            </small>
+          {% for error in form.email.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
         </div>
+        {% else %} {{ render_field(form.email, class="form-control",
+        placeholder="電郵") }}
+        <!original style>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.password.label }} {% if form.password.errors %} {{
+        render_field(form.password, class="form-control is-invalid",
+        placeholder="密碼", style="font-family: sans-serif;") }}
+        <!error style>
+        <div>
+          {% for error in form.password.errors %}
+          <div class="invalid-feedback d-block">{{error}}</div>
+          {% endfor %}
+        </div>
+        {% else %} {{ render_field(form.password, class="form-control",
+        placeholder="密碼", style="font-family: sans-serif;") }}
+        <!original style>
+        {% endif %}
+      </div>
+      <div class="form-group form-check">
+        {{ render_field(form.remember, class="form-check-input") }} {{
+        form.remember.label }}
+      </div>
+    </fieldset>
+    <div class="form-group">
+      {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
+      }}
     </div>
+    <div class="form-group">
+      <small> <a href="#">忘記密碼？</a> </small>
+    </div>
+    <div class="form-group">
+      <small>
+        <a href="{{url_for('register')}}">需要賬號？</a>
+      </small>
+    </div>
+  </form>
+  <div></div>
+</div>
 {% endblock content %}

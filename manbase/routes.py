@@ -1,7 +1,11 @@
-from flask import render_template, url_for, flash, redirect
-from flask_login import login_user, logout_user , current_user
+import secrets
+import os
+import cv2
+import matplotlib.image as pltimg
+from flask import render_template, url_for, flash, redirect, request
+from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt
-from manbase.forms import RegistrationForm, LoginForm
+from manbase.forms import RegistrationForm, LoginForm, UpdateAccountForm
 from manbase.models import User, Post
 
 
@@ -20,6 +24,12 @@ isLogin = False
 @app.route('/home')
 def home():
     return render_template('home.html', posts = posts)
+
+# TODO: Incorporate this template as the landing page
+# This should replace the '/' route
+@app.route('/index')
+def index():
+    return render_template('index.html')
 
 @app.route('/about')
 def about():
@@ -62,9 +72,34 @@ def logout():
     flash('You have successfully logged out.', 'sucess')
     return redirect(url_for('home'))
 
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+    img = pltimg.imread(form_picture)
+    img = cv2.resize(img, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
+    cv2.imwrite(picture_path, cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+    #form_picture.save(picture_path)
+    return picture_fn
 
-@app.route('/account')
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
 def account():
-    return render_template('account.html', title='account')
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_fn = save_picture(form.picture.data)
+            current_user.profile_image = picture_fn
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash("Account Info Updated")
+        return redirect(url_for('account'))
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for('static', filename = 'profile_pics/' + current_user.profile_image)
+    return render_template('account.html', title='account', image_file = image_file, form = form)
 
 
