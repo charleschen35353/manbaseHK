@@ -3,16 +3,13 @@ SET foreign_key_checks = 0;
 drop table if exists users, business_users, individual_users, jobs, job_listings, business_address, districts, abormality, job_type, job_applications, enrollments, announcement, announcement_listingsk, industry, rating_category, rating, review, review_followup;
 SET foreign_key_checks = 1;
 
-DROP TABLE job_listings;
-
 CREATE TABLE users(
     ur_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     ur_id VARCHAR(1000) PRIMARY KEY,
     ur_login VARCHAR(36) NOT NULL,
     ur_password_hash INT(36) NOT NULL,
     ur_isDeleted TINYINT(1) DEFAULT 0
-)
-
+);
 
 CREATE TABLE business_users(
     bu_id VARCHAR(1000) PRIMARY KEY,
@@ -22,20 +19,18 @@ CREATE TABLE business_users(
     bu_picName VARCHAR(36) NOT NULL, 
     bu_phone VARCHAR(8) NOT NULL, 
     bu_isSMSVerified TINYINT(1) DEFAULT 0,
-    bu_businessLogo LONGBLOB,
+    bu_businessLogo VARCHAR(2048),
     bu_isDeleted TINYINT(1) DEFAULT 0,
-    bu_BusinessVerificationStatus TINYTEXT DEFAULT 'not verified',
+    bu_BusinessVerificationStatus VARCHAR(1) DEFAULT 0, #0 is not verified, 1 is pending, 2 is verified
 
     FOREIGN KEY(bu_id) REFERENCES users(ur_id)
-    CONSTRAINT bu_BusinessVerificationStatus CHECK
-    (bu_BusinessVerificationStatus IN ('not verified','pending', 'verified'))
-)
+);
 
 CREATE TABLE individual_users(
     iu_id VARCHAR(1000) PRIMARY KEY,
     iu_phone INT(8) NOT NULL, #how about region code
     iu_isSMSVerified TINYINT(1) DEFAULT 0,
-    iu_profilePicture LONGBLOB,
+    iu_profilePicture VARCHAR(2048),
     iu_isIndentityVerified TINYINT(1) DEFAULT 0,
     iu_CName VARCHAR(36) NOT NULL,
     iu_EName VARCHAR(36) NOT NULL,
@@ -55,8 +50,7 @@ CREATE TABLE individual_users(
     FOREIGN KEY(iu_id) REFERENCES users(ur_id),
     CONSTRAINT iu_educationLevel CHECK
         (iu_educationLevel IN ('primary school graduate','secondary school graduate', 'undergraduate or above'))
-
-)
+);
 
 CREATE TABLE jobs(
     jb_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -64,7 +58,7 @@ CREATE TABLE jobs(
     jb_decription TEXT(20000) NOT NULL,
     jb_isDeleted TINYINT(1) DEFAULT 0,
     jb_expected_payment_days INT(36) NOT NULL
-)
+);
 
 CREATE TABLE job_listings(
     li_id VARCHAR(1000) PRIMARY KEY,
@@ -78,7 +72,7 @@ CREATE TABLE job_listings(
     FOREIGN KEY(li_jb_id) REFERENCES jobs(jb_id),
     CONSTRAINT li_salary_type CHECK(
         li_salary_type IN ('hour rate','lump sum'))
-)
+);
 
 CREATE TABLE business_address(
     bads_id VARCHAR(1000) PRIMARY KEY,
@@ -89,12 +83,12 @@ CREATE TABLE business_address(
 
     FOREIGN KEY (bads_jb_id) REFERENCES jobs(jb_id),
     FOREIGN KEY (bads_district_id) REFERENCES districts(district_id)
-)
+);
 
 CREATE TABLE districts(
     district_id VARCHAR(1000) PRIMARY KEY,
     district_name VARCHAR(36) NOT NULL
-)
+);
 
 CREATE TABLE abnormality(
     abn_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -112,13 +106,13 @@ CREATE TABLE abnormality(
 
     CONSTRAINT abn_status CHECK(
         abn_status IN ('pending','processing', 'accepted','rejected', 'deleted','solved'))
-)
+);
 
 CREATE TABLE job_type(
     jt_id VARCHAR(1000) PRIMARY KEY,
     jt_name VARCHAR(36) NOT NULL,
     jt_description VARCHAR(20000) NOT NULL
-)
+);
 
 
 CREATE TABLE job_applications(
@@ -135,7 +129,7 @@ CREATE TABLE job_applications(
     CONSTRAINT ap_status CHECK(
         ap_status IN ('pending','offer-released','enrolled','declined by applicant','rejected by applicant','completed','reviewed')
         )
-)
+);
 
 
 CREATE TABLE enrollments(
@@ -152,7 +146,7 @@ CREATE TABLE enrollments(
     CONSTRAINT en_present_status CHECK(
         en_present_status IN ('on time','late','absence','medical leave')
         )
-)
+);
 
 CREATE TABLE announcement(
     an_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -162,7 +156,7 @@ CREATE TABLE announcement(
     an_sender_id VARCHAR(1000) NOT NULL,
 
     FOREIGN KEY(an_sender_id) REFERENCES users(ur_id)
-)
+);
 
 CREATE TABLE announcement_listings(
     anli_an_id VARCHAR(1000) NOT NULL,
@@ -172,18 +166,18 @@ CREATE TABLE announcement_listings(
 
     FOREIGN KEY(anli_li_id) REFERENCES job_listings(li_id),
     FOREIGN KEY(anli_an_id) REFERENCES job_applications(ap_id)
-)
+);
 
 CREATE TABLE industry(
     ind_id VARCHAR(1000) PRIMARY KEY,
     ind_name TEXT(36) NOT NULL
-)
+);
 
 CREATE TABLE verification(
     veri_creationTIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     veri_id VARCHAR(1000) PRIMARY KEY,
     veri_type TINYTEXT NOT NULL,
-    veri_doc LONGBLOB NOT NULL,
+    veri_doc VARCHAR(2048) NOT NULL,
     veri_ur_id VARCHAR(1000) NOT NULL,
 
     FOREIGN KEY(veri_ur_id) REFERENCES users(ur_id),
@@ -191,12 +185,12 @@ CREATE TABLE verification(
     CONSTRAINT veri_type CHECK(
         veri_type IN ('HKID','Passport','BRC','medical doc')
         )
-)
+);
 
 CREATE TABLE rating_category(
     rc_id VARCHAR(1000) PRIMARY KEY,
     rc_name VARCHAR(36) NOT NULL
-)
+);
 
 CREATE TABLE rating(
     rate_re_id VARCHAR(1000) NOT NULL,
@@ -206,7 +200,7 @@ CREATE TABLE rating(
 
     FOREIGN KEY(rate_re_id) REFERENCES review(re_id),
     FOREIGN KEY(rate_rc_id) REFERENCES rating_category(rc_id)
-)
+);
 
 CREATE TABLE review(
     re_id VARCHAR(1000) PRIMARY KEY,
@@ -219,7 +213,7 @@ CREATE TABLE review(
     re_en_id VARCHAR(1000) NOT NULL,
 
     FOREIGN KEY(re_en_id) REFERENCES enrollments(en_id)
-)
+);
 
 CREATE TABLE review_followup(
     rf_creationTIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -229,4 +223,4 @@ CREATE TABLE review_followup(
     rf_re_id VARCHAR(1000) NOT NULL,
 
     FOREIGN KEY(rf_re_id) REFERENCES review(re_id)
-)
+);
