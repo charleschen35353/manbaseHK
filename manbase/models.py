@@ -7,12 +7,12 @@ from sqlalchemy import create_engine
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return users.query.get(int(user_id))
 
 Base = automap_base()
 
 # engine, suppose it has tables set up
-engine = create_engine("mysql://public:b05qv-x4xca@localhost/manbasedb")
+engine = create_engine("mysql://public:b05qv-x4xca@test.manbasehk.com/manbasedb")
 
 # reflect the tables
 Base.prepare(engine, reflect=True)

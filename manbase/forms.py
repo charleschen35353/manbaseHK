@@ -3,8 +3,7 @@ from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from manbase.models import User
-
+from manbase.models import users
 
 def password_requirement(form, field):
     # check if passwords contains 0-9 & a-z &A-Z and !@#$%
