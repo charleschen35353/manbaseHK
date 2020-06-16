@@ -39,8 +39,6 @@ rating = Base.classes.rating
 review = Base.classes.review
 review_followup = Base.classes.review_followup
 
-
-'''
 session = Session(engine)
 
 class User(db.Model, UserMixin):
@@ -58,9 +56,9 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return "User(\'{}\',\'{}\',\'{}\')".format(self.username, self.email, self.profile_image)
+'''
 
-
-class Individual_User(db.Model):
+class User(db.Model):
     __table_name__= "individual_users" 
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     phone = db.Column(db.String(8), primary_key=True)
@@ -68,6 +66,7 @@ class Individual_User(db.Model):
     # long list of attributes TODO
     def __repr__(self):
         return "User(\'{}\',\'{}\',\'{}\')".format(self.username, self.email, self.image_file)
+'''
 
 class Post(db.Model):
     __table_name__= "posts" 
@@ -79,4 +78,3 @@ class Post(db.Model):
 
     def __repr__(self):
         return "Post(\'{}\',\'{}\')".format(self.title, self.date_posted)
-'''
