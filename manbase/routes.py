@@ -5,8 +5,8 @@ import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt
-from manbase.forms import RegistrationForm, LoginForm, UpdateAccountForm, BusinessRegistrationForm
-from manbase.models import User, Post
+from manbase.forms import BusinessRegistrationForm,RegistrationForm, LoginForm, UpdateAccountForm
+from manbase.models import Users
 
 
 posts = [ #fake db return
@@ -18,13 +18,13 @@ posts = [ #fake db return
 	} 
 ]
 
-db.create_all()
 isLogin = False
 @app.route('/')
 @app.route('/home')
 def home():
     return render_template('home.html', posts = posts)
 
+'''suspend'''
 # TODO: Incorporate this template as the landing page
 # This should replace the '/' route
 @app.route('/index')
@@ -42,9 +42,9 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email = form.email.data, password = hashed_password)
+        '''user = User(username=form.username.data, email = form.email.data, password = hashed_password)
         db.session.add(user)
-        db.session.commit()
+        db.session.commit()'''
         flash("Account created for {}. You are able to log in. ".format(form.username.data),"success")
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form, isLogin=isLogin)
@@ -55,7 +55,7 @@ def login():
         return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-         user = User.query.filter_by(email=form.email.data).first()
+         '''user = User.query.filter_by(email=form.email.data).first()'''
          if user and bcrypt.check_password_hash(user.password, form.password.data):
              login_user(user, remember = form.remember.data)
              isLogin = True
@@ -93,7 +93,7 @@ def account():
             current_user.profile_image = picture_fn
         current_user.username = form.username.data
         current_user.email = form.email.data
-        db.session.commit()
+        '''db.session.commit()'''
         flash("Account Info Updated")
         return redirect(url_for('account'))
     elif request.method == "GET":
@@ -101,10 +101,18 @@ def account():
         form.email.data = current_user.email
     image_file = url_for('static', filename = 'profile_pics/' + current_user.profile_image)
     return render_template('account.html', title='account', image_file = image_file, form = form)
+'''end suspend'''
 
 
 '''business'''
-@app.route("/business_register")
-def register_business():
+@app.route("/business_register",methods=['GET', 'POST'])
+def business_register():
     form = BusinessRegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.username.data}!', 'success')
+        return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
+
+@app.route('/business_register_confirm', methods=['GET','POST'])
+def business_register_confirm():
+    return render_template('business_register_confirm.html',title = '註冊 - 商業帳戶資料確認')

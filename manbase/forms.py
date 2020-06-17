@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from manbase.models import Users
 
@@ -71,32 +71,43 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError(
                     'Email is taken. Please choose a different one')
 
+
 '''business'''
 class BusinessRegistrationForm(FlaskForm):
 
     user_login = StringField('帳戶',
-                           validators=[DataRequired(), Length(min=5, max=20)])
+                           validators=[DataRequired(message = '名字不能為空'), Length(min=5, max=20)])
     password = PasswordField('密碼',
-                             validators=[DataRequired(), Length(min=5, max=32)])
+                             validators=[DataRequired(message = '密碼不能為空'), Length(min=5, max=32)])
     confirm_password = PasswordField('重新輸入密碼',
                                      validators=[DataRequired(), EqualTo('password', message="must match password")])
+    company_CName = StringField('企業中文名字',
+                                validators = [DataRequired(message = '企業中文名字不能為空'), Length(min=1, max=20)])
+    company_EName = StringField('企業英文名字',
+                                validators = [])
     company_email = StringField('公司電子郵箱',
-                        validators=[DataRequired(), Email()])
+                        validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
     company_contact_person = StringField('聯絡人',
-                                        validators = [DataRequired(), Length(min=1,max=32)])
+                                        validators = [DataRequired(message = '公司聯絡人不能為空'), Length(min=1,max=32)])
     company_contact_number = IntegerField('聯絡電話',
-                                        validators = [DataRequired(), Length(min=8,max=8)])
+                                        validators = [DataRequired(message = '聯絡電話不能為空'), Length(min=8,max=8)])
 
-    submit = SubmitField('Sign Up')
+    submit = SubmitField('註冊')
 
-    def validate_username(self, username):
-        user = Users.query.filter_by(ur_login=username.data).first()
+    def validate_user_login(self, user_login):
+        user = Users.query.filter_by(ur_login=user_login.data).first()
         if user:
             raise ValidationError(
-                'Username is taken. Please choose a different one')
+                '此商業帳戶已存在，請登入。')
 
-    def validate_email(self, email):
-        user = users.query.filter_by(email=email.data).first()
+    def validate_company_CName(self, company_CName):
+        user = Users.query.filter_by(ur_login=company_CName.data).first()
         if user:
             raise ValidationError(
-                'Email is taken. Please choose a different one')
+                '此商業名稱已存在，請重新輸入。')
+
+    def validate_company_email(self, company_email):
+        user = Users.query.filter_by(email=company_email.data).first()
+        if user:
+            raise ValidationError(
+                '此企業電郵已存在，請重新輸入。')
