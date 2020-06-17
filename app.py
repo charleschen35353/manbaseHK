@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 # Configuring SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://public:b05qv-x4xca@localhost/manbasedb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'https://test.manbasehk.com/'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)

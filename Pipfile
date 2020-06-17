@@ -17,6 +17,7 @@ opencv-python = "*"
 matplotlib = "*"
 mysqlclient = "*"
 flask-uuid = "*"
+flask-migrate = "*"
 
 [requires]
 python_version = "3.8"

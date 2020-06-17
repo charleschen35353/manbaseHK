@@ -11,7 +11,8 @@ def load_user(user_id):
 
 Base = automap_base()
 # reflect the tables
-Base.prepare(db.engine, reflect=True)
+engine = create_engine("mysql+mysqldb://lancetpk:lancetpk@test.manbasehk.com:3306/manbasedb")
+Base.prepare(engine, reflect=True)
 
 # mapped classes are now created with names by default
 # matching that of the table name.
