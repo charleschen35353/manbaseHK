@@ -223,4 +223,4 @@ CREATE TABLE review_followup(
     rf_re_id VARCHAR(1000) NOT NULL,
 
     FOREIGN KEY(rf_re_id) REFERENCES review(re_id)
-);
+)

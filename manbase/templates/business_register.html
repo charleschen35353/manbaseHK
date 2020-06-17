@@ -119,8 +119,9 @@
 
             </fieldset>
             <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
-            </div>
+                {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
+                }}
+              </div>
 
             <a class="button" href="{{url_for('business_register_confirm')}}">遞交</a>
         </form>
