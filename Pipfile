@@ -16,6 +16,7 @@ email-validator = "*"
 opencv-python = "*"
 matplotlib = "*"
 mysqlclient = "*"
+flask-uuid = "*"
 
 [requires]
 python_version = "3.8"

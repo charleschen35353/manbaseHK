@@ -5,7 +5,7 @@ import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt
-from manbase.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from manbase.forms import RegistrationForm, LoginForm, UpdateAccountForm, BusinessRegistrationForm
 from manbase.models import User, Post
 
 
@@ -23,10 +23,13 @@ isLogin = False
 @app.route('/')
 @app.route('/home')
 def home():
-    if current_user.is_authenticated:
-        return render_template('home.html', posts=posts)
-    else:
-        return render_template('index.html')
+    return render_template('home.html', posts = posts)
+
+# TODO: Incorporate this template as the landing page
+# This should replace the '/' route
+@app.route('/index')
+def index():
+    return render_template('index.html')
 
 @app.route('/about')
 def about():
@@ -100,3 +103,8 @@ def account():
     return render_template('account.html', title='account', image_file = image_file, form = form)
 
 
+'''business'''
+@app.route("/business_register")
+def register_business():
+    form = BusinessRegistrationForm()
+    return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
