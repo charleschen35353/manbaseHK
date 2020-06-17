@@ -4,10 +4,10 @@ import cv2
 import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user , current_user, login_required
-from manbase import app, db, bcrypt
+from manbase import app, db, bcrypt,uuid
 from manbase.forms import BusinessRegistrationForm,RegistrationForm, LoginForm, UpdateAccountForm
-from manbase.models import Users
-
+from manbase.models import Users, BusinessUsers
+from datetime import datetime
 
 posts = [ #fake db return
 	{
@@ -41,8 +41,8 @@ def register():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        '''user = User(username=form.username.data, email = form.email.data, password = hashed_password)
+        '''hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email = form.email.data, password = hashed_password)
         db.session.add(user)
         db.session.commit()'''
         flash("Account created for {}. You are able to log in. ".format(form.username.data),"success")
@@ -55,21 +55,30 @@ def login():
         return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-         '''user = User.query.filter_by(email=form.email.data).first()'''
-         if user and bcrypt.check_password_hash(user.password, form.password.data):
-             login_user(user, remember = form.remember.data)
-             isLogin = True
-             flash("Login Successful.".format(form.email.data),"success")
-             return redirect(url_for('home'))
-         else:
-             flash('Login Failed. Please check email or password', 'fail')
+        if login == 'test' and password == 'testing':
+            flash("成功登入.".format(form.login.data),"success")
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
+        else:
+            flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')
+
+        '''user = User.query.filter_by(login=form.login.data).first()
+        
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember = form.remember.data)
+            isLogin = True
+            flash("成功登入.".format(form.login.data),"success")
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
+        else:
+            flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')'''
     return render_template('login.html', title='Login', form=form)
 
 
 @app.route('/logout')
 def logout():
     logout_user()
-    flash('You have successfully logged out.', 'sucess')
+    flash('您已成功登出.', 'sucess')
     return redirect(url_for('home'))
 
 def save_picture(form_picture):
@@ -107,9 +116,38 @@ def account():
 '''business'''
 @app.route("/business_register",methods=['GET', 'POST'])
 def business_register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = BusinessRegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
+        '''hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        uid = uuid.uuid4()
+
+        #ensure unique uid
+        validate_uid = Users.query.filter_by(ur_id=uid).first()
+        while validate_uid:
+            uid = uuid.uuid4()
+            validate_uid = Users.query.filter_by(ur_id=uid).first()
+
+        user = Users(
+                    ur_creationTime = datetime.now, 
+                    ur_id = uid,
+                    ur_login = form.user_login.data,
+                    ur_password_hash = hashed_password
+                    )
+        business_user = BusinessUsers(
+                                    bu_id = uid,
+                                    bu_address = 'NS', #not specified
+                                    bu_CName = form.company_CName.data,
+                                    bu_EName = form.company_EName.data,
+                                    bu_picName = form.company_contact_person.data,
+                                    bu_phone = form.company_contact_number.data
+                                    )
+        db.session.add(user)
+        db.session.add(business_user)
+        db.session.commit()
+        '''
+        flash(f'{form.company_CName.data} 的商業帳號已成功註冊!', 'success')
         return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
 

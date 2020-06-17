@@ -60,6 +60,7 @@ class User(db.Model):
     phone = db.Column(db.String(8), primary_key=True)
     sms_verified = db.Column(db.Boolean, primary_key=True)
     # long list of attributes TODO
+    
     def __repr__(self):
         return "User(\'{}\',\'{}\',\'{}\')".format(self.username, self.email, self.image_file)
         

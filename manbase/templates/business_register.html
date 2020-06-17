@@ -33,6 +33,45 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
+                    {{ form.confirm_password.label(class="form-control-label") }}
+                    {% if form.confirm_password.errors %}
+                        {{ form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.confirm_password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.confirm_password(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.company_CName.label(class="form-control-label") }}
+                    {% if form.company_CName.errors %}
+                        {{ form.company_CName(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.company_CName.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.company_CName(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.company_EName.label(class="form-control-label") }}
+                    {% if form.company_EName.errors %}
+                        {{ form.company_EName(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.company_EName.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.company_EName(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
                     {{ form.company_email.label(class="form-control-label") }}
                     {% if form.company_email.errors %}
                         {{ form.company_email(class="form-control form-control-lg is-invalid") }}
@@ -60,7 +99,6 @@
                 </div>
                 <div class="form-group">
                     {{ form.company_contact_number.label(class="form-control-label") }}
-
 
                     {% if form.company_contact_number.errors %}
                         {{ form.company_contact_number(class="form-control form-control-lg is-invalid") }}

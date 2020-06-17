@@ -9,7 +9,6 @@ from flask_uuid import FlaskUUID
 csrf = CSRFProtect()
 
 app = Flask(__name__)
-FlaskUUID(app)
 uri = 'mysql+mysqldb://lancetpk:lancetpk@test.manbasehk.com:3306/manbasedb'
 #uri = 'mysql://public:b05qv-x4xca@localhost/manbasedb'
 app.config['SECRET_KEY'] = secrets.token_hex(16)
@@ -18,6 +17,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+uuid = FlaskUUID(app)
 login_manager = LoginManager(app)
 
 from manbase import routes

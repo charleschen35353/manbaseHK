@@ -39,8 +39,8 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
 
-    email = StringField('電郵',
-                        validators=[DataRequired(), Email()])
+    login = StringField('帳號',
+                        validators=[DataRequired()])
     password = PasswordField('密碼',
                              validators=[DataRequired(), Length(min=5)])
     remember = BooleanField('請記住我')
@@ -75,7 +75,7 @@ class UpdateAccountForm(FlaskForm):
 '''business'''
 class BusinessRegistrationForm(FlaskForm):
 
-    user_login = StringField('帳戶',
+    user_login = StringField('帳號',
                            validators=[DataRequired(message = '名字不能為空'), Length(min=5, max=20)])
     password = PasswordField('密碼',
                              validators=[DataRequired(message = '密碼不能為空'), Length(min=5, max=32)])
