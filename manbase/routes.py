@@ -22,7 +22,11 @@ isLogin = False
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html', posts = posts)
+    if current_user.is_authenticated:
+        return render_template('home.html', posts=posts)
+    else:
+        return render_template('index.html')
+    
 
 '''suspend'''
 # TODO: Incorporate this template as the landing page
@@ -78,7 +82,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    flash('您已成功登出.', 'sucess')
+    flash('您已成功登出.', 'success')
     return redirect(url_for('home'))
 
 def save_picture(form_picture):
@@ -148,7 +152,7 @@ def business_register():
         db.session.commit()
         '''
         flash(f'{form.company_CName.data} 的商業帳號已成功註冊!', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('business_register_confirm'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
 
 @app.route('/business_register_confirm', methods=['GET','POST'])
