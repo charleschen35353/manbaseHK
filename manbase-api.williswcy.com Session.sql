@@ -9,7 +9,7 @@ CREATE TABLE users(
     ur_login VARCHAR(36) NOT NULL,
     ur_password_hash VARCHAR(255) NOT NULL,
     ur_isDeleted TINYINT(1) DEFAULT 0
-);
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE business_users(
     bu_id VARCHAR(255) PRIMARY KEY,
@@ -25,7 +25,7 @@ CREATE TABLE business_users(
     bu_BusinessVerificationStatus VARCHAR(1) DEFAULT 0, #0 is not verified, 1 is pending, 2 is verified
 
     FOREIGN KEY(bu_id) REFERENCES users(ur_id)
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE individual_users(
     iu_id VARCHAR(255) PRIMARY KEY,
@@ -52,7 +52,7 @@ CREATE TABLE individual_users(
     FOREIGN KEY(iu_id) REFERENCES users(ur_id),
     CONSTRAINT iu_educationLevel CHECK
         (iu_educationLevel IN ('primary school graduate','secondary school graduate', 'undergraduate or above'))
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE jobs(
     jb_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -60,7 +60,7 @@ CREATE TABLE jobs(
     jb_decription TEXT(20000) NOT NULL,
     jb_isDeleted TINYINT(1) DEFAULT 0,
     jb_expected_payment_days INT(36) NOT NULL
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE job_listings(
     li_id VARCHAR(255) PRIMARY KEY,
@@ -74,7 +74,7 @@ CREATE TABLE job_listings(
     FOREIGN KEY(li_jb_id) REFERENCES jobs(jb_id),
     CONSTRAINT li_salary_type CHECK(
         li_salary_type IN ('hour rate','lump sum'))
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE business_address(
     bads_id VARCHAR(255) PRIMARY KEY,
@@ -85,12 +85,12 @@ CREATE TABLE business_address(
 
     FOREIGN KEY (bads_jb_id) REFERENCES jobs(jb_id),
     FOREIGN KEY (bads_district_id) REFERENCES districts(district_id)
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE districts(
     district_id VARCHAR(255) PRIMARY KEY,
     district_name VARCHAR(36) NOT NULL
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE abnormality(
     abn_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -108,14 +108,13 @@ CREATE TABLE abnormality(
 
     CONSTRAINT abn_status CHECK(
         abn_status IN ('pending','processing', 'accepted','rejected', 'deleted','solved'))
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE job_type(
     jt_id VARCHAR(255) PRIMARY KEY,
     jt_name VARCHAR(36) NOT NULL,
     jt_description VARCHAR(20000) NOT NULL
-);
-
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE job_applications(
     ap_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -131,7 +130,7 @@ CREATE TABLE job_applications(
     CONSTRAINT ap_status CHECK(
         ap_status IN ('pending','offer-released','enrolled','declined by applicant','rejected by applicant','completed','reviewed')
         )
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 
 CREATE TABLE enrollments(
@@ -148,7 +147,7 @@ CREATE TABLE enrollments(
     CONSTRAINT en_present_status CHECK(
         en_present_status IN ('on time','late','absence','medical leave')
         )
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE announcement(
     an_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -158,7 +157,7 @@ CREATE TABLE announcement(
     an_sender_id VARCHAR(1000) NOT NULL,
 
     FOREIGN KEY(an_sender_id) REFERENCES users(ur_id)
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE announcement_listings(
     anli_an_id VARCHAR(255) NOT NULL,
@@ -168,12 +167,12 @@ CREATE TABLE announcement_listings(
 
     FOREIGN KEY(anli_li_id) REFERENCES job_listings(li_id),
     FOREIGN KEY(anli_an_id) REFERENCES job_applications(ap_id)
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE industry(
     ind_id VARCHAR(255) PRIMARY KEY,
     ind_name TEXT(36) NOT NULL
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE verification(
     veri_creationTIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -187,12 +186,12 @@ CREATE TABLE verification(
     CONSTRAINT veri_type CHECK(
         veri_type IN ('HKID','Passport','BRC','medical doc')
         )
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE rating_category(
     rc_id VARCHAR(255) PRIMARY KEY,
     rc_name VARCHAR(36) NOT NULL
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE rating(
     rate_re_id VARCHAR(255) NOT NULL,
@@ -202,7 +201,7 @@ CREATE TABLE rating(
 
     FOREIGN KEY(rate_re_id) REFERENCES review(re_id),
     FOREIGN KEY(rate_rc_id) REFERENCES rating_category(rc_id)
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE review(
     re_id VARCHAR(255) PRIMARY KEY,
@@ -215,7 +214,7 @@ CREATE TABLE review(
     re_en_id VARCHAR(1000) NOT NULL,
 
     FOREIGN KEY(re_en_id) REFERENCES enrollments(en_id)
-);
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE review_followup(
     rf_creationTIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -225,4 +224,4 @@ CREATE TABLE review_followup(
     rf_re_id VARCHAR(1000) NOT NULL,
 
     FOREIGN KEY(rf_re_id) REFERENCES review(re_id)
-)
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
