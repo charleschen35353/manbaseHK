@@ -12,7 +12,7 @@
                         {{ render_field(form.user_login, class="form-control form-control-lg is-invalid")}}
                         <div class="invalid-feedback">
                             {% for error in form.user_login.errors %}
-                                <span>{{ error }}</span>
+                                <small class='error'> {{error}} </small>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -25,7 +25,7 @@
                         {{ render_field(form.password, class="form-control form-control-lg is-invalid")}}
                         <div class="invalid-feedback">
                             {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
+                                <small class='error'> {{error}} </small>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -38,7 +38,7 @@
                         {{ render_field(form.confirm_password, class="form-control form-control-lg is-invalid")}}
                         <div class="invalid-feedback">
                             {% for error in form.confirm_password.errors %}
-                                <span>{{ error }}</span>
+                                <small class='error'> {{error}} </small>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -51,7 +51,7 @@
                         {{  render_field(form.company_CName,class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.company_CName.errors %}
-                                <span>{{ error }}</span>
+                                <small class='error'> {{error}} </small>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -64,7 +64,7 @@
                         {{  render_field(form.company_EName,class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.company_EName.errors %}
-                                <span>{{ error }}</span>
+                                <small class='error'> {{error}} </small>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -78,7 +78,7 @@
                         {{ render_field(form.company_contact_person, class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.company_contact_person.errors %}
-                                <span>{{ error }}</span>
+                                <small class='error'> {{error}} </small>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -92,7 +92,7 @@
                         {{ render_field(form.company_contact_number, class="form-control form-control-lg is-invalid")}}
                         <div class="invalid-feedback">
                             {% for error in form.company_contact_number.errors %}
-                                <span>{{ error }}</span>
+                                <small class='error'> {{error}} </small>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -102,14 +102,16 @@
                 <!-- 驗證碼button moved to suspended_code.html-->
 
             </fieldset>
+
             <div class="form-group">
                 {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
                 }}
             </div>
               
-            <a class="button" href="{{url_for('business_register_confirm')}}">遞交</a>
+            
         </form>
     </div>
+
     <div class="border-top pt-3">
         <small class="text-muted">
             已經擁有帳號？ <a class="ml-2" href="{{ url_for('login') }}">登入</a>

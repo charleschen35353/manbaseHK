@@ -15,6 +15,9 @@ app.config['SECRET_KEY'] = secrets.token_hex(16)
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+#using default error message translation
+app.config['WTF_I18N_ENABLED'] = False
+
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 uuid = FlaskUUID(app)

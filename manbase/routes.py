@@ -5,7 +5,7 @@ import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
-from manbase.forms import BusinessRegistrationForm,RegistrationForm, LoginForm, UpdateAccountForm
+from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm
 from manbase.models import Users, BusinessUsers
 from datetime import datetime
 from uuid import uuid4
@@ -62,21 +62,58 @@ def logout():
     flash('您已成功登出.', 'success')
     return redirect(url_for('home'))
 
-#Individual Users
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register')
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    form = RegistrationForm()
-    '''
+    return render_template('register.html', title='註冊')
+
+#Individual Users
+@app.route("/individaul_register",methods=['GET', 'POST'])
+def individual_register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = IndividualRegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email = form.email.data, password = hashed_password)
+        uid = uuid4()
+
+        #ensure unique uid
+        validate_uid = Users.query.filter_by(ur_id=uid).first()
+        while validate_uid:
+            uid = uuid4()
+            validate_uid = Users.query.filter_by(ur_id=uid).first()
+
+        user = Users(
+                    ur_creationTime = datetime.utcnow(), 
+                    ur_id = uid,
+                    ur_login = form.user_login.data,
+                    ur_password_hash = hashed_password
+                    )
+        individual_user = IndividualUsers(
+                                    iu_id = uid,
+                                    iu_phone = form.individual_contact_number.data,
+                                    iu_email = form.individual_email.data,
+                                    iu_CName = form.individual_CName.data,
+                                    iu_EName = form.individual_EName.data,
+                                    iu_alias = form.individual_alias.data,
+                                    iu_HKID_head = form.individual_HKID_head.data,
+                                    iu_HKID_tail = form.individual_HKID_tail.data,
+                                    iu_gender = form.individual_gender.data,
+                                    iu_birthday = form.individual_birthday.data,
+                                    iu_educationLevel = form.individual_educationLevel.data,
+                                    iu_language_Cantonese = form.individual_language_Cantonese.data,
+                                    iu_language_English = form.individual_language_English.data,
+                                    iu_language_Putonghua = form.individual_language_Putonghua.data,
+                                    iu_language_Other = form.individual_language_Other.data
+                                    )
         db.session.add(user)
+        db.session.add(individual_user)
         db.session.commit()
-        flash("Account created for {}. You are able to log in. ".format(form.username.data),"success")
-        return redirect(url_for('home'))'''
-    return render_template('register.html', title='Register', form=form)
+
+        flash(f'{form.individual_CName.data} 的個人帳號已成功註冊!', 'success')
+        return redirect(url_for('home'))
+    return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
 
 
 def save_picture(form_picture):
