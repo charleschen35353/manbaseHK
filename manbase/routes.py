@@ -156,3 +156,14 @@ def business_register():
 @app.route('/business_register_confirm', methods=['GET','POST'])
 def business_register_confirm():
     return render_template('business_register_confirm.html',title = '註冊 - 商業帳戶資料確認')
+
+
+# Error Handler
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
