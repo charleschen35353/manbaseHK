@@ -12,11 +12,18 @@ def load_user(user_id):
 Base = automap_base(db.Model)
 # reflect the tables
 engine = create_engine("mysql+mysqldb://lancetpk:lancetpk@test.manbasehk.com:3306/manbasedb")
+
+#inherit UserMixin Property and redefine get_id due to different id name
+class Users(Base, UserMixin):
+    __table_name__ = 'users'
+    def get_id(self):
+        return (self.ur_id)
+
 Base.prepare(engine, reflect=True)
 
 # mapped classes are now created with names by default
 # matching that of the table name.
-Users = Base.classes.users
+#Users = Base.classes.users
 BusinessUsers = Base.classes.business_users
 IndividualUsers = Base.classes.individual_users
 Jobs = Base.classes.jobs
@@ -37,6 +44,7 @@ Review = Base.classes.review
 ReviewFollowup = Base.classes.review_followup
 
 session = Session(engine)
+
 '''
 class User(db.Model, UserMixin):
     __tablename__ = "user"

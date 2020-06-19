@@ -4,7 +4,7 @@ import cv2
 import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user , current_user, login_required
-from manbase import app, db, bcrypt
+from manbase import app, db, bcrypt, login_manager
 from manbase.forms import BusinessRegistrationForm,RegistrationForm, LoginForm, UpdateAccountForm
 from manbase.models import Users, BusinessUsers
 from datetime import datetime
@@ -19,7 +19,10 @@ posts = [ #fake db return
 	} 
 ]
 
-isLogin = False
+@login_manager.user_loader
+def load_user(ur_id):
+    return Users.query.get(ur_id)
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -36,6 +39,30 @@ def index():
 def about():
     return render_template('about.html', title = "about us")
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home')) 
+    form = LoginForm()
+    if form.validate_on_submit():
+
+        user = Users.query.filter_by(ur_login=form.login.data).first()
+        
+        if user and bcrypt.check_password_hash(user.ur_password_hash, form.password.data):
+            login_user(user, remember = form.remember.data)
+            flash("成功登入.".format(form.login.data),"success")
+            return redirect(url_for('home'))
+        else:
+            flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')
+    return render_template('login.html', title='Login', form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('您已成功登出.', 'success')
+    return redirect(url_for('home'))
+
+#Individual Users
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -49,39 +76,8 @@ def register():
         db.session.commit()
         flash("Account created for {}. You are able to log in. ".format(form.username.data),"success")
         return redirect(url_for('home'))'''
-    return render_template('register.html', title='Register', form=form, isLogin=isLogin)
+    return render_template('register.html', title='Register', form=form)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('home')) 
-    form = LoginForm()
-    if form.validate_on_submit():
-        if form.login.data == 'test' and form.password.data =='testing':
-            
-            flash("成功登入.".format(form.login.data),"success")
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
-        else:
-            flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')
-
-        '''user = User.query.filter_by(login=form.login.data).first()
-        
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember = form.remember.data)
-            isLogin = True
-            flash("成功登入.".format(form.login.data),"success")
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
-        else:
-            flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')'''
-    return render_template('login.html', title='Login', form=form)
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    flash('您已成功登出.', 'success')
-    return redirect(url_for('home'))
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -115,7 +111,7 @@ def account():
 '''end suspend'''
 
 
-'''business'''
+#Business User
 @app.route("/business_register",methods=['GET', 'POST'])
 def business_register():
     if current_user.is_authenticated:

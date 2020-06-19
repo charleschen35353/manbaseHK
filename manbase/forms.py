@@ -91,6 +91,8 @@ class BusinessRegistrationForm(FlaskForm):
                                         validators = [DataRequired(message = '公司聯絡人不能為空'), Length(min=1,max=32)])
     company_contact_number = IntegerField('聯絡電話',
                                         validators = [DataRequired(message = '聯絡電話不能為空')])
+    company_email = StringField('公司電子郵箱',
+                                validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
 
     submit = SubmitField('註冊')
 
@@ -106,11 +108,9 @@ class BusinessRegistrationForm(FlaskForm):
             raise ValidationError(
                 '此商業名稱已存在，請重新輸入。')
 
-    '''
-    company_email = StringField('公司電子郵箱',
-                        validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
+    
     def validate_company_email(self, company_email):
-        user = BusinessUsers.query.filter_by(bu_=company_email.data).first()
+        user = BusinessUsers.query.filter_by(bu_email=company_email.data).first()
         if user:
             raise ValidationError(
-                '此企業電郵已存在，請重新輸入。')'''
+                '此企業電郵已存在，請重新輸入。')
