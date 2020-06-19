@@ -3,7 +3,8 @@ from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from manbase.models import Users
+from manbase.models import Users, BusinessUsers
+from uuid import uuid4
 
 def password_requirement(form, field):
     # check if passwords contains 0-9 & a-z &A-Z and !@#$%
@@ -85,12 +86,11 @@ class BusinessRegistrationForm(FlaskForm):
                                 validators = [DataRequired(message = '企業中文名字不能為空'), Length(min=1, max=20)])
     company_EName = StringField('企業英文名字',
                                 validators = [])
-    company_email = StringField('公司電子郵箱',
-                        validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
+
     company_contact_person = StringField('聯絡人',
                                         validators = [DataRequired(message = '公司聯絡人不能為空'), Length(min=1,max=32)])
     company_contact_number = IntegerField('聯絡電話',
-                                        validators = [DataRequired(message = '聯絡電話不能為空'), Length(min=8,max=8)])
+                                        validators = [DataRequired(message = '聯絡電話不能為空')])
 
     submit = SubmitField('註冊')
 
@@ -101,13 +101,16 @@ class BusinessRegistrationForm(FlaskForm):
                 '此商業帳戶已存在，請登入。')
 
     def validate_company_CName(self, company_CName):
-        user = Users.query.filter_by(ur_login=company_CName.data).first()
+        user = BusinessUsers.query.filter_by(bu_CName=company_CName.data).first()
         if user:
             raise ValidationError(
                 '此商業名稱已存在，請重新輸入。')
 
+    '''
+    company_email = StringField('公司電子郵箱',
+                        validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
     def validate_company_email(self, company_email):
-        user = Users.query.filter_by(email=company_email.data).first()
+        user = BusinessUsers.query.filter_by(bu_=company_email.data).first()
         if user:
             raise ValidationError(
-                '此企業電郵已存在，請重新輸入。')
+                '此企業電郵已存在，請重新輸入。')'''

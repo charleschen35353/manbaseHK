@@ -4,10 +4,11 @@ import cv2
 import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user , current_user, login_required
-from manbase import app, db, bcrypt,uuid
+from manbase import app, db, bcrypt
 from manbase.forms import BusinessRegistrationForm,RegistrationForm, LoginForm, UpdateAccountForm
 from manbase.models import Users, BusinessUsers
 from datetime import datetime
+from uuid import uuid4
 
 posts = [ #fake db return
 	{
@@ -27,10 +28,6 @@ def home():
     else:
         return render_template('index.html')
     
-
-'''suspend'''
-# TODO: Incorporate this template as the landing page
-# This should replace the '/' route
 @app.route('/index')
 def index():
     return render_template('index.html')
@@ -44,13 +41,14 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegistrationForm()
+    '''
     if form.validate_on_submit():
-        '''hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email = form.email.data, password = hashed_password)
         db.session.add(user)
-        db.session.commit()'''
+        db.session.commit()
         flash("Account created for {}. You are able to log in. ".format(form.username.data),"success")
-        return redirect(url_for('home'))
+        return redirect(url_for('home'))'''
     return render_template('register.html', title='Register', form=form, isLogin=isLogin)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -59,7 +57,8 @@ def login():
         return redirect(url_for('home')) 
     form = LoginForm()
     if form.validate_on_submit():
-        if login == 'test' and password == 'testing':
+        if form.login.data == 'test' and form.password.data =='testing':
+            
             flash("成功登入.".format(form.login.data),"success")
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
@@ -77,7 +76,6 @@ def login():
         else:
             flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')'''
     return render_template('login.html', title='Login', form=form)
-
 
 @app.route('/logout')
 def logout():
@@ -124,17 +122,17 @@ def business_register():
         return redirect(url_for('home'))
     form = BusinessRegistrationForm()
     if form.validate_on_submit():
-        '''hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        uid = uuid.uuid4()
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        uid = uuid4()
 
         #ensure unique uid
         validate_uid = Users.query.filter_by(ur_id=uid).first()
         while validate_uid:
-            uid = uuid.uuid4()
+            uid = uuid4()
             validate_uid = Users.query.filter_by(ur_id=uid).first()
 
         user = Users(
-                    ur_creationTime = datetime.now, 
+                    ur_creationTime = datetime.utcnow(), 
                     ur_id = uid,
                     ur_login = form.user_login.data,
                     ur_password_hash = hashed_password
@@ -150,9 +148,9 @@ def business_register():
         db.session.add(user)
         db.session.add(business_user)
         db.session.commit()
-        '''
+
         flash(f'{form.company_CName.data} 的商業帳號已成功註冊!', 'success')
-        return redirect(url_for('business_register_confirm'))
+        return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
 
 @app.route('/business_register_confirm', methods=['GET','POST'])

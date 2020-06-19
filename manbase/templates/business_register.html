@@ -71,19 +71,7 @@
                         {{ render_field(form.company_EName,class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
-                <div class="form-group">
-                    {{ form.company_email.label(class="form-control-label") }}
-                    {% if form.company_email.errors %}
-                        {{  render_field(form.company_email, class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.company_email.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ render_field(form.company_email, class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
+                <!-- suspended email to suspended_code.html -->
                 <div class="form-group">
                     {{ form.company_contact_person.label(class="form-control-label") }}
                     {% if form.company_contact_person.errors %}
@@ -112,16 +100,13 @@
                         <button type = 'submit' class = 'button_1'> 發送驗證碼 </button>
                     {% endif %}
                 </div>
-                <form>
-                    <input type='text' placeholder="請輸入短訊驗證碼">
-                    <button type ='submit' class='button_1'>驗證</button>>
-                </form>
+                <!-- 驗證碼button moved to suspended_code.html-->
 
             </fieldset>
             <div class="form-group">
                 {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
                 }}
-              </div>
+            </div>
               
             <a class="button" href="{{url_for('business_register_confirm')}}">遞交</a>
         </form>

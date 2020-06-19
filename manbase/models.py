@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 def load_user(user_id):
     return users.query.get(int(user_id))
 
-Base = automap_base()
+Base = automap_base(db.Model)
 # reflect the tables
 engine = create_engine("mysql+mysqldb://lancetpk:lancetpk@test.manbasehk.com:3306/manbasedb")
 Base.prepare(engine, reflect=True)
@@ -53,7 +53,7 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return "User(\'{}\',\'{}\',\'{}\')".format(self.username, self.email, self.profile_image)
-'''
+
 class User(db.Model):
     __table_name__= "individual_users" 
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
@@ -74,3 +74,4 @@ class Post(db.Model):
 
     def __repr__(self):
         return "Post(\'{}\',\'{}\')".format(self.title, self.date_posted)
+'''

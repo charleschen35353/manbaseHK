@@ -1,0 +1,18 @@
+<!-- business_register -->
+    <div class="form-group">
+        {{ form.company_email.label(class="form-control-label") }}
+        {% if form.company_email.errors %}
+            {{  render_field(form.company_email, class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in form.company_email.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ render_field(form.company_email, class="form-control form-control-lg") }}
+        {% endif %}
+    </div>
+    <form>
+        <input type='text' placeholder="請輸入短訊驗證碼">
+        <button type ='submit' class='button_1'>驗證</button>>
+    </form>
