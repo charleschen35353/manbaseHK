@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 # TODO: Convert the URI and SECRET_KEY into Environment Variables
 #       Use 'localhost' instead for deployment
-uri = 'mysql+mysqldb://public:b05qv-x4xca@test.manbasehk.com:3306/manbasedb'
+uri = 'mysql+pymysql://public:b05qv-x4xca@test.manbasehk.com:3306/manbasedb'
 app.config['SECRET_KEY'] = secrets.token_hex(16)
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

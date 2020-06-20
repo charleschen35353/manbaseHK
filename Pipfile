@@ -15,9 +15,9 @@ flask-login = "*"
 email-validator = "*"
 opencv-python = "*"
 matplotlib = "*"
-mysqlclient = "*"
 flask-uuid = "*"
 flask-migrate = "*"
+pymysql = "*"
 
 [requires]
 python_version = "3.8"

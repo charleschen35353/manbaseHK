@@ -11,7 +11,7 @@ def load_user(user_id):
 
 Base = automap_base(db.Model)
 # Reflect the tables
-engine = create_engine("mysql+mysqldb://public:b05qv-x4xca@test.manbasehk.com:3306/manbasedb")
+engine = create_engine("mysql+pymysql://public:b05qv-x4xca@test.manbasehk.com:3306/manbasedb")
 
 # Inherit UserMixin Property and redefine get_id due to different id name
 class Users(Base, UserMixin):
