@@ -6,7 +6,7 @@ from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
 from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm
-from manbase.models import Users, BusinessUsers
+from manbase.models import Users, BusinessUsers, IndividualUsers
 from datetime import datetime
 from uuid import uuid4
 

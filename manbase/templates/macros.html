@@ -1,4 +1,5 @@
 {% macro from_field(field) %}
+{% from "_formhelpers.html" import render_field %}
 
     <div class="form-group">
         {{ field.label(class="form-control-label") }} <br>
