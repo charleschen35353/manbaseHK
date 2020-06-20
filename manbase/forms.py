@@ -29,6 +29,8 @@ class LoginForm(BaseForm):
     submit = SubmitField('登入')
 
 #Individual Users
+
+#TODO: rewrite validators
 class IndividualRegistrationForm(BaseForm):
     user_login = StringField('帳號',
                            validators=[DataRequired(message = '名字不能為空'), Length(min=5, max=20)])
@@ -44,10 +46,7 @@ class IndividualRegistrationForm(BaseForm):
                                 validators = [DataRequired(message = '中文全名不能為空'), Length(min=1, max=20)])
     individual_EName = StringField('英文名字', validators = [])
     individual_alias = StringField('暱稱', validators = [])
-    individual_HKID_head = StringField('身分證首字母', validators = [DataRequired()])
-    # TODO: Break the tail part into 3 fields so it is easier for Front-end Formatting
-    individual_HKID_tail = StringField('身分證後三位',
-                                validators = [DataRequired(), Length(min=3, max=3)])
+    individual_HKID = StringField('身分證字母加首四位數字', validators = [DataRequired()])
     individual_gender = IntegerField('性別', validators=[DataRequired()])
     individual_birthday = DateField('出生日期', validators=[DataRequired()])
     individual_educationLevel = StringField('教育程度', validators=[])

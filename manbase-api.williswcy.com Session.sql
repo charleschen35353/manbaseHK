@@ -56,8 +56,7 @@ CREATE TABLE individual_users(
     iu_CName VARCHAR(36) NOT NULL,
     iu_EName VARCHAR(36) NOT NULL,
     iu_alias VARCHAR(36) NOT NULL,
-    iu_HKID_head VARCHAR(1) NOT NULL,
-    iu_HKID_tail VARCHAR(3) NOT NULL,
+    iu_HKID VARCHAR(9) NOT NULL,
     iu_gender TINYINT(1) NOT NULL, #0 for female, 1 for male, 2 for others
     iu_birthday DATE NOT NULL, #YYYY-MM-DD
     iu_educationLevel TINYTEXT NOT NULL,
@@ -179,7 +178,7 @@ CREATE TABLE announcement_listings(
     anli_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY(anli_li_id) REFERENCES job_listings(li_id),
-    FOREIGN KEY(anli_an_id) REFERENCES job_applications(ap_id)
+    FOREIGN KEY(anli_an_id) REFERENCES announcement(an_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE verification(
@@ -211,7 +210,9 @@ CREATE TABLE review(
     re_isDeleted TINYINT(1) DEFAULT 0,
     re_en_id VARCHAR(255) NOT NULL,
 
-    FOREIGN KEY(re_en_id) REFERENCES enrollments(en_id)
+    FOREIGN KEY(re_en_id) REFERENCES enrollments(en_id),
+    FOREIGN KEY(re_receiver_id) REFERENCES users(ur_id),
+    FOREIGN KEY(re_sender_id) REFERENCES users(ur_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE rating(
