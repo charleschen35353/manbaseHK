@@ -23,29 +23,50 @@ posts = [ #fake db return
 def load_user(ur_id):
     return Users.query.get(ur_id)
 
+# =======================================
+#           ROUTE DEFINITIONS
+# =======================================
+
+# @ROUTE DEFINTION
+# NAME:     Public Homepage
+# PATH:     /
+# METHOD:   GET
+# DESC.:    The homepage where the public will see
+# @ROUTE DEFINTION
+# NAME:     Member Homepage (TODO)
+# PATH:     /
+# METHOD:   GET
+# DESC.:    The homepage where the member will see
 @app.route('/')
 @app.route('/home')
 def home():
     if current_user.is_authenticated:
+        # TODO: Get the user info and render it into the homepage
         return render_template('home.html', posts=posts)
     else:
         return render_template('index.html')
-    
-@app.route('/index')
-def index():
-    return render_template('index.html')
 
+# @ROUTE DEFINTION
+# NAME:     About Page
+# PATH:     /about
+# METHOD:   GET
+# DESC.:    The about page of the website
 @app.route('/about')
 def about():
     return render_template('about.html', title = "about us")
 
+# @ROUTE DEFINTION
+# NAME:     Login Page
+# PATH:     /login
+# METHOD:   GET / POST
+# DESC.:    [GET]   The login form for public to use
+#           [POST]  The method which validates the user's credential
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home')) 
     form = LoginForm()
     if form.validate_on_submit():
-
         user = Users.query.filter_by(ur_login=form.login.data).first()
         
         if user and bcrypt.check_password_hash(user.ur_password_hash, form.password.data):
@@ -56,19 +77,35 @@ def login():
             flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')
     return render_template('login.html', title='Login', form=form)
 
+# @ROUTE DEFINTION
+# NAME:     Logout
+# PATH:     /logout
+# METHOD:   GET
+# DESC.:    The method which logs the user out
 @app.route('/logout')
 def logout():
     logout_user()
     flash('您已成功登出.', 'success')
     return redirect(url_for('home'))
 
+# @ROUTE DEFINTION
+# NAME:     Logout
+# PATH:     /register
+# METHOD:   GET
+# DESC.:    The page where the user selects whether they need 
+#           a business account or an individual account
 @app.route('/register')
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     return render_template('register.html', title='註冊')
 
-#Individual Users
+# @ROUTE DEFINTION
+# NAME:     Registration (Individual)
+# PATH:     /individual_register
+# METHOD:   GET / POST
+# DESC.:    [GET]   The page where the individual user creates their account
+#           [POST]  The method which validates the registration info and register the user
 @app.route("/individaul_register",methods=['GET', 'POST'])
 def individual_register():
     if current_user.is_authenticated:
@@ -78,7 +115,7 @@ def individual_register():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         uid = uuid4()
 
-        #ensure unique uid
+        # Ensure the generated user ID is unique
         validate_uid = Users.query.filter_by(ur_id=uid).first()
         while validate_uid:
             uid = uuid4()
@@ -115,40 +152,12 @@ def individual_register():
         return redirect(url_for('home'))
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
 
-
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-    img = pltimg.imread(form_picture)
-    img = cv2.resize(img, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
-    cv2.imwrite(picture_path, cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
-    #form_picture.save(picture_path)
-    return picture_fn
-
-@app.route('/account', methods=['GET', 'POST'])
-@login_required
-def account():
-    form = UpdateAccountForm()
-    if form.validate_on_submit():
-        if form.picture.data:
-            picture_fn = save_picture(form.picture.data)
-            current_user.profile_image = picture_fn
-        current_user.username = form.username.data
-        current_user.email = form.email.data
-        '''db.session.commit()'''
-        flash("Account Info Updated")
-        return redirect(url_for('account'))
-    elif request.method == "GET":
-        form.username.data = current_user.username
-        form.email.data = current_user.email
-    image_file = url_for('static', filename = 'profile_pics/' + current_user.profile_image)
-    return render_template('account.html', title='account', image_file = image_file, form = form)
-'''end suspend'''
-
-
-#Business User
+# @ROUTE DEFINTION
+# NAME:     Registration (Business)
+# PATH:     /business_register
+# METHOD:   GET / POST
+# DESC.:    [GET]   The page where the business user creates their account
+#           [POST]  The method which validates the registration info and register the user
 @app.route("/business_register",methods=['GET', 'POST'])
 def business_register():
     if current_user.is_authenticated:
@@ -158,7 +167,7 @@ def business_register():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         uid = uuid4()
 
-        #ensure unique uid
+        # Ensure the generated user ID is unique
         validate_uid = Users.query.filter_by(ur_id=uid).first()
         while validate_uid:
             uid = uuid4()
@@ -186,12 +195,65 @@ def business_register():
         return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
 
+# =======================================
+#    INCOMPLETED / SUSPENDED ROUTES
+# =======================================
+
+def save_picture(form_picture):
+    """
+    A utility function which helps save the profile picture in 'static/profile_pics',
+    and return the new name of the profile picture
+    """
+    # Rename the profile picture
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+
+    # Resize the picture and save it in the path
+    img = pltimg.imread(form_picture)
+    img = cv2.resize(img, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
+    cv2.imwrite(picture_path, cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+
+    return picture_fn
+
+# @ROUTE DEFINTION
+# NAME:     Update Account Info
+# PATH:     /account
+# METHOD:   GET / POST
+# DESC.:    TBC
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_fn = save_picture(form.picture.data)
+            current_user.profile_image = picture_fn
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        # TODO: Update the new information on the remote database
+        '''db.session.commit()'''
+        flash("Account Info Updated")
+        return redirect(url_for('account'))
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for('static', filename = 'profile_pics/' + current_user.profile_image)
+    return render_template('account.html', title='account', image_file = image_file, form = form)
+
+# @ROUTE DEFINTION
+# NAME:     Confirm Business Registration
+# PATH:     /business_register_confirm
+# METHOD:   TBC
+# DESC.:    TBC
 @app.route('/business_register_confirm', methods=['GET','POST'])
 def business_register_confirm():
     return render_template('business_register_confirm.html',title = '註冊 - 商業帳戶資料確認')
 
-
-# Error Handler
+# =======================================
+#             ERROR HANDLERS
+# =======================================
 
 @app.errorhandler(404)
 def page_not_found(e):
