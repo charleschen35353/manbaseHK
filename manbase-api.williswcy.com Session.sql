@@ -203,8 +203,8 @@ CREATE TABLE rating_category(
 CREATE TABLE review(
     re_id VARCHAR(255) PRIMARY KEY,
     re_creationTIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
-    re_receiver_id INT(8) NOT NULL,
-    re_sender_id INT(8) NOT NULL,
+    re_receiver_id VARCHAR(255) NOT NULL,
+    re_sender_id VARCHAR(255) NOT NULL,
     re_comment TEXT(20000) NOT NULL,
     re_isFollowUpNeeded TINYINT(1) NOT NULL,
     re_isDeleted TINYINT(1) DEFAULT 0,
