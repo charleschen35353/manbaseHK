@@ -1,6 +1,6 @@
 SET foreign_key_checks = 0;
 -- Drop tables
-drop table if exists users, business_users, individual_users, jobs, job_listings, business_address, districts, abormality, job_type, job_applications, enrollments, announcement, announcement_listingsk, industry, rating_category, rating, review, review_followup;
+drop table if exists users, districts, job_type, industry, business_users, individual_users, jobs, job_listings, business_address, abnormality, job_applications, enrollments, announcement, announcement_listings, verification, rating_category, review, rating, review_followup;
 SET foreign_key_checks = 1;
 
 CREATE TABLE users(
