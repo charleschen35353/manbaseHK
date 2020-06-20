@@ -1,0 +1,85 @@
+#template of macro
+{% from 'macros.html' import from_field %}
+{{ from_field(form.) }}<br>
+
+<!-- business_register -->
+    <form>
+        <input type='text' placeholder="請輸入短訊驗證碼">
+        <button type ='submit' class='button_1'>驗證</button>>
+    </form>
+    <button type = 'submit' class = 'button_1'> 發送驗證碼 </button>
+    <a class="button" href="{{url_for('business_register_confirm')}}">遞交</a>
+
+
+<!-- register -->
+<div>
+    <!--
+    <form method="POST" action="">
+        <!
+        {% if form.errors %}
+            {{ form.errors }}
+        {% endif %} !>
+        {{form.hidden_tag()}}
+        <fieldset>
+            <legend>Join Today</legend>
+            <div>
+                {{ form.username.label }}
+                {% if form.username.errors %}
+                    {{ form.username }} <!error style>
+                    <div> 
+                        {% for error in form.username.errors %}
+                        <span> {{error}} </span>                 
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.username }} <!original style>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.email.label }}
+                {% if form.email.errors %}
+                    {{ form.email }} <!error style>
+                    <div> 
+                        {% for error in form.email.errors %}
+                        <span> {{ error }} </span>                 
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.email }} <!original style>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.password.label }}
+                {% if form.password.errors %}
+                    {{ form.password }} <!error style>
+                    <div> 
+                        {% for error in form.password.errors %}
+                        <span> {{error}} </span>                 
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.password }} <!original style>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.confirm_password.label }}
+                {% if form.confirm_password.errors %}
+                    {{ form.confirm_password }} <!error style>
+                    <div> 
+                        {% for error in form.confirm_password.errors %}
+                        <span> {{error}} </span>                 
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.confirm_password }} <!original style>
+                {% endif %}
+            </div>
+        </fieldset>
+        <div>
+            {{ form.submit}}
+       </div>
+    </form>
+    -->
+
+    #Individual Register
+    

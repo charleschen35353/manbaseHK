@@ -1,76 +1,15 @@
-{% extends "layout.html" %}
+<!-- TODO: Fix the Layout -->
+{% extends "layout.html" %} 
+{% from "_formhelpers.html" import render_field %}
 
 {% block content %}
-    <div>
-        <form method="POST" action="">
-            <!
-            {% if form.errors %}
-                {{ form.errors }}
-            {% endif %} !>
-            {{form.hidden_tag()}}
-            <fieldset>
-                <legend>Join Today</legend>
-                <div>
-                    {{ form.username.label }}
-                    {% if form.username.errors %}
-                        {{ form.username }} <!error style>
-                        <div> 
-                            {% for error in form.username.errors %}
-                            <span> {{error}} </span>                 
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.username }} <!original style>
-                    {% endif %}
-                </div>
-                <div>
-                    {{ form.email.label }}
-                    {% if form.email.errors %}
-                        {{ form.email }} <!error style>
-                        <div> 
-                            {% for error in form.email.errors %}
-                            <span> {{ error }} </span>                 
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.email }} <!original style>
-                    {% endif %}
-                </div>
-                <div>
-                    {{ form.password.label }}
-                    {% if form.password.errors %}
-                        {{ form.password }} <!error style>
-                        <div> 
-                            {% for error in form.password.errors %}
-                            <span> {{error}} </span>                 
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.password }} <!original style>
-                    {% endif %}
-                </div>
-                <div>
-                    {{ form.confirm_password.label }}
-                    {% if form.confirm_password.errors %}
-                        {{ form.confirm_password }} <!error style>
-                        <div> 
-                            {% for error in form.confirm_password.errors %}
-                            <span> {{error}} </span>                 
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.confirm_password }} <!original style>
-                    {% endif %}
-                </div>
-            </fieldset>
-            <div>
-                {{ form.submit}}
-           </div>
-        </form>
+    <!--moved to suspended_code.html-->>
+    <h1> 您使用平台的目的是<h1>
         <div>
-            <small>
-                Already Have An Account? <a href="{{url_for('login')}}"> Sign In</a>
-            </small>
+            尋找合適的工作機會<a href="{{url_for('individual_register')}}">註冊工作帳戶</a>
         </div>
-    </div>
+        <div>
+            尋找合適的人才<a href="{{url_for('business_register')}}">註冊企業帳戶</a>
+        </div>
+        
 {% endblock content %}
