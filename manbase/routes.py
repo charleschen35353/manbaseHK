@@ -113,12 +113,12 @@ def individual_register():
     form = IndividualRegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        uid = uuid4()
+        uid = str(uuid4())
 
         # Ensure the generated user ID is unique
         validate_uid = Users.query.filter_by(ur_id=uid).first()
         while validate_uid:
-            uid = uuid4()
+            uid = str(uuid4())
             validate_uid = Users.query.filter_by(ur_id=uid).first()
 
         user = Users(
@@ -164,12 +164,12 @@ def business_register():
     form = BusinessRegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        uid = uuid4()
+        uid = str(uuid4())
 
         # Ensure the generated user ID is unique
         validate_uid = Users.query.filter_by(ur_id=uid).first()
         while validate_uid:
-            uid = uuid4()
+            uid = str(uuid4())
             validate_uid = Users.query.filter_by(ur_id=uid).first()
 
         user = Users(
