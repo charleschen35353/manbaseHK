@@ -18,7 +18,7 @@ def password_requirement(form, field):
 # NOTE: The error message of email validator on the Buiness Registration Form is Simplified Chinese
 class BaseForm(FlaskForm):
     class Meta:
-        locales = ['zh']
+        locales = ['zh-TW']
 
 class LoginForm(BaseForm):
     login = StringField('帳號',

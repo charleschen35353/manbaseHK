@@ -5,19 +5,10 @@ import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
-from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm
+from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm
 from manbase.models import Users, BusinessUsers, IndividualUsers
 from datetime import datetime
 from uuid import uuid4
-
-posts = [ #fake db return
-	{
-		'author': "Charles Chen",
-		'title': "Home Page Prototype",
-        	'content': "This is the home page of ManBase",
-       		'date_posted': "May 6, 2020",
-	} 
-]
 
 @login_manager.user_loader
 def load_user(ur_id):
@@ -193,6 +184,19 @@ def business_register():
         flash(f'{form.company_CName.data} 的商業帳號已成功註冊!', 'success')
         return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
+
+# @ROUTE DEFINTION
+# NAME:     Registration (Business)
+# PATH:     /post_job
+# METHOD:   GET / POST
+# DESC.:    [GET]   The page where the business user creates their account
+#           [POST]  The method which validates the job info and post a job
+@app.route("/post_job",methods=['GET', 'POST'])
+@login_required
+def post_job():
+    form = PostJobForm()
+    return render_template('post_job.html', title = '發布工作', form = form)
+
 
 # =======================================
 #    INCOMPLETED / SUSPENDED ROUTES
