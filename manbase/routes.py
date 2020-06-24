@@ -106,7 +106,7 @@ def register():
 # METHOD:   GET / POST
 # DESC.:    [GET]   The page where the individual user creates their account
 #           [POST]  The method which validates the registration info and register the user
-@app.route("/individaul_register",methods=['GET', 'POST'])
+@app.route("/individual_register",methods=['GET', 'POST'])
 def individual_register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))

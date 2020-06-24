@@ -28,6 +28,11 @@
     <!-- TODO: self-serve this package -->
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 
+    <!-- jQuery, Popper.js, and Bootstrap JS -->
+    <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
     {% if title %}
     <title>Manbase - {{title}}</title>
     {% else %}
@@ -38,7 +43,7 @@
     <div class="main m-0">
       <header class="m-0">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a href="/" class="navbar-brand"
+          <a href="{{ url_for('home') }}" class="navbar-brand"
             >man<span class="text-primary">base</span> | 大社群</a
           >
           <button
@@ -53,21 +58,27 @@
           <div class="collapse navbar-collapse" id="main-nav">
             <ul class="navbar-nav ml-auto text-center">
               <li class="nav-item">
-                <a href="/about" class="nav-link">關於我們</a>
+                <a href="{{ url_for('about') }}" class="nav-link {% if request.path == url_for('about') %} active {% endif %}">關於我們</a>
               </li>
               {% if not current_user.is_authenticated %}
               <li class="nav-item">
-                <a href="/login" class="nav-link">登入</a>
+                <a href="{{ url_for('login') }}" class="nav-link  {% if request.path == url_for('login') %} active {% endif %}">登入</a>
               </li>
               <li class="nav-item">
-                <a href="/register" class="nav-link">註冊</a>
+                <a href="{{ url_for('register') }}" class="nav-link
+                {% if request.path in [url_for('register'), url_for('individual_register'), url_for('business_register')] %}
+                active
+                {% endif %}
+                ">
+                  註冊
+                </a>
               </li>
               {% else %}
               <li class="nav-item">
-                <a href="/account" class="nav-link">我的賬戶</a>
+                <a href="{{ url_for('account') }}" class="nav-link">我的賬戶</a>
               </li>
               <li class="nav-item">
-                <a href="/logout" class="nav-link">登出</a>
+                <a href="{{ url_for('logout') }}" class="nav-link">登出</a>
               </li>
               {% endif %}
             </ul>
@@ -75,11 +86,16 @@
         </nav>
       </header>
       
-      <div {% if request.path in [url_for('login'), url_for('register')] %} class="content-switch center-grid" {% else %} class="content-swtich" {% endif %}>
+      <div {% if request.path in [url_for('login'), url_for('register')] %} class="content-switch center-grid" {% else %} class="content-switch" {% endif %}>
         {% with messages = get_flashed_messages(with_categories=true) %} 
         {% if messages %} 
           {% for category, message in messages %}
-            <div class="alert {{'alert-success' if category == 'success' else 'alert-warning'}} mb-0">{{message}}</div>
+            <div class="alert {{'alert-success' if category == 'success' else 'alert-warning'}} mb-0 alert-dismissible fade show" role="alert">
+              {{message}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
           {% endfor %} 
         {% endif %} 
       {% endwith %}
@@ -90,11 +106,7 @@
     <footer class="d-flex justify-content-center align-self-end text-center">
       Copyright &copy; 2020 All rights reserved
     </footer>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.slim.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    
 
     <!-- Google Analytics -->
     <!-- Global site tag (gtag.js) - Google Analytics -->
