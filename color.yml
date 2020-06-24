@@ -1,5 +1,8 @@
 Primary: '#6AB03A'
+Secondary: '#3c6997'
 Info: '#152614'
+Warning: '#F86624'
 Danger: '#DB3A34'
+Success: '#012622'
 Light: '#E6EFE9'
 Dark: '#010001'
