@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateTimeField, RadioField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from manbase.models import Users, BusinessUsers
 from uuid import uuid4
@@ -97,6 +97,7 @@ class UpdateAccountForm(BaseForm):
                     'Email is taken. Please choose a different one')
 
 
+#Business Users
 class BusinessRegistrationForm(BaseForm):
 
     user_login = StringField('帳號',
@@ -131,10 +132,31 @@ class BusinessRegistrationForm(BaseForm):
         if user:
             raise ValidationError(
                 '此商業名稱已存在，請重新輸入。')
-
     
     def validate_company_email(self, company_email):
         user = BusinessUsers.query.filter_by(bu_email=company_email.data).first()
         if user:
             raise ValidationError(
                 '此企業電郵已存在，請重新輸入。')
+
+class PostJobForm(BaseForm):
+    job_title = StringField('職位名稱',
+                            validators=[DataRequired(message = '職位名稱不能為空')])
+    job_description = StringField('工作內容',
+                            validators=[DataRequired(message = '工作內容不能為空')])
+    job_type = StringField('工作類型',
+                            validators=[DataRequired(message = '工作類型不能為空')])
+    job_expected_payment_days = IntegerField('預計出糧日期',
+                                            validators=[DataRequired(message = '預計出糧日期不能為空')])
+    list_start_time = DateTimeField('工作開始時間',
+                                    validators=[DataRequired(message = '工作開始時間不能為空')])
+    list_end_time = DateTimeField('工作完成時間',
+                                    validators=[DataRequired(message = '工作完成時間不能為空')])
+    list_salary = IntegerField('薪資',
+                               validators=[DataRequired(message = '薪資不能為空')])
+    list_salary_type = RadioField('薪資類別',
+                                validators=[DataRequired(message = '薪資類別不能為空')])
+    list_quota = IntegerField('職位空缺數目',
+                            validators=[DataRequired(message = '職位空缺數目不能為空')])
+    submit = SubmitField('遞交工作')
+    

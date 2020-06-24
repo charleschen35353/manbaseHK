@@ -1,6 +1,6 @@
 {% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
 {% block content %}
-<div class="transparent-watermark-background p-3 m-3">
+<div class="transparent-watermark-background d-flex justify-content-center align-items-center" style="min-height: 88vh;">
   <img
     src="{{url_for('static', filename='img/stories/login.gif')}}"
     alt="Login Animation"
@@ -13,8 +13,8 @@
   <form
     method="POST"
     action=""
-    class="p-3 m-3 shadow"
-    style="min-width: 30vw; background-color: rgba(255, 255, 255, 0.3);"
+    class="p-5 m-3 shadow"
+    style="min-width: 40vw; background-color: rgba(255, 255, 255, 0.3);"
   >
     <!
             {% if form.errors %}
@@ -72,6 +72,6 @@
       </small>
     </div>
   </form>
-  <div></div>
+
 </div>
 {% endblock content %}

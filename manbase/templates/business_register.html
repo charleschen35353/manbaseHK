@@ -1,135 +1,246 @@
-<!-- TODO: Fix the Layout -->
+<!-- TODO: Add Client-side Validation -->
 {% extends "layout.html" %} 
 {% from "_formhelpers.html" import render_field %}
 
+{% set has_error = False %}
+{% set error_section = 0 %}
+
 {% block content %}
-    <div class = 'content-section'>
-        <form method = 'POST' action = ''>
-            {{ form.hidden_tag() }}
-            <fieldset class='form-group'>
-                <legend class = 'border-bottom mb-4'>馬上註冊商業帳戶</legend>
-                <div class="form-group">
-                    {{ form.user_login.label(class="form-control-label") }}
-                    {% if form.user_login.errors %}
-                        {{ render_field(form.user_login, class="form-control form-control-lg is-invalid")}}
-                        <div class="invalid-feedback">
-                            {% for error in form.user_login.errors %}
-                                <small class='error'> {{error}} </small>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ render_field(form.user_login,class="form-control form-control-lg" )}}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.password.label(class="form-control-label") }}
-                    {% if form.password.errors %}
-                        {{ render_field(form.password, class="form-control form-control-lg is-invalid")}}
-                        <div class="invalid-feedback">
-                            {% for error in form.password.errors %}
-                                <small class='error'> {{error}} </small>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ render_field(form.password, class="form-control form-control-lg")}}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.confirm_password.label(class="form-control-label") }}
-                    {% if form.confirm_password.errors %}
-                        {{ render_field(form.confirm_password, class="form-control form-control-lg is-invalid")}}
-                        <div class="invalid-feedback">
-                            {% for error in form.confirm_password.errors %}
-                                <small class='error'> {{error}} </small>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ render_field(form.confirm_password, class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.company_CName.label(class="form-control-label") }}
-                    {% if form.company_CName.errors %}
-                        {{  render_field(form.company_CName,class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.company_CName.errors %}
-                                <small class='error'> {{error}} </small>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ render_field(form.company_CName,class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.company_EName.label(class="form-control-label") }}
-                    {% if form.company_EName.errors %}
-                        {{  render_field(form.company_EName,class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.company_EName.errors %}
-                                <small class='error'> {{error}} </small>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ render_field(form.company_EName,class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.company_contact_person.label(class="form-control-label") }}
-                    {% if form.company_contact_person.errors %}
-                        {{ render_field(form.company_contact_person, class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.company_contact_person.errors %}
-                                <small class='error'> {{error}} </small>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ render_field(form.company_contact_person, class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.company_contact_number.label(class="form-control-label") }}
-                
-                    {% if form.company_contact_number.errors %}
-                        {{ render_field(form.company_contact_number, class="form-control form-control-lg is-invalid")}}
-                        <div class="invalid-feedback">
-                            {% for error in form.company_contact_number.errors %}
-                                <small class='error'> {{error}} </small>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ render_field(form.company_contact_number, class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.company_email.label(class="form-control-label") }}
-                    {% if form.company_email.errors %}
-                        {{  render_field(form.company_email, class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.company_email.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ render_field(form.company_email, class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <!-- 驗證碼button moved to suspended_code.html-->
 
-            </fieldset>
+<div class="content-switch center-grid d-flex justify-content-center align-items-center">
+    <div class="transparent-watermark-background d-flex justify-content-center align-items-center" style="min-height: 88vh;">
+        <img
+          src="{{url_for('static', filename='img/stories_secondary/business_register.gif')}}"
+          alt="Login Animation"
+        />
+      </div>
+    <form method='POST' class="d-flex flex-column col-11 col-md-7 shadow rounded p-5 bus-reg justify-content-between mt-3" novalidate style="min-height: 75vh; background: rgba(255, 255, 255, 0.3);">
+        {{ form.hidden_tag() }}
+        <div class="text-center">
+            <h2 class="text-secondary">馬上註冊 <span class="text-dark">man</span><span class="text-primary">base</span> 商業帳戶</h2>
+            {% if form.errors %}
+                {% for field, errors in form.errors.items() %}
+                    <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
 
+        <!-- Section 1: Username, Password, Confirm Password -->
+        <div class="form-section animate__animated" id="bus_reg_sec_1">
+            <h3 class="mt-2">賬戶資料（第一步，共三步）</h3>
             <div class="form-group">
-                {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
-                }}
+                {{ render_field(form.user_login.label, class="form-control-label") }}
+                {% if form.user_login.errors %}
+                    {% if not has_error %}
+                        {% set error_section = 1 %}
+                        {% set has_error = True %}
+                    {% endif %}
+                    {{ render_field(form.user_login, class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.user_login.errors %}
+                            <small class='error'> {{error}} </small>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ render_field(form.user_login,class="form-control form-control-lg" )}}
+                {% endif %}
             </div>
-              
+            <div class="form-group">
+                {{ form.password.label(class="form-control-label") }}
+                {% if form.password.errors %}
+                    {% if not has_error %}
+                        {% set error_section = 1 %}
+                        {% set has_error = True %}
+                    {% endif %}
+                    {{ render_field(form.password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif;")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.password.errors %}
+                            <small class='error'> {{error}} </small>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ render_field(form.password, class="form-control form-control-lg", style="font-family: sans-serif;")}}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.confirm_password.label(class="form-control-label") }}
+                {% if form.confirm_password.errors %}
+                    {% if not has_error %}
+                        {% set error_section = 1 %}
+                        {% set has_error = True %}
+                    {% endif %}
+                    {{ render_field(form.confirm_password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif;")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.confirm_password.errors %}
+                            <small class='error'> {{error}} </small>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ render_field(form.confirm_password, class="form-control form-control-lg", style="font-family: sans-serif;") }}
+                {% endif %}
+            </div>
+            <div class="row">
+                <button class="btn btn-secondary btn-block col-5 col-md-3 offset-7 offset-md-9" id="bus_reg_sec_1_next" type="button">下一步：公司資料 <i class="las la-arrow-circle-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Section 2: Company Info -->
+        <div class="form-section animate__animated" id="bus_reg_sec_2">
+            <h3 class="mt-2">公司資料（第二步，共三步）</h3>
+            <div class="form-group">
+                {{ form.company_CName.label(class="form-control-label") }}
+                {% if form.company_CName.errors %}
+                    {% if not has_error %}
+                        {% set error_section = 2 %}
+                        {% set has_error = True %}
+                    {% endif %}
+                    {{  render_field(form.company_CName,class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.company_CName.errors %}
+                            <small class='error'> {{error}} </small>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ render_field(form.company_CName,class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.company_EName.label(class="form-control-label") }}
+                {% if form.company_EName.errors %}
+                    {% if not has_error %}
+                        {% set error_section = 2 %}
+                        {% set has_error = True %}
+                    {% endif %} 
+                    {{  render_field(form.company_EName,class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.company_EName.errors %}
+                            <small class='error'> {{error}} </small>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ render_field(form.company_EName,class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="row">
+                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5" id="bus_reg_sec_2_prev"  type="button"><i class="las la-arrow-circle-left"></i> 上一步：賬戶資料</button>
+                <button class="btn btn-secondary col-5 col-md-3 offset-1" id="bus_reg_sec_2_next"  type="button">下一步：聯絡資料 <i class="las la-arrow-circle-right"></i> </button>
+            </div>
+        </div>
+        
+        <!-- Section 3: Contact Info -->
+        <div class="form-section animate__animated"  id="bus_reg_sec_3">
+            <h3 class="mt-2">聯絡資料（第三步，共三步）</h3>
+            <div class="form-group">
+                {{ form.company_contact_person.label(class="form-control-label") }}
+                {% if form.company_contact_person.errors %}
+                    {% if not has_error %}
+                        {% set error_section = 3 %}
+                        {% set has_error = True %}
+                    {% endif %}
+                    {{ render_field(form.company_contact_person, class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.company_contact_person.errors %}
+                            <small class='error'> {{error}} </small>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ render_field(form.company_contact_person, class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.company_contact_number.label(class="form-control-label") }}
             
-        </form>
-    </div>
-
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            已經擁有帳號？ <a class="ml-2" href="{{ url_for('login') }}">登入</a>
-        </small>
-    </div>
+                {% if form.company_contact_number.errors %}
+                    {% if not has_error %}
+                        {% set error_section = 3 %}
+                        {% set has_error = True %}
+                    {% endif %}
+                    {{ render_field(form.company_contact_number, class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.company_contact_number.errors %}
+                            <small class='error'> {{error}} </small>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ render_field(form.company_contact_number, class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.company_email.label(class="form-control-label") }}
+                {% if form.company_email.errors %}
+                    {% if not has_error %}
+                        {% set error_section = 3 %}
+                        {% set has_error = True %}
+                    {% endif %}
+                    {{  render_field(form.company_email, class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.company_email.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ render_field(form.company_email, class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <!-- 驗證碼button moved to suspended_code.html-->
     
+            <div class="form-group row">
+                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5" id="bus_reg_sec_3_prev" type="button"><i class="las la-arrow-circle-left"></i> 上一步：公司資料</button>
+                <!-- TODO: Find a way to put a check mark after the label -->
+                {{ render_field(form.submit, class="btn btn-secondary col-5 col-md-3 offset-1") }}
+            </div>
+        </div>
+        <p class="text-muted text-center">
+            已經擁有帳號？ <a class="ml-2 text-secondary" href="{{ url_for('login') }}">登入</a>
+        </p>
+    </form>
+
+    <hr>
+        
+    
+
+</div>
+
+<script>
+
+    $('#bus_reg_sec_1').show();
+
+    $('#bus_reg_sec_1_next').click(() => {
+        // TODO: Client Validate info
+
+
+        $('#bus_reg_sec_1').fadeToggle({
+            duration: 200,
+            done: () => {
+                $('#bus_reg_sec_2').fadeToggle();
+        }});
+    });
+
+    $('#bus_reg_sec_2_prev').click(() => {
+        $('#bus_reg_sec_2').fadeToggle({
+            duration: 200,
+            done: () => {
+                $('#bus_reg_sec_1').fadeToggle();
+        }});
+    });
+
+    $('#bus_reg_sec_2_next').click(() => {
+        // TODO: Client Validate info
+
+        $('#bus_reg_sec_2').fadeToggle({
+            duration: 200,
+            done: () => {
+                $('#bus_reg_sec_3').fadeToggle();
+        }});
+    });
+
+    $('#bus_reg_sec_3_prev').click(() => {
+        $('#bus_reg_sec_3').fadeToggle({
+            duration: 200,
+            done: () => {
+                $('#bus_reg_sec_2').fadeToggle();
+        }});
+    });
+</script>
+
 {% endblock content%}

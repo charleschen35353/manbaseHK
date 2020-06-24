@@ -54,3 +54,7 @@ footer {
   align-self: center;
   justify-self: center;
 }
+
+.bus-reg > .form-section {
+  display: none;
+}

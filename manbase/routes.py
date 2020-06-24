@@ -6,7 +6,7 @@ from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
 from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm
-from manbase.models import Users, BusinessUsers, IndividualUsers
+from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings
 from datetime import datetime
 from uuid import uuid4
 
@@ -23,19 +23,46 @@ def load_user(ur_id):
 # PATH:     /
 # METHOD:   GET
 # DESC.:    The homepage where the public will see
-# @ROUTE DEFINTION
-# NAME:     Member Homepage (TODO)
-# PATH:     /
-# METHOD:   GET
-# DESC.:    The homepage where the member will see
 @app.route('/')
 @app.route('/home')
 def home():
     if current_user.is_authenticated:
         # TODO: Get the user info and render it into the homepage
-        return render_template('home.html', posts=posts)
+        uid = current_user.get_id()
+        if BusinessUsers.query.filter_by(bu_id = uid).first():
+            return redirect(url_for('business_home'))
+        elif IndividualUsers.query.filter_by(iu_id = uid).first():
+            return redirect(url_for('individual_home'))
+        else:
+            return render_template('home.html', posts=posts)
     else:
         return render_template('index.html')
+    
+# @ROUTE DEFINTION
+# NAME:     Business Homepage
+# PATH:     /home_business
+# METHOD:   GET
+# DESC.:    The homepage where the business user will see
+@app.route('/business_home')
+@login_required
+def business_home():
+    if BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
+        return render_template('business_home.html')
+    else:
+        return render_template('404.html'), 404
+
+# @ROUTE DEFINTION
+# NAME:     Individual Homepage
+# PATH:     /home_individual
+# METHOD:   GET
+# DESC.:    The homepage where the individual user will see
+@app.route('/individual_home')
+@login_required
+def individual_home():
+    if IndividualUsers.query.filter_by(iu_id = current_user.get_id).first():
+        return render_template('individual_home.html')
+    else:
+        return render_template('404.html'), 404
 
 # @ROUTE DEFINTION
 # NAME:     About Page
@@ -97,19 +124,19 @@ def register():
 # METHOD:   GET / POST
 # DESC.:    [GET]   The page where the individual user creates their account
 #           [POST]  The method which validates the registration info and register the user
-@app.route("/individaul_register",methods=['GET', 'POST'])
+@app.route("/individual_register",methods=['GET', 'POST'])
 def individual_register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = IndividualRegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        uid = uuid4()
+        uid = str(uuid4())
 
         # Ensure the generated user ID is unique
         validate_uid = Users.query.filter_by(ur_id=uid).first()
         while validate_uid:
-            uid = uuid4()
+            uid = str(uuid4())
             validate_uid = Users.query.filter_by(ur_id=uid).first()
 
         user = Users(
@@ -152,15 +179,16 @@ def individual_register():
 def business_register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
+
     form = BusinessRegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        uid = uuid4()
+        uid = str(uuid4())
 
         # Ensure the generated user ID is unique
         validate_uid = Users.query.filter_by(ur_id=uid).first()
         while validate_uid:
-            uid = uuid4()
+            uid = str(uuid4())
             validate_uid = Users.query.filter_by(ur_id=uid).first()
 
         user = Users(
@@ -169,6 +197,7 @@ def business_register():
                     ur_login = form.user_login.data,
                     ur_password_hash = hashed_password
                     )
+
         business_user = BusinessUsers(
                                     bu_id = uid,
                                     bu_address = 'NS', #not specified
@@ -187,15 +216,69 @@ def business_register():
 
 # @ROUTE DEFINTION
 # NAME:     Registration (Business)
-# PATH:     /post_job
+# PATH:     /business_post_job
 # METHOD:   GET / POST
 # DESC.:    [GET]   The page where the business user creates their account
 #           [POST]  The method which validates the job info and post a job
-@app.route("/post_job",methods=['GET', 'POST'])
+#TODO:need to validate user type: business user
+@app.route("/business_post_job",methods=['GET', 'POST'])
 @login_required
-def post_job():
+def business_post_job():
+
+    if BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
+        return render_template('404.html'), 404
+
     form = PostJobForm()
-    return render_template('post_job.html', title = '發布工作', form = form)
+
+    if current_user.is_authenticated:
+            return redirect(url_for('home'))
+
+    if form.validate_on_submit():
+
+        jid = str(uuid4())
+
+        # Ensure the generated job ID is unique
+        validate_jid = Jobs.query.filter_by(jb_id=jid).first()
+        while validate_jid:
+            uid = str(uuid4())
+            validate_jid = Jobs.query.filter_by(jb_id=jid).first()
+
+        job = Jobs(
+                jb_creationTime = datetime.utcnow(),
+                jb_id = jid,
+                jb_title = form.job_title.data,
+                jb_description = form.job_description.data,
+                jb_expected_payment_days = form.job_expected_payment_days.data,
+                jb_bu_id = current_user.get_id(),
+                jb_jt_id = form.job_type.data,
+        )
+
+        liid = str(uuid4())
+
+        # Ensure the generated job listing ID is unique
+        validate_liid = Jobs.query.filter_by(li_id = llid).first()
+        while validate_liid:
+            uid = str(uuid4())
+            validate_liid = Jobs.query.filter_by(li_id = llid).first()
+
+        job_list = JobListings(
+                li_id = liid,
+                li_jb_id = jid,
+                li_starttime = form.list_start_time.data,
+                li_endtime = form.list_end_time.data,
+                li_salary_amt = form.list_salary.data,
+                li_salary_type = form.list_salary_type.data,
+                li_quota = form.list_quota.data
+        )
+
+        db.session.add(job)
+        db.session.add(job_list)
+        db.session.commit()
+
+        flash(f'您的工作已成功發布!', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('business_post_job.html', title = '發布工作', form = form)
 
 
 # =======================================
