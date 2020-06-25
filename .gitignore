@@ -133,3 +133,9 @@ dmypy.json
 
 # Pycharm
 .idea/
+
+# Sass Cache
+.sass-cache/
+
+# VS Code
+.vscode/
