@@ -2,7 +2,7 @@ import secrets
 import os
 import cv2
 import matplotlib.image as pltimg
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
 from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm
@@ -43,7 +43,7 @@ def home():
 # PATH:     /home_business
 # METHOD:   GET
 # DESC.:    The homepage where the business user will see
-@app.route('/business_home')
+@app.route('/home/business')
 @login_required
 def business_home():
     if BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
@@ -56,7 +56,7 @@ def business_home():
 # PATH:     /home_individual
 # METHOD:   GET
 # DESC.:    The homepage where the individual user will see
-@app.route('/individual_home')
+@app.route('/home/individual')
 @login_required
 def individual_home():
     if IndividualUsers.query.filter_by(iu_id = current_user.get_id).first():
@@ -124,7 +124,7 @@ def register():
 # METHOD:   GET / POST
 # DESC.:    [GET]   The page where the individual user creates their account
 #           [POST]  The method which validates the registration info and register the user
-@app.route("/individual_register",methods=['GET', 'POST'])
+@app.route("/register/individual",methods=['GET', 'POST'])
 def individual_register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -175,7 +175,7 @@ def individual_register():
 # METHOD:   GET / POST
 # DESC.:    [GET]   The page where the business user creates their account
 #           [POST]  The method which validates the registration info and register the user
-@app.route("/business_register",methods=['GET', 'POST'])
+@app.route("/register/business",methods=['GET', 'POST'])
 def business_register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -221,7 +221,7 @@ def business_register():
 # DESC.:    [GET]   The page where the business user creates their account
 #           [POST]  The method which validates the job info and post a job
 #TODO:need to validate user type: business user
-@app.route("/business_post_job",methods=['GET', 'POST'])
+@app.route("/business/job/new",methods=['GET', 'POST'])
 @login_required
 def business_post_job():
 
@@ -280,6 +280,36 @@ def business_post_job():
 
     return render_template('business_post_job.html', title = '發布工作', form = form)
 
+# @ROUTE DEFINTION
+# NAME:     View Job Posted
+# PATH:     /business/jobs
+# METHOD:   GET
+# DESC.:    The page where the user selects whether they need 
+#           a business account or an individual account
+@app.route("/business/jobs",methods=['GET', 'POST'])
+@login_required
+def business_view_jobs_posted():
+    if BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
+        return render_template('404.html'), 404
+    jobs = Jobs.query.filter_by(jb_bu_id = current_user.get_id()).all()
+    return render_template('business_jobs_posted.html', title="已發布的工作", jobs = jobs)
+
+# @ROUTE DEFINTION
+# NAME:     View Specific Job
+# PATH:     /business/jobs/<job_id>
+# METHOD:   GET
+# DESC.:    The page where the business user view a specific job posted
+@app.route('business/jobs/<job_id>')
+@login_required
+def job(job_id):
+    job = Jobs.query.get_or_404(job_id)
+    listings = JobListings.query.filter_by(li_jb_id=job.jb_id).all()
+    return render_template('business_job.html',title=job.jb_title, job = job, listings = listings)
+
+    if job.jb_bu_id != current_user:
+        abort(403)
+    
+
 
 # =======================================
 #    INCOMPLETED / SUSPENDED ROUTES
@@ -333,7 +363,7 @@ def account():
 # PATH:     /business_register_confirm
 # METHOD:   TBC
 # DESC.:    TBC
-@app.route('/business_register_confirm', methods=['GET','POST'])
+@app.route('/business/register/confirm', methods=['GET','POST'])
 def business_register_confirm():
     return render_template('business_register_confirm.html',title = '註冊 - 商業帳戶資料確認')
 
