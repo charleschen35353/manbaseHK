@@ -14,11 +14,9 @@ def password_requirement(form, field):
             'Password must contain at least one number, one charater in upper case, one character in lower case, and a special character from \'@#!&*\'')
 
 # setting base error language as chinese
-# TODO: Check whether 'zh' refers to Simplified Chinese or Traditional Chinese
-# NOTE: The error message of email validator on the Buiness Registration Form is Simplified Chinese
 class BaseForm(FlaskForm):
     class Meta:
-        locales = ['zh-TW']
+        locales = ['zh_TW']
 
 class LoginForm(BaseForm):
     login = StringField('帳號',
@@ -49,7 +47,7 @@ class IndividualRegistrationForm(BaseForm):
     individual_HKID = StringField('身分證字母加首四位數字', validators = [DataRequired()])
     individual_gender = IntegerField('性別', validators=[DataRequired()])
     individual_birthday = DateField('出生日期', validators=[DataRequired()])
-    individual_educationLevel = StringField('教育程度', validators=[])
+    individual_educationLevel = RadioField('教育程度', validators=[])
     individual_language_Cantonese = IntegerField('工作語言 - 廣東話', validators=[])
     individual_language_English = IntegerField('工作語言 - 英文', validators=[])
     individual_language_Putonghua = IntegerField('工作語言 - 普通話', validators=[])

@@ -225,12 +225,12 @@ def business_register():
 @login_required
 def business_post_job():
 
-    if BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
+    if not BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
         return render_template('404.html'), 404
 
     form = PostJobForm()
 
-    if current_user.is_authenticated:
+    if not current_user.is_authenticated:
             return redirect(url_for('home'))
 
     if form.validate_on_submit():
@@ -289,7 +289,7 @@ def business_post_job():
 @app.route("/business/jobs",methods=['GET', 'POST'])
 @login_required
 def business_view_jobs_posted():
-    if BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
+    if not BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
         return render_template('404.html'), 404
     jobs = Jobs.query.filter_by(jb_bu_id = current_user.get_id()).all()
     return render_template('business_jobs_posted.html', title="已發布的工作", jobs = jobs)
@@ -299,7 +299,7 @@ def business_view_jobs_posted():
 # PATH:     /business/jobs/<job_id>
 # METHOD:   GET
 # DESC.:    The page where the business user view a specific job posted
-@app.route('business/jobs/<job_id>')
+@app.route('/business/jobs/<job_id>')
 @login_required
 def job(job_id):
     job = Jobs.query.get_or_404(job_id)
