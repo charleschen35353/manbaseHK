@@ -20,7 +20,7 @@
       {% if job.jb_bu_id == current_user.get_id() %}
         <div>
           <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('business_job_update', job_id=job.jb_id) }}">更新工作詳情</a>
-          <button type="button" class="btn btn-danger btn-sm m-1">Delete</button>
+          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('business_job_delete', job_id=job.jb_id) }}">刪除工作</a>
         </div>
       {% elif BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first()%}
         <div>
