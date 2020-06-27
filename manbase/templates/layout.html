@@ -21,11 +21,6 @@
   <link rel="stylesheet"
     href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 
-  <!-- jQuery, Popper.js, and Bootstrap JS -->
-  <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-
   <!-- Swup CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='swup-main.css') }}">
 
@@ -118,13 +113,28 @@
 
       gtag('config', 'UA-41948260-3');
     </script>
+
+    <!-- jQuery, Popper.js, and Bootstrap JS -->
+    <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+    <!-- Swup -->
     <script src="{{ url_for('static', filename='node_modules/swup/dist/swup.min.js') }}"></script>
+
+    <!-- Custom JS - Registration Forms -->
     <script src="{{ url_for('static', filename='js/business_register.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/individual_register.js') }}"></script>
+
+    <!-- Custom JS - Swup Init -->
     <script>
 
       const init = () => {
         if (document.querySelector('#business_register')) {
           business_register_on_load();
+        }
+        if (document.querySelector('#individual_register')) {
+          individual_register_on_load();
         }
       }
 

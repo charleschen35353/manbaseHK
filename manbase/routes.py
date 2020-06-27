@@ -59,7 +59,7 @@ def business_home():
 @app.route('/home/individual')
 @login_required
 def individual_home():
-    if IndividualUsers.query.filter_by(iu_id = current_user.get_id).first():
+    if IndividualUsers.query.filter_by(iu_id = current_user.get_id()).first():
         return render_template('individual_home.html')
     else:
         return render_template('404.html'), 404
