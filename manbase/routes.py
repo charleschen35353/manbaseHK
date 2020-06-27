@@ -212,7 +212,7 @@ def apply_job(job_id, list_id):
         db.session.add(application)
         db.session.commit()
         flash(f'您已成功遞交工作申請!', 'success')
-            return redirect(url_for('view_job_board'))
+        return redirect(url_for('view_job_board'))
     return render_template('apply_job.html', title='申請工作',form = form,job = job_id, list = list_id)
 
 # @ROUTE DEFINTION
