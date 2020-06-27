@@ -6,7 +6,7 @@ from flask import render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
 from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm
-from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings
+from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings, JobApplications, Enrollments
 from datetime import datetime
 from uuid import uuid4
 
@@ -170,6 +170,86 @@ def individual_register():
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
 
 # @ROUTE DEFINTION
+# NAME:     View Job Board (Individual)
+# PATH:     /job_board
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users view listed job
+@app.route('/individual/job_board', methods=['POST'])
+def view_job_board():
+    jobs = Jobs.query.all()
+    return render_template('job_board.html', title='工作板', jobs = jobs)
+
+# @ROUTE DEFINTION
+# NAME:     Apply Job
+# PATH:     /jobs/<job_id>/apply
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users view listed job
+@app.route('/individual/job_board/<string:job_id>/apply', methods=['GET','POST'])
+def apply_job(job_id, list_id):
+
+    #if the user is not current user, return 404
+    if not IndividualUsers.query.filter_by(iu_id = current_user.get_id()):
+        return render_template('404.html'), 404
+
+    form = ApplyJobForm()
+    
+    if form.validate_on_submit():
+        apid = str(uuid4())
+
+        # Ensure the generated application ID is unique
+        validate_apid = JobListings.query.filter_by(ap_id=apid).first()
+        while validate_apid:
+            apid = str(uuid4())
+            validate_apid = Jobs.query.filter_by(jb_id=jid).first()
+
+        application = JobApplications(
+                                    ap_creationTime = datetime.utcnow(),
+                                    ap_id = apid,
+                                    ap_status = 'pending',
+                                    ap_li_id = list_id,
+                                    ap_iu_id = current_user.get_id()
+                                    )
+        db.session.add(application)
+        db.session.commit()
+        flash(f'您已成功遞交工作申請!', 'success')
+            return redirect(url_for('view_job_board'))
+    return render_template('apply_job.html', title='申請工作',form = form,job = job_id, list = list_id)
+
+# @ROUTE DEFINTION
+# NAME:     View my jobs (individual)
+# PATH:     /individual/jobs
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users can view their jobs
+@app.route('/individual/jobs')
+def individual_my_jobs(iu_id):
+    return render_template('individual_my_jobs.html',title =‘我的工作’)
+
+# @ROUTE DEFINTION
+# NAME:     View applied jobs (individual)
+# PATH:     /individual/jobs
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users can view their applied jobs
+@app.route('/individual/jobs/applied')
+def individual_applied_jobs():
+    applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
+    return render_template('individual_applied_jobs.html',title ='我的工作',applications=applications)
+
+# @ROUTE DEFINTION
+# NAME:     View enrolled jobs (individual)
+# PATH:     /individual/jobs/enrolled
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users can view their applied jobs
+@app.route('/individual/jobs/enrolled')
+def individual_enrolled_jobs():
+    applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
+    enrollments = []
+    for application in applications:
+        nested_enrollments.append(Enrollments.query.filter_by(ap_iu_id=current_user.get_id).all())
+    enrollments = lambda l: [item for sublist in l for item in sublist]
+    return render_template('individual_enrolled_jobs.html',title ='我的工作',enrollments=enrollments)
+
+
+# @ROUTE DEFINTION
 # NAME:     Registration (Business)
 # PATH:     /business_register
 # METHOD:   GET / POST
@@ -221,7 +301,7 @@ def business_register():
 # DESC.:    [GET]   The page where the business user creates their account
 #           [POST]  The method which validates the job info and post a job
 #TODO:need to validate user type: business user
-@app.route("/business/job/new",methods=['GET', 'POST'])
+@app.route("/business/jobs/new",methods=['GET', 'POST'])
 @login_required
 def business_post_job():
 
@@ -299,16 +379,64 @@ def business_view_jobs_posted():
 # PATH:     /business/jobs/<job_id>
 # METHOD:   GET
 # DESC.:    The page where the business user view a specific job posted
-@app.route('/business/jobs/<job_id>')
-@login_required
+#TODO: separate specific job into business/individual view.
+@app.route('/jobs/<string:job_id>')
+#@login_required
 def job(job_id):
     job = Jobs.query.get_or_404(job_id)
     listings = JobListings.query.filter_by(li_jb_id=job.jb_id).all()
-    return render_template('business_job.html',title=job.jb_title, job = job, listings = listings)
+    return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings)
 
-    if job.jb_bu_id != current_user:
-        abort(403)
+# @ROUTE DEFINTION
+# NAME:     View Job Applicants
+# PATH:     /business/jobs/<job_id>/<sting: list_id>/applicants
+# METHOD:   GET
+# DESC.:    The page where the business user view list of applicant of a specific job posted
+@app.route('/jobs/<string:job_id>/<sting: list_id>/applications')
+#@login_required
+def job_list_applications(job_id, list_id):
+    applicantions = JobApplications.query.filter_by(ap_li_id=list_id).all()
+    listing = JobListings.query.filter_by(li_id = list_id).first()
+    return render_template('job_list_applications.html',title=‘工作申請’,applicantions=applications, listing = listing)
+
+# @ROUTE DEFINTION
+# NAME:     View an Job Applicant
+# PATH:     /business/jobs/<job_id>/<sting: list_id>/applicants
+# METHOD:   GET
+# DESC.:    The page where the business user view specific job applicant of a specific job posted
+@app.route('/jobs/<string:job_id>/<string:list_id>/applicants/<strings:app_id>')
+#@login_required
+def view_an_applicant(job_id, list_id, app_id):
+    applicantion = JobApplications.query.filter_by(ap_id=app_id).first()
+    applicant = IndividualUsers.query.filter_by(iu_id=application.ap_iu_id).first()
+    listing = JobListings.query.filter_by(li_id=application.ap_li_id).first()
+
+    form = AcceptApplicationForm()
     
+    if form.validate_on_submit():
+        enid = str(uuid4())
+
+        # Ensure the generated application ID is unique
+        validate_enid = JobListings.query.filter_by(ap_id=application.ap_id).first()
+        while validate_enid:
+            enid = str(uuid4())
+            validate_enid = Jobs.query.filter_by(jb_id=jid).first()
+
+        enrollment = Enrollments(
+                                en_creationTime = datetime.utcnow(),
+                                en_id = enid,
+                                en_is_paid = 0,
+                                en_present_status = '',
+                                en_li_id = application.ap_li_id,
+                                en_ap_id = application.ap_id
+                                )
+        db.session.add(enrollment)
+        db.session.commit()
+        flash(f'工作申請已成功接受!', 'success')
+        applicantions = JobApplications.query.filter_by(ap_li_id=list_id).all()
+        return job_list_applications(job_id, list_id)
+    
+    return render_template('view_an_applicant.html',title='查看申請者',applicant=applicant,application = application,job_id = job_id,list_id = list_id)
 
 
 # =======================================

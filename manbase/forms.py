@@ -94,6 +94,9 @@ class UpdateAccountForm(BaseForm):
                 raise ValidationError(
                     'Email is taken. Please choose a different one')
 
+class ApplyJobForm():
+    submit = SubmitField('遞交申請')
+
 
 #Business Users
 class BusinessRegistrationForm(BaseForm):
@@ -158,3 +161,5 @@ class PostJobForm(BaseForm):
                             validators=[DataRequired(message = '職位空缺數目不能為空')])
     submit = SubmitField('遞交工作')
     
+class AcceptApplicationForm():
+    submit = SubmitField('確認申請')

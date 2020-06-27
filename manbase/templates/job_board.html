@@ -1,4 +1,5 @@
 {% extends "layout.html" %} 
+{% from "_formhelpers.html" import render_field %}
 
 {% block content %}
     {% for job in jobs %}
@@ -8,8 +9,9 @@
               <a class="mr-2" href="#">{{ job.jb_creationTime.strftime('%Y-%m-%d') }}</a>
             </div>
 
-            <h2><a class="article-title" href="{{ url_for('business_job', job_id=job.jb_id) }}">{{ job.jb_title }}</a></h2>
+            <h2><a class="article-title" href="{{ url_for('job', job_id=job.jb_id) }}">{{ job.jb_title }}</a></h2>
             <p class="article-content">{{ job.jb_description }}</p>
+            <p>Salary: #blank </p>
           </div>
         </article>
     {% endfor %}
