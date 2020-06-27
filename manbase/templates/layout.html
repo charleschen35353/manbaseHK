@@ -37,7 +37,7 @@
 </head>
 
 <body>
-  <div class="main m-0">
+  <div class="main m-0" id="swup">
     <header class="m-0">
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a href="{{ url_for('home') }}" class="navbar-brand">man<span class="text-primary">base</span> | 大社群</a>
@@ -78,48 +78,62 @@
       </nav>
     </header>
 
-    <div {% if request.path in [url_for('login'), url_for('register')] %} class="content-switch center-grid" {% else %}
-      class="content-switch" {% endif %}>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      {% for category, message in messages %}
-      <div
-        class="alert {{'alert-success' if category == 'success' else 'alert-warning'}} mb-0 alert-dismissible fade show"
-        role="alert">
-        {{message}}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      {% endfor %}
-      {% endif %}
-      {% endwith %}
-      <div class="transition-fade" id="swup">
+    {% if request.path in [url_for('login'), url_for('register')] %}
+    <div class="content-switch center-grid transition-fade">
+      {% else %}
+      <div class="content-switch transition-fade">
+        {% endif %}
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+          class="alert {{'alert-success' if category == 'success' else 'alert-warning'}} mb-0 alert-dismissible fade show"
+          role="alert">
+          {{message}}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
         {% block content %}
         {% endblock %}
       </div>
     </div>
-  </div>
 
-  <footer class="d-flex justify-content-center align-self-end text-center">
-    Copyright &copy; 2020 All rights reserved
-  </footer>
+    <footer class="d-flex justify-content-center align-self-end text-center">
+      Copyright &copy; 2020 All rights reserved
+    </footer>
 
 
-  <!-- Google Analytics -->
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-41948260-3"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
+    <!-- Google Analytics -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-41948260-3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
 
-    gtag('config', 'UA-41948260-3');
-  </script>
-  <script src="{{ url_for('static', filename='node_modules/swup/dist/swup.min.js') }}"></script>
-  <script>
-    const swup = new Swup();
-  </script>
+      gtag('config', 'UA-41948260-3');
+    </script>
+    <script src="{{ url_for('static', filename='node_modules/swup/dist/swup.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/business_register.js') }}"></script>
+    <script>
+
+      const init = () => {
+        if (document.querySelector('#business_register')) {
+          business_register_on_load();
+        }
+      }
+
+      init();
+
+      const swup = new Swup();
+
+      swup.on('contentReplaced', init);
+    </script>
 </body>
 
 </html>
