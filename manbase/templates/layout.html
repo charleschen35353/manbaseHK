@@ -1,122 +1,149 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-main.css') }}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/animate.css/animate.min.css') }}">
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', filename='main.css') }}"
-    />
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-main.css') }}">
 
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Main CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}" />
 
-    <!-- Line Awesome - CDN -->
-    <!-- TODO: self-serve this package -->
-    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
+    rel="stylesheet" />
 
-    <!-- jQuery, Popper.js, and Bootstrap JS -->
-    <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+  <!-- Line Awesome - CDN -->
+  <!-- TODO: self-serve this package -->
+  <link rel="stylesheet"
+    href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 
-    {% if title %}
-    <title>Manbase - {{title}}</title>
-    {% else %}
-    <title>Manbase</title>
-    {% endif %}
-  </head>
-  <body>
-    <div class="main m-0">
-      <header class="m-0">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a href="{{ url_for('home') }}" class="navbar-brand"
-            >man<span class="text-primary">base</span> | 大社群</a
-          >
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#main-nav"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
+  <!-- Swup CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='swup-main.css') }}">
 
-          <div class="collapse navbar-collapse" id="main-nav">
-            <ul class="navbar-nav ml-auto text-center">
-              <li class="nav-item">
-                <a href="{{ url_for('about') }}" class="nav-link {% if request.path == url_for('about') %} active {% endif %}">關於我們</a>
-              </li>
-              {% if not current_user.is_authenticated %}
-              <li class="nav-item">
-                <a href="{{ url_for('login') }}" class="nav-link  {% if request.path == url_for('login') %} active {% endif %}">登入</a>
-              </li>
-              <li class="nav-item">
-                <a href="{{ url_for('register') }}" class="nav-link
+  {% if title %}
+  <title>Manbase - {{title}}</title>
+  {% else %}
+  <title>Manbase</title>
+  {% endif %}
+</head>
+
+<body>
+  <div class="main m-0" id="swup">
+    <header class="m-0">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a href="{{ url_for('home') }}" class="navbar-brand">man<span class="text-primary">base</span> | 大社群</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="main-nav">
+          <ul class="navbar-nav ml-auto text-center">
+            <li class="nav-item">
+              <a href="{{ url_for('about') }}"
+                class="nav-link {% if request.path == url_for('about') %} active {% endif %}">關於我們</a>
+            </li>
+            {% if not current_user.is_authenticated %}
+            <li class="nav-item">
+              <a href="{{ url_for('login') }}"
+                class="nav-link  {% if request.path == url_for('login') %} active {% endif %}">登入</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url_for('register') }}" class="nav-link
                 {% if request.path in [url_for('register'), url_for('individual_register'), url_for('business_register')] %}
                 active
                 {% endif %}
                 ">
-                  註冊
-                </a>
-              </li>
-              {% else %}
-              <li class="nav-item">
-                <a href="{{ url_for('account') }}" class="nav-link">我的賬戶</a>
-              </li>
-              <li class="nav-item">
-                <a href="{{ url_for('logout') }}" class="nav-link">登出</a>
-              </li>
-              {% endif %}
-            </ul>
-          </div>
-        </nav>
-      </header>
-      
-      <div {% if request.path in [url_for('login'), url_for('register')] %} class="content-switch center-grid" {% else %} class="content-switch" {% endif %}>
-        {% with messages = get_flashed_messages(with_categories=true) %} 
-        {% if messages %} 
-          {% for category, message in messages %}
-            <div class="alert {{'alert-success' if category == 'success' else 'alert-warning'}} mb-0 alert-dismissible fade show" role="alert">
-              {{message}}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-          {% endfor %} 
-        {% endif %} 
-      {% endwith %}
-        {% block content %} {% endblock %}
+                註冊
+              </a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a href="{{ url_for('account') }}" class="nav-link">我的賬戶</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url_for('logout') }}" class="nav-link">登出</a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    {% if request.path in [url_for('login'), url_for('register')] %}
+    <div class="content-switch center-grid transition-fade">
+      {% else %}
+      <div class="content-switch transition-fade">
+        {% endif %}
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+          class="alert {{'alert-success' if category == 'success' else 'alert-warning'}} mb-0 alert-dismissible fade show"
+          role="alert">
+          {{message}}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
       </div>
     </div>
 
     <footer class="d-flex justify-content-center align-self-end text-center">
       Copyright &copy; 2020 All rights reserved
     </footer>
-    
+
 
     <!-- Google Analytics -->
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-41948260-3"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag() { dataLayer.push(arguments); }
       gtag('js', new Date());
 
       gtag('config', 'UA-41948260-3');
     </script>
-  </body>
+
+    <!-- jQuery, Popper.js, and Bootstrap JS -->
+    <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+    <!-- Swup -->
+    <script src="{{ url_for('static', filename='node_modules/swup/dist/swup.min.js') }}"></script>
+
+    <!-- Custom JS - Registration Forms -->
+    <script src="{{ url_for('static', filename='js/business_register.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/individual_register.js') }}"></script>
+
+    <!-- Custom JS - Swup Init -->
+    <script>
+
+      const init = () => {
+        if (document.querySelector('#business_register')) {
+          business_register_on_load();
+        }
+        if (document.querySelector('#individual_register')) {
+          individual_register_on_load();
+        }
+      }
+
+      init();
+
+      const swup = new Swup();
+
+      swup.on('contentReplaced', init);
+    </script>
+</body>
+
 </html>

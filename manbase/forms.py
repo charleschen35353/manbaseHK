@@ -26,9 +26,8 @@ class LoginForm(BaseForm):
     remember = BooleanField('請記住我')
     submit = SubmitField('登入')
 
-#Individual Users
-
-#TODO: rewrite validators
+# Individual Users
+# TODO: rewrite validators
 class IndividualRegistrationForm(BaseForm):
     user_login = StringField('帳號',
                            validators=[DataRequired(message = '名字不能為空'), Length(min=5, max=20)])
@@ -45,13 +44,15 @@ class IndividualRegistrationForm(BaseForm):
     individual_EName = StringField('英文名字', validators = [])
     individual_alias = StringField('暱稱', validators = [])
     individual_HKID = StringField('身分證字母加首四位數字', validators = [DataRequired()])
-    individual_gender = IntegerField('性別', validators=[DataRequired()])
+    # DEBUG: removed validators
+    individual_gender = RadioField('性別', choices=[(0, "Female"), (1, "Male")], validators=[], coerce=int)
     individual_birthday = DateField('出生日期', validators=[DataRequired()])
-    individual_educationLevel = RadioField('教育程度', validators=[])
-    individual_language_Cantonese = IntegerField('工作語言 - 廣東話', validators=[])
-    individual_language_English = IntegerField('工作語言 - 英文', validators=[])
-    individual_language_Putonghua = IntegerField('工作語言 - 普通話', validators=[])
-    individual_language_Other = IntegerField('工作語言 - 其他', validators=[])
+    # DEBUG: removed validators
+    individual_educationLevel = RadioField('教育程度', choices=[(0, "Pracitcally Useless"), (1, "Graduated from an awful Primary School"), (2, "Graduated from secondary school, but serve no purpose to society"), (3, "Graduated from a \"university\", but not a proper one"), (4, "Serve some purposes to the society")],  validators=[], coerce=int)
+    individual_language_Cantonese = BooleanField('廣東話', validators=[])
+    individual_language_English = BooleanField('英文', validators=[])
+    individual_language_Putonghua = BooleanField('普通話', validators=[])
+    individual_language_Other = StringField('其他 (Optional)', validators=[])
 
     submit = SubmitField('註冊個人帳戶')
 
@@ -98,7 +99,7 @@ class ApplyJobForm():
     submit = SubmitField('遞交申請')
 
 
-#Business Users
+# Business Users
 class BusinessRegistrationForm(BaseForm):
 
     user_login = StringField('帳號',
