@@ -212,7 +212,7 @@ def apply_job(job_id, list_id):
         db.session.add(application)
         db.session.commit()
         flash(f'您已成功遞交工作申請!', 'success')
-            return redirect(url_for('view_job_board'))
+        return redirect(url_for('view_job_board'))
     return render_template('apply_job.html', title='申請工作',form = form,job = job_id, list = list_id)
 
 # @ROUTE DEFINTION
@@ -222,7 +222,7 @@ def apply_job(job_id, list_id):
 # DESC.:    [GET]   The page where the individual users can view their jobs
 @app.route('/individual/jobs')
 def individual_my_jobs(iu_id):
-    return render_template('individual_my_jobs.html',title =‘我的工作’)
+    return render_template('individual_my_jobs.html',title='我的工作')
 
 # @ROUTE DEFINTION
 # NAME:     View applied jobs (individual)
@@ -392,19 +392,19 @@ def job(job_id):
 # PATH:     /business/jobs/<job_id>/<sting: list_id>/applicants
 # METHOD:   GET
 # DESC.:    The page where the business user view list of applicant of a specific job posted
-@app.route('/jobs/<string:job_id>/<sting: list_id>/applications')
+@app.route('/jobs/<string:job_id>/<string:list_id>/applications')
 #@login_required
 def job_list_applications(job_id, list_id):
     applicantions = JobApplications.query.filter_by(ap_li_id=list_id).all()
     listing = JobListings.query.filter_by(li_id = list_id).first()
-    return render_template('job_list_applications.html',title=‘工作申請’,applicantions=applications, listing = listing)
+    return render_template('job_list_applications.html', title='工作申請', applicantions=applications, listing = listing)
 
 # @ROUTE DEFINTION
 # NAME:     View an Job Applicant
 # PATH:     /business/jobs/<job_id>/<sting: list_id>/applicants
 # METHOD:   GET
 # DESC.:    The page where the business user view specific job applicant of a specific job posted
-@app.route('/jobs/<string:job_id>/<string:list_id>/applicants/<strings:app_id>')
+@app.route('/jobs/<string:job_id>/<string:list_id>/applicants/<string:app_id>')
 #@login_required
 def view_an_applicant(job_id, list_id, app_id):
     applicantion = JobApplications.query.filter_by(ap_id=app_id).first()
