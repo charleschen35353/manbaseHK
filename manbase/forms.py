@@ -120,7 +120,7 @@ class BusinessRegistrationForm(BaseForm):
     # TODO: Invalid email address should have error messages in Traditional Chinese, not Simplified Chinese
     company_email = StringField('公司電子郵箱',
                                 validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
-
+    business_tos = BooleanField('Terms of Service', validators=[DataRequired(message='Must agree to terms of service')])
     submit = SubmitField('註冊')
 
     def validate_user_login(self, user_login):

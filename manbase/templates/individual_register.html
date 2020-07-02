@@ -166,14 +166,14 @@
             <div class="form-group">
                 {{ form.individual_contact_number.label(class="form-control-label") }}
                 {% if form.individual_contact_number.errors %}
-                {{  render_field(form.individual_contact_number,class="form-control form-control-lg is-invalid", id="ind_reg_tel_num", maxlength="9", pattern="[0-9]{4}-[0-9]{4}", placeholder="0000-0000") }}
+                {{  render_field(form.individual_contact_number,class="form-control form-control-lg is-invalid", id="ind_reg_tel_num", maxlength="8", pattern="[0-9]{8}", placeholder="00000000") }}
                 <div class="invalid-feedback">
                     {% for error in form.individual_contact_number.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ render_field(form.individual_contact_number,class="form-control form-control-lg", id="ind_reg_tel_num", maxlength="9", pattern="[0-9]{4}-[0-9]{4}", placeholder="0000-0000") }}
+                {{ render_field(form.individual_contact_number,class="form-control form-control-lg", id="ind_reg_tel_num", maxlength="8", pattern="[0-9]{8}", placeholder="00000000") }}
                 {% endif %}
             </div>
 
