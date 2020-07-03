@@ -78,7 +78,7 @@ const business_register_on_load = () => {
             $(account).addClass('is-invalid');
 
             // TODO: Update to Chinese Warning
-            $(account_errors).append("<p class='error'>Account name must not be empty.</p>");
+            $(account_errors).append("<p class='error'>帳號不能為空</p>");
         } else {
             $(account).addClass('is-valid');
         }
@@ -90,7 +90,7 @@ const business_register_on_load = () => {
             $(password).addClass('is-invalid');
 
             // TODO: Update to Chinese Warning
-            $(password_errors).append("<p class='error'>Password must be at least 8 characters long.</p>")
+            $(password_errors).append("<p class='error'>您的密碼必須有至少 8 個字元。</p>")
         } else {
             $(password).addClass('is-valid');
         }
@@ -100,7 +100,7 @@ const business_register_on_load = () => {
             $(repeat_password).addClass('is-invalid');
 
             // TODO: Update to Chinese Warning
-            $(repeat_password_errors).append("<p class='error'>Repeat password must match the password above.</p>")
+            $(repeat_password_errors).append("<p class='error'>您重複輸入的密碼必須與上面的相同。</p>")
         } else {
             $(repeat_password).addClass('is-valid');
         }
@@ -150,7 +150,7 @@ const business_register_on_load = () => {
             error = true;
             $(c_name).addClass('is-invalid');
             // TODO: Update to Chinese warning
-            $(c_name_errors).append("<p class='error'>The Chinese Name must be provided.</p>");
+            $(c_name_errors).append("<p class='error'>您必須提供企業的中文名稱。</p>");
         } else {
             $(c_name).addClass('is-valid')
         }
@@ -207,7 +207,7 @@ const business_register_on_load = () => {
             error = true;
             $(pic).addClass('is-invalid');
             // TODO: Update to Chinese warning
-            $(pic_errors).append("<p class='error'>Must provide a person-in-charge name</p>");
+            $(pic_errors).append("<p class='error'>您必須提供聯絡人的名稱。</p>");
         } else {
             $(pic).addClass('is-valid');
         }
@@ -217,7 +217,7 @@ const business_register_on_load = () => {
             error = true;
             $(phone).addClass('is-invalid');
 
-            error_msg = $(phone).val().length != 8 ? "The phone must be of 8 digit." : "The phone number does not start with a valid digit.";
+            error_msg = $(phone).val().length != 8 ? "聯絡電話必須是 8 個數字。" : "您的電話必須是有效的香港電話號碼。";
 
             $(phone_errors).append("<p class='error'>" + error_msg + "</p>")
         } else {
@@ -229,7 +229,7 @@ const business_register_on_load = () => {
             error = true;
             $(email).addClass('is-invalid');
             // TODO: Update to Chinese warning
-            $(email_errors).append("<p class='error'>Must provide a valid email address.</p>");
+            $(email_errors).append("<p class='error'>您必須提供有效的電子郵箱地址。</p>");
         } else {
             $(email).addClass('is-valid');
         }
@@ -240,7 +240,7 @@ const business_register_on_load = () => {
         $(".bus-reg-confirm").each((index, element) => {
             if ($(element).html() == '') {
                 // TODO: Update to Chinese warning
-                $(element).html("<span class='text-info'>DID NOT FILL IN</span>");
+                $(element).html("<span class='text-info'>未填寫</span>");
             }
         });
 

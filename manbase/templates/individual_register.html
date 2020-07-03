@@ -16,7 +16,8 @@
         {{ form.hidden_tag() }}
 
         <div class="text-center mb-3">
-            <h2 class="text-primary">馬上註冊 <span class="text-dark">man</span><span class="text-secondary">base</span>
+            <h2 class="text-primary text-nowrap">馬上註冊 <wbr><span class="text-dark">man</span><span
+                    class="text-secondary">base</span><wbr>
                 個人帳戶</h2>
             {% if form.errors %}
             {% for field, errors in form.errors.items() %}
@@ -27,21 +28,29 @@
 
         <!-- Section 1: Username, Password, and Repeat Password -->
         <div class="form-section" id="ind_reg_sec_1">
-            <!-- TODO: Update Description-->
-            <h3 class="mt-2">賬戶資料（第一步，共5步）</h3>
+            <h3 class="mt-2">賬戶資料</h3>
+            <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
+                &#9679;&#9675;&#9675;&#9675;&#9675;</h5>
+            <hr>
 
             <!-- Username -->
             <div class="form-group">
                 {{ form.user_login.label(class="form-control-label") }}
                 {% if form.user_login.errors %}
-                {{ render_field(form.user_login, class="form-control form-control-lg is-invalid")}}
+                {{ render_field(form.user_login, 
+                                class="form-control form-control-lg is-invalid", 
+                                placeholder="帳號")
+                }}
                 <div class="invalid-feedback">
                     {% for error in form.user_login.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ render_field(form.user_login,class="form-control form-control-lg" )}}
+                {{ render_field(form.user_login,
+                                class="form-control form-control-lg", 
+                                placeholder="帳號")
+                }}
                 {% endif %}
             </div>
 
@@ -49,14 +58,22 @@
             <div class="form-group">
                 {{ form.password.label(class="form-control-label") }}
                 {% if form.password.errors %}
-                {{ render_field(form.password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif;")}}
+                {{ render_field(form.password, 
+                                class="form-control form-control-lg is-invalid", 
+                                style="font-family: sans-serif, 'Noto Sans TC';", 
+                                placeholder="密碼")
+                }}
                 <div class="invalid-feedback">
                     {% for error in form.password.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ render_field(form.password, class="form-control form-control-lg", style="font-family: sans-serif;")}}
+                {{ render_field(form.password, 
+                                class="form-control form-control-lg", 
+                                style="font-family: sans-serif, 'Noto Sans TC';", 
+                                placeholder="密碼")
+                }}
                 {% endif %}
             </div>
 
@@ -64,41 +81,57 @@
             <div class="form-group">
                 {{ form.confirm_password.label(class="form-control-label") }}
                 {% if form.confirm_password.errors %}
-                {{ render_field(form.confirm_password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif;")}}
+                {{ render_field(form.confirm_password, 
+                                class="form-control form-control-lg is-invalid", 
+                                style="font-family: sans-serif, 'Noto Sans TC';", 
+                                placeholder="重新輸入密碼")
+                }}
                 <div class="invalid-feedback">
                     {% for error in form.confirm_password.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ render_field(form.confirm_password, class="form-control form-control-lg", style="font-family: sans-serif;") }}
+                {{ render_field(form.confirm_password,
+                                class="form-control form-control-lg",
+                                style="font-family: sans-serif, 'Noto Sans TC';",
+                                placeholder="重新輸入密碼")
+                }}
                 {% endif %}
             </div>
 
             <!-- Section Button -->
             <div class="row">
-                <!-- TODO: Update Button -->
-                <button class="btn btn-primary btn-block col-5 col-md-3 offset-7 offset-md-9" id="ind_reg_sec_1_next"
-                    type="button">下一步：公司資料 <i class="las la-arrow-circle-right"></i></button>
+                <button class="btn btn-primary btn-block col-5 col-md-3 offset-7 offset-md-9 text-nowrap"
+                    id="ind_reg_sec_1_next" type="button">下一步：<wbr>個人資料1<i
+                        class="las la-arrow-circle-right"></i></button>
             </div>
         </div>
         <!-- Section 2: Chinese Name, English Name, Nickname, HKID -->
         <div class="form-section" id="ind_reg_sec_2">
-            <!-- TODO: Update Description -->
-            <h3 class="mt-2">公司資料（第二步，共5步）</h3>
+            <h3 class="mt-2">個人資料（1）</h3>
+            <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
+                &#9675;&#9679;&#9675;&#9675;&#9675;</h5>
+            <hr>
 
             <!-- Chinese Name -->
             <div class="form-group">
                 {{ form.individual_CName.label(class="form-control-label") }}
                 {% if form.individual_CName.errors %}
-                {{  render_field(form.individual_CName,class="form-control form-control-lg is-invalid") }}
+                {{ render_field(form.individual_CName,
+                                class="form-control form-control-lg is-invalid",
+                                placeholder="中文全名") 
+                }}
                 <div class="invalid-feedback">
                     {% for error in form.individual_CName.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ render_field(form.individual_CName,class="form-control form-control-lg") }}
+                {{ render_field(form.individual_CName,
+                                class="form-control form-control-lg",
+                                placeholder="中文全名")
+                }}
                 {% endif %}
             </div>
 
@@ -106,61 +139,101 @@
             <div class="form-group">
                 {{ form.individual_EName.label(class="form-control-label") }}
                 {% if form.individual_EName.errors %}
-                {{  render_field(form.individual_EName,class="form-control form-control-lg is-invalid") }}
+                {{ render_field(form.individual_EName,
+                                class="form-control form-control-lg is-invalid", 
+                                placeholder="英文名字")
+                }}
+
                 <div class="invalid-feedback">
                     {% for error in form.individual_EName.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ render_field(form.individual_EName,class="form-control form-control-lg") }}
+                {{ render_field(form.individual_EName,
+                                class="form-control form-control-lg",
+                                placeholder="英文名字")
+                }}
+
                 {% endif %}
+                <small class="form-text text-muted">
+                    可選填
+                </small>
+
             </div>
 
             <!-- Nickname -->
             <div class="form-group">
                 {{ form.individual_alias.label(class="form-control-label") }}
                 {% if form.individual_alias.errors %}
-                {{  render_field(form.individual_alias,class="form-control form-control-lg is-invalid") }}
+                {{ render_field(form.individual_alias,
+                                class="form-control form-control-lg is-invalid",
+                                placeholder="暱稱") 
+                }}
                 <div class="invalid-feedback">
                     {% for error in form.individual_alias.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ render_field(form.individual_alias,class="form-control form-control-lg") }}
+                {{ render_field(form.individual_alias,
+                                class="form-control form-control-lg", 
+                                placeholder="暱稱")
+                }}
                 {% endif %}
+                <small class="form-text text-muted">
+                    可選填
+                </small>
             </div>
 
             <!-- HKID -->
             <div class="form-group">
                 {{ form.individual_HKID.label(class="form-control-label") }}
-                {% if form.individual_HKID.errors %}
-                {{  render_field(form.individual_HKID,class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
+                <div class="d-flex align-items-center">
+                    <div class="d-flex">
+                        {% if form.individual_HKID.errors %}
+                        {{ render_field(form.individual_HKID, 
+                                        class="form-control form-control-lg is-invalid",
+                                        placeholder="A1234",
+                                        maxlength="6") 
+                        }}
+                        {% else %}
+                        {{ render_field(form.individual_HKID,
+                                        class="form-control form-control-lg",
+                                        placeholder="A1234",
+                                        maxlength="6")
+                        }}
+                        {% endif %}
+                    </div>
+                    <p class="w-100 m-0 ml-2">XX(X)</p>
+                </div>
+
+                <div class="invalid-feedback d-block">
+                    {% if form.individual_HKID.errors %}
                     {% for error in form.individual_HKID.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ render_field(form.individual_HKID,class="form-control form-control-lg") }}
-                {% endif %}
             </div>
 
             <!-- Section Buttons -->
             <div class="row">
-                <!-- TODO: Update Buttons -->
-                <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5" id="ind_reg_sec_2_prev"
-                    type="button"><i class="las la-arrow-circle-left"></i> 上一步：賬戶資料</button>
-                <button class="btn btn-primary col-5 col-md-3 offset-1" id="ind_reg_sec_2_next" type="button">下一步：聯絡資料
+                <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
+                    id="ind_reg_sec_2_prev" type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：<wbr>賬戶資料</button>
+                <button class="btn btn-primary col-5 col-md-3 offset-1 text-nowrap" id="ind_reg_sec_2_next"
+                    type="button">下一步：<wbr>個人資料2
                     <i class="las la-arrow-circle-right"></i> </button>
             </div>
         </div>
 
         <!-- Section 3 (Personal Info): Tel Number, Email, Gender, DOB -->
         <div class="form-section" id="ind_reg_sec_3">
-            <!-- TODO: Update Description -->
-            <h3 class="mt-2">公司資料（第3步，共5步）</h3>
+            <h3 class="mt-2">個人資料（2）</h3>
+            <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
+                &#9675;&#9675;&#9679;&#9675;&#9675;</h5>
+            <hr>
 
             <!-- Tel Number -->
             <div class="form-group">
@@ -181,14 +254,14 @@
             <div class="form-group">
                 {{ form.individual_email.label(class="form-control-label") }}
                 {% if form.individual_email.errors %}
-                {{  render_field(form.individual_email,class="form-control form-control-lg is-invalid") }}
+                {{  render_field(form.individual_email,class="form-control form-control-lg is-invalid", placeholder="example@email.com") }}
                 <div class="invalid-feedback">
                     {% for error in form.individual_email.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ render_field(form.individual_email,class="form-control form-control-lg") }}
+                {{ render_field(form.individual_email,class="form-control form-control-lg", placeholder="example@email.com") }}
                 {% endif %}
             </div>
 
@@ -228,27 +301,30 @@
 
             <!-- Section Buttons -->
             <div class="row">
-                <!-- TODO: Update Buttons -->
-                <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5" id="ind_reg_sec_3_prev"
-                    type="button"><i class="las la-arrow-circle-left"></i> 上一步：賬戶資料</button>
-                <button class="btn btn-primary col-5 col-md-3 offset-1" id="ind_reg_sec_3_next" type="button">下一步：聯絡資料
+                <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
+                    id="ind_reg_sec_3_prev" type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：<wbr>個人資料1</button>
+                <button class="btn btn-primary col-5 col-md-3 offset-1 text-nowrap" id="ind_reg_sec_3_next"
+                    type="button">下一步：<wbr>工作資料
                     <i class="las la-arrow-circle-right"></i> </button>
             </div>
         </div>
 
         <!-- Section 4 (Working Info): Edu, Lang -->
         <div class="form-section" id="ind_reg_sec_4">
-            <!-- TODO: Update Description -->
-            <h3 class="mt-2">公司資料（第4步，共5步）</h3>
-
+            <h3 class="mt-2">工作資料</h3>
+            <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
+                &#9675;&#9675;&#9675;&#9679;&#9675;</h5>
+            <hr>
             <!-- Education -->
             <div class="form-group">
-                {{ form.individual_educationLevel.label(class="form-control-label") }}
+                {{ form.individual_educationLevel.label(class="form-control-label h4 mb-0") }}
+                <small class="form-text text-muted my-1">
+                    可選填
+                </small>
                 {% for subfield in form.individual_educationLevel %}
                 <div class="">
-                    <div class="">
-                        {{ render_field(subfield, class="text-primary") }} {{ subfield.label }}
-                    </div>
+                    {{ render_field(subfield, class="text-primary") }} {{ subfield.label }}
                 </div>
                 {% endfor %}
                 {% if form.individual_educationLevel.errors %}
@@ -261,95 +337,118 @@
             </div>
 
             <!-- Language -->
-            <h4>工作語言</h4>
-            <div class="row mb-2">
-                <div class="col-11 col-md-3 offset-md-1 form-check">
-
-
+            <div class="form-group">
+                <h4>工作語言</h4>
+                <div class="form-check">
                     {% if form.individual_language_Cantonese.errors %}
                     {{  render_field(form.individual_language_Cantonese,class="form-check-input is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.individual_language_Cantonese.errors %}
-                        <small class='error'> {{error}} </small>
-                        {% endfor %}
-                    </div>
                     {% else %}
                     {{ render_field(form.individual_language_Cantonese,class="form-check-input bg-primary") }}
                     {% endif %}
 
                     {{ form.individual_language_Cantonese.label(class="form-check-label") }}
-
-
                 </div>
-                <div class="col-11 col-md-3 form-check">
 
+                <div class="form-check">
                     {% if form.individual_language_English.errors %}
                     {{  render_field(form.individual_language_English,class="form-check-input is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.individual_language_English.errors %}
-                        <small class='error'> {{error}} </small>
-                        {% endfor %}
-                    </div>
                     {% else %}
                     {{ render_field(form.individual_language_English,class="form-check-input") }}
                     {% endif %}
 
                     {{ form.individual_language_English.label(class="form-check-label") }}
                 </div>
-                <div class="col-11 col-md-3 form-check">
 
+                <div class="form-check">
                     {% if form.individual_language_Putonghua.errors %}
                     {{  render_field(form.individual_language_Putonghua,class="form-check-input is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.individual_language_Putonghua.errors %}
-                        <small class='error'> {{error}} </small>
-                        {% endfor %}
-                    </div>
                     {% else %}
                     {{ render_field(form.individual_language_Putonghua,class="form-check-input") }}
                     {% endif %}
 
                     {{ form.individual_language_Putonghua.label(class="form-check-label") }}
                 </div>
-            </div>
 
-            <div class="form-group">
-                {{ form.individual_language_Other.label(class="form-control-label") }}
-                {% if form.individual_language_Other.errors %}
-                {{  render_field(form.individual_language_Other,class="form-control is-invalid") }}
-                <div class="invalid-feedback">
+                <div class="form-group">
+                    {{ form.individual_language_Other.label(class="form-control-label") }}
+                    {% if form.individual_language_Other.errors %}
+                    {{ render_field(form.individual_language_Other,
+                                    class="form-control form-control-lg is-invalid", 
+                                    placeholder="其他工作語言") 
+                    }}
+                    {% else %}
+                    {{ render_field(form.individual_language_Other,
+                                    class="form-control form-control-lg", 
+                                    placeholder="其他工作語言") 
+                    }}
+                    {% endif %}
+                    <small class="form-text text-muted">
+                        可選填
+                    </small>
+                </div>
+
+                <div class="invalid-feedback d-block">
+                    {% if form.individual_language_Cantonese.errors %}
+                    {% for error in form.individual_language_Cantonese.errors %}
+                    <small class='error'> {{error}} </small>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if form.individual_language_English.errors %}
+                    {% for error in form.individual_language_English.errors %}
+                    <small class='error'> {{error}} </small>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if form.individual_language_Putonghua.errors %}
+                    {% for error in form.individual_language_Putonghua.errors %}
+                    <small class='error'> {{error}} </small>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if form.individual_language_Other.errors %}
                     {% for error in form.individual_language_Other.errors %}
                     <small class='error'> {{error}} </small>
                     {% endfor %}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ render_field(form.individual_language_Other,class="form-control") }}
-                {% endif %}
             </div>
+
 
             <!-- Section Buttons -->
             <div class="row">
-                <!-- TODO: Update Buttons -->
-                <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5" id="ind_reg_sec_4_prev"
-                    type="button"><i class="las la-arrow-circle-left"></i> 上一步：賬戶資料</button>
-                <button class="btn btn-primary col-5 col-md-3 offset-1" id="ind_reg_sec_4_next" type="button">下一步：聯絡資料
+                <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
+                    id="ind_reg_sec_4_prev" type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：<wbr>個人資料2</button>
+                <button class="btn btn-primary col-5 col-md-3 offset-1 text-nowrap" id="ind_reg_sec_4_next"
+                    type="button">下一步：確認<wbr>資料及條款
                     <i class="las la-arrow-circle-right"></i> </button>
             </div>
         </div>
 
         <!-- Section 5: Confirm and Accept TOC -->
         <div class="form-section" id="ind_reg_sec_5">
-            <!-- TODO: Update Description -->
-            <h3 class="mt-2">公司資料（第5步，共5步）</h3>
-
+            <h3 class="mt-2 text-nowrap">確認資料<wbr>及<wbr>條款</h3>
+            <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
+                &#9675;&#9675;&#9675;&#9675;&#9679;</h5>
+            <hr>
             <!-- TODO: Put Confirm Info -->
             <p>TODO: Confirm Info Here</p>
             <!-- TODO: Put TOC Buttons -->
-            <p>TODO: TOC Confirm HERE</p>
+            <hr>
+            <div class="row mx-2 my-3 align-items-center form-check">
+                {{ render_field(form.individual_tos, 
+                                class="form-check-input", 
+                                id="ind_register_agree_tos")
+                }}
+                <label for="agree_tos" class="text-break bus-reg-confirm form-check-label">我已經閱讀並同意<a href="#"
+                        class="text-primary">《使用條款及細則》</a>。</label>
+            </div>
             <!-- Sections Button -->
             <div class="form-group row">
-                <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5" id="ind_reg_sec_5_prev"
-                    type="button"><i class="las la-arrow-circle-left"></i> 上一步：公司資料</button>
+                <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
+                    id="ind_reg_sec_5_prev" type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：<wbr>工作資料</button>
                 <!-- TODO: Find a way to put a check mark after the label -->
                 {{ render_field(form.submit, class="btn btn-primary col-5 col-md-3 offset-1") }}
             </div>

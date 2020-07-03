@@ -130,6 +130,8 @@
     <script>
 
       const init = () => {
+        $("html, body").animate({ scrollTop: 0 }, "fast");
+
         if (document.querySelector('#business_register')) {
           business_register_on_load();
         }
