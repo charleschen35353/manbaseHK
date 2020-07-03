@@ -1,0 +1,17 @@
+{% extends "layout.html" %} 
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+    {% if not enrolled}
+        <p> no enrollment at all</p>
+    {% endif%}
+    {% for enroll in enrolled%}
+        <p>{{enrollment.en_id}}</p>
+        <a href="{{url_for('rate_n_review_on_individual',en_id=enroll.en_id)}}" class="btn btn-primary btn-large p-2">
+            <h4 class="m-0">評價及完成工作</h4>
+        </a>
+    {% endfor %}
+    <a href="" class="btn btn-primary btn-large p-2">
+        <h4 class="m-0">報告異常</h4>
+    </a>
+{% endblock content %}

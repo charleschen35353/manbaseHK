@@ -1,0 +1,51 @@
+{% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
+{% block content %}
+    <div class = 'content-section'> 
+        <form method = 'POST' action = ''>
+            {{ form.hidden_tag() }}
+                <fieldset class='form-group'>
+                    <div class="text-center">
+                        <h2 class="text-secondary">僱員評分及評價 <span class="text-dark">man</span>
+                        {% if form.errors %}
+                        {% for field, errors in form.errors.items() %}
+                        <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.rating_score.label(class="form-control-label") }}
+                        {% if form.rating_score.errors %}
+                        {{ render_field(form.rating_score, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.rating_score.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.rating_score,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.comment.label(class="form-control-label") }}
+                        {% if form.comment.errors %}
+                        {{ render_field(form.comment, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.comment.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.comment,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                
+                <div class="form-group">
+                    {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
+                    }}
+                </div>
+        </form>
+    </div>
+{% endblock content %}

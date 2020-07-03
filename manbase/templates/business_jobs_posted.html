@@ -1,6 +1,9 @@
 {% extends "layout.html" %} 
 
 {% block content %}
+    {% if not jobs %}
+        <p> no jobs at all</p>
+    {% endif %}
     {% for job in jobs %}
         <article class="media content-section">
           <div class="media-body">

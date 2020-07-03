@@ -6,6 +6,9 @@
 <article class="media content-section">
   <div class="media-body">
     <div class="article-metadata">
+      {% if not listings}
+        <p> no listings at all</p>
+      {% endif%}
       {% for listing in listings%}
           <a class="mr-2" href="#"> Quota: {{ listing.li_quota }}</a>
           <small class="text-muted">Start: {{ listing.li_starttime) }}</small>
@@ -14,7 +17,12 @@
           <small class="text-muted">Salary Type: {{ listing.li_salary_type) }}</small>
           <a href="{{url_for('job_list_applicants', job_id = job.jb_id, list_id = listing.li_id)}}" class="btn btn-secondary btn-large p-2">
             <h4 class="m-0">查看工作申請</h4>
-        </a>
+          </a>
+          {% if job.jb_bu_id == current_user.get_id() %}
+            <a href="{{url_for('job_list_enrolled', job_id = job.jb_id, list_id = listing.li_id)}}" class="btn btn-secondary btn-large p-2">
+              <h4 class="m-0">查看已錄取的員工</h4>
+            </a>
+          {% endif %}
       {% endfor %}
 
       {% if job.jb_bu_id == current_user.get_id() %}
@@ -27,6 +35,10 @@
           <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('apply_job', job_id=job.jb_id) }}">申請工作</a>
         </div>
       {% endif %}
+
+      <div>
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('report_job_abnormality',job_id = job.jb_id }}">報錯</a>
+      </div>
     </div>
     
     <h2 class="article-title">{{ job.jb_title }}</h2>

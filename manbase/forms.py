@@ -164,3 +164,26 @@ class PostJobForm(BaseForm):
     
 class AcceptApplicationForm():
     submit = SubmitField('確認申請')
+
+class RateAndReviewOnIndividualForm():
+    rating_score = RadioField('員工評分',
+                        validators = [DataRequired(message = '員工評分不能為空')])
+    comment = StringField('表現評價',
+                        validators = [DataRequired(message = '表現評價不能為空')])
+    submit = SubmitField('遞交評論')
+
+class RateAndReviewOnBusinessForm():
+    comment = StringField('留言',
+                        validators = [DataRequired(message = '留言不能為空')])
+    workload_score = RadioField('工作量評分',
+                        validators = [DataRequired(message = '工作量分不能為空')])
+    work_environment_score = RadioField('工作環境評分',
+                        validators = [DataRequired(message = '工作環境評分不能為空')])
+    administration_score = RadioField('管理人員評分',
+                        validators = [DataRequired(message = '管理人員不能為空')])
+    submit = SubmitField('遞交評論')
+
+class ReportAbnormalityForm():
+    message = StringField('問題描述',
+                        validators = [DataRequired(message = '問題描述不能為空')])
+    submit = SubmitField('錯誤報吿')

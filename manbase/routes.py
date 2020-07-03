@@ -6,9 +6,10 @@ from flask import render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
 from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm
-from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings, JobApplications, Enrollments
+from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings, JobApplications, Enrollments, Review, Rating, Abnormality
 from datetime import datetime
 from uuid import uuid4
+from collections import defaultdict 
 
 @login_manager.user_loader
 def load_user(ur_id):
@@ -249,6 +250,59 @@ def individual_enrolled_jobs():
     return render_template('individual_enrolled_jobs.html',title ='我的工作',enrollments=enrollments)
 
 
+@app.route('/individual/jobs/enrolled/<string:en_id>/rate',methods=['GET', 'POST'])
+def rate_n_review_on_business(en_id):
+    enrollment = Enrollments.query.get_or_404(en_id)
+    job_list = JobListings.query.filter_by(enrollment.en_li_id).fisrt()
+    job = Jobs.query.filter_by(job_list.li_jb_id).first()
+    employer = BusinessUsers.query.filter_by(job.jb_bu_id).first()
+
+    form = RateAndReviewOnBusinessForm()
+    if form.validate_on_submit():
+
+        reid = str(uuid4())
+
+        # Ensure the generated job listing ID is unique
+        validate_reid = Jobs.query.filter_by(li_id = llid).first()
+        while validate_reid:
+            reid = str(uuid4())
+            validate_reid = Jobs.query.filter_by(li_id = llid).first()
+        
+        review = Review(
+                    re_id = reid,
+                    re_creationTIME = datetime.utcnow(),
+                    re_receiver_id = employer.bu_id,
+                    re_sender_id = current_user.get_id(),
+                    re_comment = form.comment.data,
+                    jb_expected_paymenre_isFollowUpNeededt_days = 0,
+                    re_en_id = en_id
+                )
+        rating_workload = Rating(
+                rate_re_id = reid,
+                rate_rc_id = '68469ba5-cf13-4436-a994-62376d61498e',
+                rate_score = form.workload_score.data
+                                )
+        rating_work_environment = Rating(
+                rate_re_id =  reid,
+                rate_rc_id = '57169219-ca4f-4712-a6a5-6fa2fce66182',
+                rate_score = form.work_environment_score.data
+                                )
+        rating_administration = Rating(
+                rate_re_id =  reid,
+                rate_rc_id = '7f0417d3-26ad-4708-ad30-d32e13d4bfba',
+                rate_score = form.administration_score.data
+                                )
+        db.session.add(review)
+        db.session.add(rating_workload)
+        db.session.add(rating_work_environment)
+        db.session.add(rating_administration)
+        db.session.commit()
+
+        flash(f'已成功為僱主評分!', 'success')
+        #TODO: return to last page
+    return render_template('rate_n_review_on_business.html', title = '僱主評分及留言', form = form)
+
+
 # @ROUTE DEFINTION
 # NAME:     Registration (Business)
 # PATH:     /business_register
@@ -320,7 +374,7 @@ def business_post_job():
         # Ensure the generated job ID is unique
         validate_jid = Jobs.query.filter_by(jb_id=jid).first()
         while validate_jid:
-            uid = str(uuid4())
+            jid = str(uuid4())
             validate_jid = Jobs.query.filter_by(jb_id=jid).first()
 
         job = Jobs(
@@ -331,14 +385,14 @@ def business_post_job():
                 jb_expected_payment_days = form.job_expected_payment_days.data,
                 jb_bu_id = current_user.get_id(),
                 jb_jt_id = form.job_type.data,
-        )
+                )
 
         liid = str(uuid4())
 
         # Ensure the generated job listing ID is unique
         validate_liid = Jobs.query.filter_by(li_id = llid).first()
         while validate_liid:
-            uid = str(uuid4())
+            liid = str(uuid4())
             validate_liid = Jobs.query.filter_by(li_id = llid).first()
 
         job_list = JobListings(
@@ -386,6 +440,118 @@ def job(job_id):
     job = Jobs.query.get_or_404(job_id)
     listings = JobListings.query.filter_by(li_jb_id=job.jb_id).all()
     return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings)
+
+@app.route('/business/jobs/<string:job_id>/update')
+def business_job_update(job_id):
+    job = Jobs.query.filter_by(jb_id=job_id).first()
+
+    #TODO: loop over lisitings
+    listing = JobListings.query.filter_by(li_jb_id=job_id).first()
+    
+    PostJobForm = PostJobForm()
+    if form.validate_on_submit():
+        job.jb_description = form.job_description.data,
+        job.jb_title = form.job_title.data,
+        job.jb_expected_payment_days = form.job_expected_payment_days.data,
+        listing.li_starttime = form.list_start_time.data,
+        listing.li_endtime = form.list_end_time,
+        listing.li_salary_amt = form.list_salary,
+        listing.li_salary_type = form.list_salary_type,
+        listing.li_quota = form.list_quota
+
+        db.commit()
+        flash(f'您的工作已成功更新!', 'success')
+        
+        #TODO: back to last page
+    
+    return render_template('job_update.html', title='更新工作',PostJobForm=PostJobForm)
+
+@app.route('/business/jobs/<string:job_id>/delete')
+def business_job_delete(job_id):
+    job = job.query.get_or_404(job_id)
+    if form.validate_on_submit():
+        db.delete(job)
+        db.commit()
+        flash(f'您的工作已成功刪除!', 'success')
+    return redirect(url_for('home'))
+
+@app.route('/jobs/<string:job_id>/report/', methods =['GET','POST'])
+def report_job_abnormality(job_id):
+    form =  ReportAbnormalityForm()
+    if form.validate_on_submit():
+
+        abid = str(uuid4())
+
+        # Ensure the generated job ID is unique
+        validate_abid = Jobs.query.filter_by(jb_id=abid).first()
+        while validate_abid:
+            abid = str(uuid4())
+            validate_abid = Jobs.query.filter_by(jb_id=abid).first()
+
+        abnormality = Abnormality(
+                                abn_creationTime = datetime.utcnow(),
+                                abn_id = abid,
+                                abn_type = 'job_abnormality',
+                                abn_status = 'pending',
+                                abn_jb_id = job_id,
+                                abn_message = form.message.data,
+                                abn_ur_id = current_user.get_id()
+                                )
+        db.session.add(abnormality)
+        db.session.commit()
+
+        flash(f'您的反饋已經成功傳達!', 'success')
+        
+        #TODO: return to last page
+        
+    return render_template('report_abnormality.html', title='報錯', form = form)
+
+@app.route('/business/jobs/<string:job_id>/enrolled')
+def job_list_enrolled(job_id,list_id):
+    enrolled = Enrollments.query.filter_by(en_li_id=list_id).all()
+    return render_template('job_list_enrolled.html',title="錄用中", enrolled = enrolled)
+
+@app.route('/business/jobs/enrolled/<string:en_id>/rate',methods=['GET', 'POST'])
+def rate_n_review_on_individual(en_id):
+    enrollment = Enrollments.query.get_or_404(en_id)
+    application = JobApplications.query.filter_by(enrollment.en_ap_id).first()
+    listing = JobListings.query.filter_by(application.ap_li_id).first()
+    job = Jobs.query.filter_by(listing.li_jb_id).first()
+    job_id = job.jb_id
+    employee = IndividualUsers.query.filter_by(application.ap_iu_id).first()
+
+    form = RateAndReviewOnIndividualForm()
+    if form.validate_on_submit():
+
+        reid = str(uuid4())
+
+        # Ensure the generated job listing ID is unique
+        validate_reid = Jobs.query.filter_by(li_id = llid).first()
+        while validate_reid:
+            reid = str(uuid4())
+            validate_reid = Jobs.query.filter_by(li_id = llid).first()
+        review = Review(
+                    re_id = reid,
+                    re_creationTIME = datetime.utcnow(),
+                    re_receiver_id = employee.iu_id,
+                    re_sender_id = current_user.get_id(),
+                    re_comment = form.comment.data,
+                    jb_expected_paymenre_isFollowUpNeededt_days = 0,
+                    re_en_id = en_id
+                )
+        rating = Rating(
+                rate_re_id =  reid,
+                rate_rc_id = 'fa4d1fcc-e870-45ee-8803-09c6dff91daf',
+                rate_score = form.rating_score.data
+                        )
+        db.session.add(review)
+        db.session.add(rating)
+        db.session.commit()
+
+        flash(f'已成功為員工評分!', 'success')
+        #TODO: return to last page
+
+    return render_template('rate_n_review_on_individual.html', title='評分及評論僱員', form = form)
 
 # @ROUTE DEFINTION
 # NAME:     View Job Applicants
