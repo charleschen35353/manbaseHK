@@ -1,5 +1,5 @@
-<!-- TODO: Add Confirm Info and Accept TOC -->
-<!-- TODO: Add Client-side Validation -->
+<!-- TODO: Add TOS -->
+<!-- TODO: Modify Client-side Validation -->
 <!-- TODO: Add autocomplete to all input fields -->
 {% extends "layout.html" %}
 {% from "_formhelpers.html" import render_field %}
@@ -8,7 +8,7 @@
 
 <div class="content-switch center-grid d-flex justify-content-center align-items-center">
     <div class="transparent-watermark-background d-flex justify-content-center align-items-center"
-        style="min-height: 88vh;">
+        style="min-height: 88vh; width: 100vw;">
         <img src="{{url_for('static', filename='img/stories_secondary/business_register.gif')}}"
             alt="Login Animation" />
     </div>
@@ -16,9 +16,10 @@
         class="d-flex flex-column col-11 col-md-7 shadow rounded p-4 p-md-5 bus-reg justify-content-between mt-3"
         novalidate style="min-height: 75vh; background: rgba(255, 255, 255, 0.3);" id="business_register">
         {{ form.hidden_tag() }}
-        <div class="text-center">
-            <h2 class="text-secondary">馬上註冊 <span class="text-dark">man</span><span class="text-primary">base</span>
-                商業帳戶</h2>
+        <div class="text-center text-nowrap">
+            <h2 class="text-secondary">馬上註冊<wbr> <span class="text-dark">man</span><span
+                    class="text-primary">base</span>
+                <wbr>商業帳戶</h2>
             {% if form.errors %}
             {% for field, errors in form.errors.items() %}
             <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
@@ -26,144 +27,242 @@
             {% endif %}
         </div>
 
-        <!-- Section 1: Username, Password, Confirm Password -->
+        <!-- Section 1: Username, Password, Confirm Password （第一步，共三步）-->
         <div class="form-section" id="bus_reg_sec_1">
-            <h3 class="mt-2">賬戶資料（第一步，共三步）</h3>
+            <h3 class="mt-2">
+                賬戶資料
+            </h3>
+            <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
+                &#9679;&#9675;&#9675;&#9675;</h5>
+            <hr>
             <div class="form-group">
                 {{ render_field(form.user_login.label, class="form-control-label") }}
                 {% if form.user_login.errors %}
-                {{ render_field(form.user_login, class="form-control form-control-lg is-invalid")}}
-                <div class="invalid-feedback">
-                    {% for error in form.user_login.errors %}
-                    <small class='error'> {{error}} </small>
-                    {% endfor %}
-                </div>
+                {{ render_field(form.user_login, class="form-control form-control-lg is-invalid", id="bus_reg_account", placeholder="帳號")}}
                 {% else %}
-                {{ render_field(form.user_login,class="form-control form-control-lg" )}}
+                {{ render_field(form.user_login, class="form-control form-control-lg", id="bus_reg_account", placeholder="帳號")}}
                 {% endif %}
+                <div class="invalid-feedback d-block" id="bus_reg_account_errors">
+                    {% if form.user_login.errors %}
+                    {% for error in form.user_login.errors %}
+                    <p class='error'> {{error}} </p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <div class="form-group">
                 {{ render_field(form.password.label, class="form-control-label") }}
+
                 {% if form.password.errors %}
-                {{ render_field(form.password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif;")}}
-                <div class="invalid-feedback">
-                    {% for error in form.password.errors %}
-                    <small class='error'> {{error}} </small>
-                    {% endfor %}
-                </div>
+                {{ render_field(form.password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif, 'Noto Sans TC';", placeholder="密碼", id="bus_reg_password")}}
                 {% else %}
-                {{ render_field(form.password, class="form-control form-control-lg", style="font-family: sans-serif;")}}
+                {{ render_field(form.password, class="form-control form-control-lg", style="font-family: sans-serif, 'Noto Sans TC';", placeholder="密碼", id="bus_reg_password")}}
                 {% endif %}
+                <small class="form-text text-muted">密碼必須有至少 8 個字元</small>
+                <div class="invalid-feedback d-block" id="bus_reg_password_errors">
+                    {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                    <p class='error'> {{error}} </p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <div class="form-group">
                 {{ render_field(form.confirm_password.label, class="form-control-label") }}
                 {% if form.confirm_password.errors %}
-                {{ render_field(form.confirm_password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif;")}}
-                <div class="invalid-feedback">
-                    {% for error in form.confirm_password.errors %}
-                    <small class='error'> {{error}} </small>
-                    {% endfor %}
-                </div>
+                {{ render_field(form.confirm_password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif, 'Noto Sans TC';", placeholder="重新輸入密碼", id="bus_reg_repeat_password")}}
                 {% else %}
-                {{ render_field(form.confirm_password, class="form-control form-control-lg", style="font-family: sans-serif;") }}
+                {{ render_field(form.confirm_password, class="form-control form-control-lg", style="font-family: sans-serif, 'Noto Sans TC';", placeholder="重新輸入密碼", id="bus_reg_repeat_password") }}
                 {% endif %}
+                <div class="invalid-feedback d-block" id="bus_reg_repeat_password_errors">
+                    {% if form.confirm_password.errors %}
+                    {% for error in form.confirm_password.errors %}
+                    <p class='error'> {{error}} </p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <div class="row">
-                <button class="btn btn-secondary btn-block col-5 col-md-3 offset-7 offset-md-9" id="bus_reg_sec_1_next"
-                    type="button">下一步：公司資料 <i class="las la-arrow-circle-right"></i></button>
+                <button class="btn btn-secondary btn-block col-5 col-md-3 offset-7 offset-md-9 text-nowrap"
+                    id="bus_reg_sec_1_next" type="button">下一步：<wbr>公司資料 <i
+                        class="las la-arrow-circle-right"></i></button>
             </div>
         </div>
 
         <!-- Section 2: Company Info -->
         <div class="form-section" id="bus_reg_sec_2">
-            <h3 class="mt-2">公司資料（第二步，共三步）</h3>
+            <h3 class="mt-2">公司資料
+            </h3>
+            <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
+                &#9675;&#9679;&#9675;&#9675;</h5>
+            <hr>
             <div class="form-group">
                 {{ render_field(form.company_CName.label, class="form-control-label") }}
                 {% if form.company_CName.errors %}
-                {{  render_field(form.company_CName,class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.company_CName.errors %}
-                    <small class='error'> {{error}} </small>
-                    {% endfor %}
-                </div>
+                {{  render_field(form.company_CName,class="form-control form-control-lg is-invalid", id="bus_reg_company_name_chinese", placeholder="企業中文名字") }}
                 {% else %}
-                {{ render_field(form.company_CName,class="form-control form-control-lg") }}
+                {{ render_field(form.company_CName,class="form-control form-control-lg", id="bus_reg_company_name_chinese", placeholder="企業中文名字") }}
                 {% endif %}
+                <div class="invalid-feedback d-block" id="bus_reg_company_name_chinese_errors">
+                    {% if form.company_CName.errors %}
+                    {% for error in form.company_CName.errors %}
+                    <p class='error'> {{error}} </p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <div class="form-group">
                 {{ render_field(form.company_EName.label, class="form-control-label") }}
                 {% if form.company_EName.errors %}
-                {{  render_field(form.company_EName,class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.company_EName.errors %}
-                    <small class='error'> {{error}} </small>
-                    {% endfor %}
-                </div>
+                {{  render_field(form.company_EName,class="form-control form-control-lg is-invalid", id="bus_reg_company_name_english", placeholder="Company English Name") }}
                 {% else %}
-                {{ render_field(form.company_EName,class="form-control form-control-lg") }}
+                {{ render_field(form.company_EName,class="form-control form-control-lg", id="bus_reg_company_name_english", placeholder="Company English Name") }}
                 {% endif %}
+                <small class="form-text text-muted">可選填</small>
+                <div class="invalid-feedback d-block" id="bus_reg_company_name_english_errors">
+                    {% if form.company_EName.errors %}
+                    {% for error in form.company_EName.errors %}
+                    <p class='error'> {{error}} </p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <div class="row">
-                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5" id="bus_reg_sec_2_prev"
-                    type="button"><i class="las la-arrow-circle-left"></i> 上一步：賬戶資料</button>
-                <button class="btn btn-secondary col-5 col-md-3 offset-1" id="bus_reg_sec_2_next" type="button">下一步：聯絡資料
+                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
+                    id="bus_reg_sec_2_prev" type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：<wbr>賬戶資料</button>
+                <button class="btn btn-secondary col-5 col-md-3 offset-1 text-nowrap" id="bus_reg_sec_2_next"
+                    type="button">下一步：<wbr>聯絡資料
                     <i class="las la-arrow-circle-right"></i> </button>
             </div>
         </div>
 
         <!-- Section 3: Contact Info -->
         <div class="form-section" id="bus_reg_sec_3">
-            <h3 class="mt-2">聯絡資料（第三步，共三步）</h3>
+            <h3 class="mt-2">聯絡資料</h3>
+            <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
+                &#9675;&#9675;&#9679;&#9675;</h5>
+            <hr>
             <div class="form-group">
                 {{ render_field(form.company_contact_person.label, class="form-control-label") }}
                 {% if form.company_contact_person.errors %}
-                {{ render_field(form.company_contact_person, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.company_contact_person.errors %}
-                    <small class='error'> {{error}} </small>
-                    {% endfor %}
-                </div>
+                {{ render_field(form.company_contact_person, class="form-control form-control-lg is-invalid", id="bus_reg_person_in_charge", placeholder="聯絡人") }}
                 {% else %}
-                {{ render_field(form.company_contact_person, class="form-control form-control-lg") }}
+                {{ render_field(form.company_contact_person, class="form-control form-control-lg", id="bus_reg_person_in_charge", placeholder="聯絡人") }}
                 {% endif %}
+                <div class="invalid-feedback d-block" id="bus_reg_person_in_charge_errors">
+                    {% if form.company_contact_person.errors %}
+                    {% for error in form.company_contact_person.errors %}
+                    <p class='error'> {{error}} </p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <div class="form-group">
                 {{ render_field(form.company_contact_number.label, class="form-control-label") }}
 
-                {% if form.company_contact_number.errors %}
-                {{ render_field(form.company_contact_number, class="form-control form-control-lg is-invalid")}}
-                <div class="invalid-feedback">
-                    {% for error in form.company_contact_number.errors %}
-                    <small class='error'> {{error}} </small>
-                    {% endfor %}
+                <div class="d-flex align-items-center">
+                    <p class="m-0 mr-2">(+852) </p>
+                    <div class="d-flex w-100">
+                        {% if form.company_contact_number.errors %}
+                        {{ render_field(form.company_contact_number, class="form-control form-control-lg is-invalid", inputmode="number", type="text", maxlength="8", id="bus_reg_phone_num", pattern="[0-9]{8}", placeholder="00000000")}}
+                        {% else %}
+                        {{ render_field(form.company_contact_number, class="form-control form-control-lg", inputmode="number", type="text", maxlength="8", id="bus_reg_phone_num", pattern="[0-9]{8}", placeholder="00000000") }}
+                        {% endif %}
+                    </div>
                 </div>
-                {% else %}
-                {{ render_field(form.company_contact_number, class="form-control form-control-lg", pattern="[0-9]*", inputmode="number", type="text", maxlength="8") }}
-                {% endif %}
+
+                <div class="invalid-feedback d-block" id="bus_reg_phone_num_errors">
+                    {% if form.company_contact_number.errors %}
+                    {% for error in form.company_contact_number.errors %}
+                    <p class='error'> {{error}} </p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <div class="form-group">
                 {{ render_field(form.company_email.label, class="form-control-label") }}
                 {% if form.company_email.errors %}
-                {{  render_field(form.company_email, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.company_email.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
+                {{  render_field(form.company_email, class="form-control form-control-lg is-invalid", id="bus_reg_email", placeholder="example@email.com") }}
                 {% else %}
-                {{ render_field(form.company_email, class="form-control form-control-lg") }}
+                {{ render_field(form.company_email, class="form-control form-control-lg", id="bus_reg_email", placeholder="example@email.com") }}
                 {% endif %}
+                <div class="invalid-feedback d-block" id="bus_reg_email_errors">
+                    {% if form.company_email.errors %}
+                    {% for error in form.company_email.errors %}
+                    <p class="error">{{ error }}</p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <!-- 驗證碼button moved to suspended_code.html-->
 
             <div class="form-group row">
-                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5" id="bus_reg_sec_3_prev"
-                    type="button"><i class="las la-arrow-circle-left"></i> 上一步：公司資料</button>
+                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
+                    id="bus_reg_sec_3_prev" type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：<wbr>公司資料</button>
                 <!-- TODO: Find a way to put a check mark after the label -->
-                {{ render_field(form.submit, class="btn btn-secondary col-5 col-md-3 offset-1") }}
+                <button class="btn btn-secondary col-5 col-md-3 offset-1 text-nowrap" id="bus_reg_sec_3_next"
+                    type="button">下一步：確認<wbr>資料及條款
+                    <i class="las la-arrow-circle-right"></i> </button>
             </div>
         </div>
-        <p class="text-muted text-center">
+        <div class="form-section" id="bus_reg_sec_4">
+            <h3 class="mt-2 text-nowrap">確認資料<wbr>及<wbr>條款
+            </h3>
+            <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
+                &#9675;&#9675;&#9675;&#9679;</h5>
+            <hr>
+            <h5 class="mt-2">賬戶資料</h5>
+            <div class="row my-3 align-items-center">
+                <div class="col-6 col-md-4 text-right">帳號:</div>
+                <strong class="col-6 col-md-8 text-secondary text-break bus-reg-confirm"
+                    id="confirm_account_name"></strong>
+            </div>
+            <hr>
+            <h5 class="mt-2">公司資料</h5>
+            <div class="row my-3 align-items-center">
+                <div class="col-6 col-md-4 text-right">企業中文名字:</div>
+                <strong class="col-6 col-md-8 text-secondary text-break bus-reg-confirm"
+                    id="confirm_company_chinese_name"></strong>
+            </div>
+            <div class="row my-3 align-items-center">
+                <div class="col-6 col-md-4 text-right">企業英文名字:</div>
+                <strong class="col-6 col-md-8 text-secondary text-break bus-reg-confirm"
+                    id="confirm_company_english_name"></strong>
+            </div>
+            <hr>
+            <h5 class="mt-2">聯絡資料</h5>
+            <div class="row my-3 align-items-center">
+                <div class="col-6 col-md-4 text-right">聯絡人:</div>
+                <strong class="col-6 col-md-8 text-secondary text-break bus-reg-confirm"
+                    id="confirm_person_in_charge"></strong>
+            </div>
+            <div class="row my-3 align-items-center">
+                <div class="col-6 col-md-4 text-right">聯絡電話:</div>
+                <strong class="col-6 col-md-8 text-secondary text-break bus-reg-confirm"
+                    id="confirm_phone_num"></strong>
+            </div>
+            <div class="row my-3 align-items-center">
+                <div class="col-6 col-md-4 text-right">公司電子郵箱:</div>
+                <strong class="col-6 col-md-8 text-secondary text-break bus-reg-confirm"
+                    id="confirm_business_email"></strong>
+            </div>
+            <hr>
+            <div class="row mx-2 my-3 align-items-center form-check">
+                {{ render_field(form.business_tos, class="form-check-input", id="agree_tos") }}
+                <label for="agree_tos" class="text-secondary text-break bus-reg-confirm form-check-label">我已經閱讀並同意<a
+                        href="#">《使用條款及細則》</a>。</label>
+            </div>
+            <div class="form-group row">
+                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
+                    id="bus_reg_sec_4_prev" type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：<wbr>聯絡資料</button>
+                <!-- TODO: Find a way to put a check mark after the label -->
+                {{ render_field(form.submit, class="btn btn-secondary col-5 col-md-3 offset-1", id="bus_reg_submit") }}
+            </div>
+        </div>
+        <p class="text-muted text-center my-2">
             已經擁有帳號？ <a class="ml-2 text-secondary" href="{{ url_for('login') }}">登入</a>
         </p>
     </form>

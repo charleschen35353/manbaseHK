@@ -45,14 +45,15 @@ class IndividualRegistrationForm(BaseForm):
     individual_alias = StringField('暱稱', validators = [])
     individual_HKID = StringField('身分證字母加首四位數字', validators = [DataRequired()])
     # DEBUG: removed validators
-    individual_gender = RadioField('性別', choices=[(0, "Female"), (1, "Male")], validators=[], coerce=int)
+    individual_gender = RadioField('性別', choices=[(0, "女性"), (1, "男性")], validators=[], coerce=int)
     individual_birthday = DateField('出生日期', validators=[DataRequired()])
     # DEBUG: removed validators
-    individual_educationLevel = RadioField('教育程度', choices=[(0, "Pracitcally Useless"), (1, "Graduated from an awful Primary School"), (2, "Graduated from secondary school, but serve no purpose to society"), (3, "Graduated from a \"university\", but not a proper one"), (4, "Serve some purposes to the society")],  validators=[], coerce=int)
+    individual_educationLevel = RadioField('教育程度', choices=[(0, "小學畢業或以下"), (1, "完成中三"), (2, "中學畢業"), (3, "大學（本科）畢業"), (4, "大學（碩士或以上）畢業")],  validators=[], coerce=int)
     individual_language_Cantonese = BooleanField('廣東話', validators=[])
     individual_language_English = BooleanField('英文', validators=[])
     individual_language_Putonghua = BooleanField('普通話', validators=[])
-    individual_language_Other = StringField('其他 (Optional)', validators=[])
+    individual_language_Other = StringField('其他', validators=[])
+    individual_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
 
     submit = SubmitField('註冊個人帳戶')
 
@@ -103,7 +104,7 @@ class ApplyJobForm():
 class BusinessRegistrationForm(BaseForm):
 
     user_login = StringField('帳號',
-                           validators=[DataRequired(message = '名字不能為空'), Length(min=5, max=20)])
+                           validators=[DataRequired(message = '帳號不能為空'), Length(min=5, max=20)])
     password = PasswordField('密碼',
                              validators=[DataRequired(message = '密碼不能為空'), Length(min=5, max=32)])
     confirm_password = PasswordField('重新輸入密碼',
@@ -120,8 +121,8 @@ class BusinessRegistrationForm(BaseForm):
     # TODO: Invalid email address should have error messages in Traditional Chinese, not Simplified Chinese
     company_email = StringField('公司電子郵箱',
                                 validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
-
-    submit = SubmitField('註冊')
+    business_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
+    submit = SubmitField('註冊商業帳戶')
 
     def validate_user_login(self, user_login):
         user = Users.query.filter_by(ur_login=user_login.data).first()

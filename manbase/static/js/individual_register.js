@@ -75,6 +75,7 @@ const individual_register_on_load = () => {
 
     // Auto-Formatting
 
+    /* Suspending
     $('#ind_reg_tel_num').on("change paste keyup", (el) => {
         let current_value = $(el.target).val();
         const regex = /[0-9]{5,}/g;
@@ -95,4 +96,5 @@ const individual_register_on_load = () => {
             $(el.target).val(current_value.substr(0, 4) + "-" + current_value.slice(4));
         }
     });
+    */
 };
