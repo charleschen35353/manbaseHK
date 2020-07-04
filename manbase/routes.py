@@ -5,7 +5,7 @@ import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
-from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm
+from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm,BusinessUpdateProfileForm,ConfirmAttendanceForm
 from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings, JobApplications, Enrollments, Review, Rating, Abnormality
 from datetime import datetime
 from uuid import uuid4
@@ -169,6 +169,47 @@ def individual_register():
         flash(f'{form.individual_CName.data} 的個人帳號已成功註冊!', 'success')
         return redirect(url_for('home'))
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
+
+@app.route('/individual/profile/<string:iuid>')
+def individual_profile(iuid):
+    profile = IndividualUsers.query.get_or_404(iuid)
+    reviews = Review.query.filter_by(re_receiver_id=iuid).all()
+
+    #create nested dictionary storing rating info of each review
+    for review in reviews:
+        ratings = Rating.query.filter_by(rate_re_id=review.re_id).all()
+        for rating in ratings:
+            review[rating.rate_rc_id] = rating
+    
+    return render_template('individual_profile.html',title ='我的個人檔案',profile = profile, reviews = reviews)
+
+@app.route('/individual/profile/<string:iuid>/update', methods =['POST','GET'])
+def individual_profile_update(iuid):
+    profile = IndividualUsers.query.get_or_404(iuid)
+    user = Users.query.get_or_404(iuid)
+    
+    form = IndividualUpdateProfileForm()
+    if form.validate_on_submit():
+        #TODO: add business address
+        profile.iu_phone = form.individual_contact_number.data
+        profile.iu_email = form.individual_email.data
+        profile.iu_CName = form.individual_CName.data
+        profile.iu_EName = form.individual_EName.data
+        profile.iu_alias = form.individual_alias.data
+        profile.iu_HKID = form.individual_HKID.data
+        if form.old_password.data and form.new_password.data and (form.old_password.data!=form.new_password.data) and (form.confirm_new_password.data == form.new_password.data):
+            old_hashed_password = bcrypt.generate_password_hash(form.old_password.data).decode('utf-8')
+            new_hashed_password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+            if old_hased_password == user.ur_password_hash:
+                user.ur_password_hash = new_hashed_password
+                flash('您的密碼已成功更新!', 'success')
+            else:
+                flash('wrong password')
+        db.commit()
+        flash('您的個人資料已成功更新!', 'success')
+        #TODO: return to last page
+
+    return render_template('business_profile_update.html', title='更新公司資料', form = form )
 
 # @ROUTE DEFINTION
 # NAME:     View Job Board (Individual)
@@ -348,6 +389,43 @@ def business_register():
         return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
 
+@app.route('/business/profile/<string:bid>')
+def business_profile(bid):
+    profile = BusinessUsers.query.get_or_404(bid)
+    reviews = Review.query.filter_by(re_receiver_id=bid).all()
+
+    #create nested dictionary storing rating info of each review
+    for review in reviews:
+        ratings = Rating.query.filter_by(rate_re_id=review.re_id).all()
+        for rating in ratings:
+            review[rating.rate_rc_id] = rating
+    
+    return render_template('business_profile.html',title ='我的公司檔案',profile = profile, reviews = reviews)
+
+@app.route('/business/profile/<string:bid>/update', methods =['POST','GET'])
+def business_profile_update(bid):
+    profile = BusinessUsers.query.get_or_404(bid)
+    user = Users.query.get_or_404(bid)
+    
+    form = BusinessUpdateProfileForm()
+    if form.validate_on_submit():
+        #TODO: add business address
+        profile.bu_address = form.company_address.data
+        bu_email = form.company_email.data
+        if form.old_password.data and form.new_password.data and (form.old_password.data!=form.new_password.data) and (form.confirm_new_password.data == form.new_password.data):
+            old_hashed_password = bcrypt.generate_password_hash(form.old_password.data).decode('utf-8')
+            new_hashed_password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+            if old_hased_password == user.ur_password_hash:
+                user.ur_password_hash = new_hashed_password
+                flash('您的已成功更新!', 'success')
+            else:
+                flash('wrong password')
+        db.commit()
+        flash('您的公司資料已成功更新!', 'success')
+        #TODO: return to last page
+
+    return render_template('business_profile_update.html', title='更新公司資料', form = form )
+
 # @ROUTE DEFINTION
 # NAME:     Registration (Business)
 # PATH:     /business_post_job
@@ -510,6 +588,19 @@ def report_job_abnormality(job_id):
 def job_list_enrolled(job_id,list_id):
     enrolled = Enrollments.query.filter_by(en_li_id=list_id).all()
     return render_template('job_list_enrolled.html',title="錄用中", enrolled = enrolled)
+
+@app.route('/business/jobs/enrolled/<string:en_id>/attendance',methods=['GET', 'POST'])
+def confirm_attendance(en_id):
+    enrollment = Enrollments.query.get_or_404(en_id)
+    form = ConfirmAttendanceForm()
+    if form.validate_on_submit():
+        enrollment.en_present_status = form.status.data
+        db.commit()
+        flash('已成功更新出席狀態','success')
+
+        #TODO: return to last page
+    
+    return render_template('confirm_attendance.html', title='確認出席', form = form)
 
 @app.route('/business/jobs/enrolled/<string:en_id>/rate',methods=['GET', 'POST'])
 def rate_n_review_on_individual(en_id):

@@ -13,7 +13,7 @@
         <h4 class="m-0">已發布的工作</h4>
     </a>
 
-    <a href="{{url_for('business_profile')}}" class="btn btn-primary btn-large p-2">
+    <a href="{{url_for('business_profile',bid=current_user.get_id())}}" class="btn btn-primary btn-large p-2">
         <h4 class="m-0">我的公司檔案</h4>
     </a>
     

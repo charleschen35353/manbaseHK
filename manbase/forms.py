@@ -72,6 +72,24 @@ class IndividualRegistrationForm(BaseForm):
         if user:
             raise ValidationError('此個人電郵已存在，請重新輸入。')
 
+class IndividualUpdateProfileForm(IndividualRegistrationForm):
+    individual_contact_number = IntegerField('聯絡電話',
+                                        validators = [])
+    individual_email = StringField('電子郵箱',
+                                validators=[])
+    individual_CName = StringField('中文全名',
+                                validators = [])
+    individual_EName = StringField('英文名字', validators = [])
+    individual_alias = StringField('暱稱', validators = [])
+    individual_HKID = StringField('身分證字母加首四位數字', validators = [])
+    old_password = PasswordField('舊密碼',
+                             validators=[])
+    new_password = PasswordField('新密碼',
+                             validators=[])
+    confirm_new_password = PasswordField('重新輸入新密碼',
+                             validators=[EqualTo('password', message="must match password")])
+    submit = SubmitField('更新個人帳戶')
+
 class UpdateAccountForm(BaseForm):
 
     username = StringField('Username',
@@ -142,6 +160,19 @@ class BusinessRegistrationForm(BaseForm):
             raise ValidationError(
                 '此企業電郵已存在，請重新輸入。')
 
+class BusinessUpdateProfileForm(BusinessRegistrationForm):
+    company_address = StringField('公司地址',
+                            validators=[])
+    company_email = StringField('電子郵箱',
+                                validators=[Email()])
+    old_password = PasswordField('舊密碼',
+                             validators=[])
+    new_password = PasswordField('新密碼',
+                             validators=[])
+    confirm_new_password = PasswordField('重新輸入新密碼',
+                             validators=[EqualTo('password', message="must match password")])
+    submit = SubmitField('更新商業帳戶資料')
+
 class PostJobForm(BaseForm):
     job_title = StringField('職位名稱',
                             validators=[DataRequired(message = '職位名稱不能為空')])
@@ -172,6 +203,11 @@ class RateAndReviewOnIndividualForm():
     comment = StringField('表現評價',
                         validators = [DataRequired(message = '表現評價不能為空')])
     submit = SubmitField('遞交評論')
+
+class ConfirmAttendanceForm():
+    status = RadioField('出席狀態',
+                        validators = [DataRequired(message = '出席狀態不能為空')])
+    submit = SubmitField('更新出席狀態')
 
 class RateAndReviewOnBusinessForm():
     comment = StringField('留言',
