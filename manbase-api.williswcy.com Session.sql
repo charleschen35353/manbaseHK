@@ -117,10 +117,13 @@ CREATE TABLE abnormality(
     abn_type TINYTEXT NOT NULL,
     abn_status TINYTEXT NOT NULL,
     abn_jb_id VARCHAR(255) NOT NULL,
-    abn_li_id VARCHAR(255) NOT NULL,
+    abn_li_id VARCHAR(255),
+    abn_message VARCHAR(255) NOT NULL,
+    abn_ur_id VARCHAR(255) NOT NULL,
 
     FOREIGN KEY (abn_li_id) REFERENCES job_listings(li_id),
     FOREIGN KEY (abn_jb_id) REFERENCES jobs(jb_id),
+    FOREIGN KEY (abn_ur_id) REFERENCES users(ur_id),
 
     CONSTRAINT abn_type_check CHECK(
         abn_type IN ('bug_report','job_abnormality', 'others')),
@@ -149,8 +152,8 @@ CREATE TABLE job_applications(
 CREATE TABLE enrollments(
     en_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     en_id VARCHAR(255) PRIMARY KEY,
-    en_is_paid TINYINT(1) NOT NULL,
-    en_present_status TINYTEXT NOT NULL,
+    en_is_paid TINYINT(1),
+    en_present_status TINYTEXT,
     en_li_id VARCHAR(255) NOT NULL,
     en_ap_id VARCHAR(255) NOT NULL,
     

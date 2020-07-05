@@ -1,0 +1,29 @@
+{% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+    <h1> 公司中文名字: {{profile.bu_CName}} </h1>>
+    <h1> 公司英文名字: {{profile.bu_ind_id}} </h1>>
+    <h1> 業務產業: {{profile.bu_ind_id}} </h1>>
+    <h1> 公司地址: {{profile.bu_address}} </h1>>
+    <h1> 公司負責人: {{profile.bu_picName}} </h1>>
+    <h1> 公司logo: {{profile.bu_businessLogo}} </h1>>
+
+    {% if not reviews %}
+        <h1> no comment on you G</h1>
+    {% endif %}
+
+    {% for review in reviews %}
+        <h1> 發佈時間: {{review.re_creationTime}} </h1>>
+        <h1> 發佈者: {{review.re_sender_id}} </h1>>
+        <h1> 工作量評分: {{review["68469ba5-cf13-4436-a994-62376d61498e"]}} </h1>>
+        <h1> 工作環境評分: {{review["57169219-ca4f-4712-a6a5-6fa2fce66182"]}} </h1>>
+        <h1> 管理人員評分: {{review["7f0417d3-26ad-4708-ad30-d32e13d4bfba"]}} </h1>>
+        <h1> 評論: {{review.re_comment}} </h1>>
+
+    {% endfor %}
+
+    <a href="{{url_for('business_profile_update',bid=current_user.get_id())}}" class="btn btn-primary btn-large p-2">
+        <h4 class="m-0">更新公司檔案</h4>
+    </a>
+
+{% endblock content %}

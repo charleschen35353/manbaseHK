@@ -2,6 +2,9 @@
 {% from "_formhelpers.html" import render_field %}
 
 {% block content %}
+    {% if not jobs %}
+        <p> no jobs at all</p>
+    {% endif %}
     {% for job in jobs %}
         <article class="media content-section">
           <div class="media-body">
@@ -12,6 +15,8 @@
             <h2><a class="article-title" href="{{ url_for('job', job_id=job.jb_id) }}">{{ job.jb_title }}</a></h2>
             <p class="article-content">{{ job.jb_description }}</p>
             <p>Salary: #blank </p>
+
+            <h2><a class="article-title" href="{{ url_for('business_profile', bid=job.jb_bu_id) }}"> 發布者{{ job.jb_bu_id }}</a></h2>
           </div>
         </article>
     {% endfor %}

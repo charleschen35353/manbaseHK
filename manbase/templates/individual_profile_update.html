@@ -1,0 +1,152 @@
+
+{% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+    <div class = 'content-section'> 
+        <form method = 'POST' action = ''>
+            {{ form.hidden_tag() }}
+                <fieldset class='form-group'>
+                    <div class="text-center">
+                        <h2 class="text-secondary">更新個人帳戶資料 <span class="text-dark">man</span>
+                        {% if form.errors %}
+                        {% for field, errors in form.errors.items() %}
+                        <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.individual_contact_number.label(class="form-control-label") }}
+                        {% if form.individual_contact_number.errors %}
+                        {{ render_field(form.individual_contact_number, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.individual_contact_number.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.individual_contact_number,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.individual_email.label(class="form-control-label") }}
+                        {% if form.individual_email.errors %}
+                        {{ render_field(form.individual_email, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.individual_email.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.individual_email,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.individual_CName.label(class="form-control-label") }}
+                        {% if form.individual_CName.errors %}
+                        {{ render_field(form.individual_CName, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.individual_CName.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.individual_CName,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.individual_EName.label(class="form-control-label") }}
+                        {% if form.individual_EName.errors %}
+                        {{ render_field(form.individual_EName, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.individual_EName.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.individual_EName,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.individual_alias.label(class="form-control-label") }}
+                        {% if form.individual_alias.errors %}
+                        {{ render_field(form.individual_alias, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.individual_alias.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.individual_alias,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.individual_HKID.label(class="form-control-label") }}
+                        {% if form.individual_HKID.errors %}
+                        {{ render_field(form.individual_HKID, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.individual_HKID.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.individual_HKID,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.old_password.label(class="form-control-label") }}
+                        {% if form.old_password.errors %}
+                        {{ render_field(form.old_password, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.old_password.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.old_password,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.new_password.label(class="form-control-label") }}
+                        {% if form.new_password.errors %}
+                        {{ render_field(form.new_password, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.new_password.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.new_password,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.confirm_new_password.label(class="form-control-label") }}
+                        {% if form.confirm_new_password.errors %}
+                        {{ render_field(form.confirm_new_password, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.confirm_new_password.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ render_field(form.confirm_new_password,class="form-control form-control-lg" )}}
+                        {% endif %}
+                    </div>
+
+                </fieldset>
+                
+                <div class="form-group">
+                    {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
+                    }}
+                </div>
+        </form>
+    </div>
+{% endblock content %}

@@ -2,7 +2,14 @@
 {% from "_formhelpers.html" import render_field %}
 
 {% block content %}
-    {% for enrollment in enrollments%}
+    {% if not enrollments %}
+        <p> no enrollments at all</p>
+    {% endif%}
+
+    {% for enroll in enrollments %}
         <p>{{enrollment.en_id}}</p>
+        <a href="{{url_for('rate_n_review_on_business',en_id=enroll.en_id)}}" class="btn btn-primary btn-large p-2">
+            <h4 class="m-0">評價僱主及完成工作</h4>
+        </a>
     {% endfor %}
 {% endblock content %}
