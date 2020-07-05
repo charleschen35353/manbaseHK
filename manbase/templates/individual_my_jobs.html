@@ -1,0 +1,13 @@
+{% extends "layout.html" %} 
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+
+    <a href="{{url_for('individual_applied_jobs')}}" class="btn btn-primary btn-large p-2">
+        <h4 class="m-0">申請中的工作</h4>
+    </a>
+    <a href="{{url_for('individual_enrolled_jobs')}}" class="btn btn-primary btn-large p-2">
+        <h4 class="m-0">正在進行中的工作</h4>
+    </a>
+
+{% endblock content %}

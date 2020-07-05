@@ -75,11 +75,14 @@ CREATE TABLE individual_users(
 CREATE TABLE jobs(
     jb_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     jb_id VARCHAR(255) PRIMARY KEY,
-    jb_decription TEXT(20000) NOT NULL,
+    jb_title VARCHAR(255) NOT NULL,
+    jb_description TEXT(20000) NOT NULL,
     jb_isDeleted TINYINT(1) DEFAULT 0,
     jb_expected_payment_days INT(36) NOT NULL,
     jb_bu_id VARCHAR(255) NOT NULL,
+    jb_jt_id VARCHAR(255) NOT NULL,
 
+    FOREIGN KEY(jb_jt_id) REFERENCES job_type(jt_id),
     FOREIGN KEY (jb_bu_id) REFERENCES business_users(bu_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
@@ -91,10 +94,8 @@ CREATE TABLE job_listings(
     li_salary_amt INT(255) NOT NULL,
     li_salary_type TINYTEXT NOT NULL,
     li_quota INT(36) NOT NULL,
-    li_jt_id VARCHAR(255) NOT NULL,
 
     FOREIGN KEY(li_jb_id) REFERENCES jobs(jb_id),
-    FOREIGN KEY(li_jt_id) REFERENCES job_type(jt_id),
     CONSTRAINT li_salary_type CHECK(
         li_salary_type IN ('hour rate','lump sum'))
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;

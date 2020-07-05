@@ -1,0 +1,31 @@
+{% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+<article class="media content-section">
+    <div class="media-body">
+        <legend class = 'border-bottom mb-4'>申請人</legend>
+        <div class="article-metadata">
+            <a class="mr-2" href="#"> Name: {{ applicant.iu_CName }}</a>
+            <a class="mr-2" href="#"> Name: {{ applicant.iu_gender }}</a>
+            <a class="mr-2" href="#"> Name: {{ applicant.iu_selfIntroduction }}</a>
+        </div>
+    </div>
+    <div class = 'content-section'> 
+        <form method = 'POST' action = ''>
+            {{ form.hidden_tag() }}
+            <fieldset class='form-group'>
+            </fieldset>
+            <div class="form-group">
+                {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
+                }}
+            </div>
+            
+        </form>
+    </div>
+</article>
+
+<a href="{{url_for('job_list_applications',job_id = job_id, list_id = list_id)}}" class="btn btn-primary btn-large p-2">
+    <h4 class="m-0">返回</h4>
+</a>
+
+{% endblock content %}

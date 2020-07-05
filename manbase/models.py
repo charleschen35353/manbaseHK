@@ -17,7 +17,8 @@ engine = create_engine("mysql+pymysql://public:b05qv-x4xca@test.manbasehk.com:33
 class Users(Base, UserMixin):
     __table_name__ = 'users'
     def get_id(self):
-        return (self.ur_id)
+        return str(self.ur_id)
+        
 
 Base.prepare(engine, reflect=True)
 

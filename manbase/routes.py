@@ -2,22 +2,13 @@ import secrets
 import os
 import cv2
 import matplotlib.image as pltimg
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
-from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm
-from manbase.models import Users, BusinessUsers, IndividualUsers
+from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm
+from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings, JobApplications, Enrollments
 from datetime import datetime
 from uuid import uuid4
-
-posts = [ #fake db return
-	{
-		'author': "Charles Chen",
-		'title': "Home Page Prototype",
-        	'content': "This is the home page of ManBase",
-       		'date_posted': "May 6, 2020",
-	} 
-]
 
 @login_manager.user_loader
 def load_user(ur_id):
@@ -32,19 +23,46 @@ def load_user(ur_id):
 # PATH:     /
 # METHOD:   GET
 # DESC.:    The homepage where the public will see
-# @ROUTE DEFINTION
-# NAME:     Member Homepage (TODO)
-# PATH:     /
-# METHOD:   GET
-# DESC.:    The homepage where the member will see
 @app.route('/')
 @app.route('/home')
 def home():
     if current_user.is_authenticated:
         # TODO: Get the user info and render it into the homepage
-        return render_template('home.html', posts=posts)
+        uid = current_user.get_id()
+        if BusinessUsers.query.filter_by(bu_id = uid).first():
+            return redirect(url_for('business_home'))
+        elif IndividualUsers.query.filter_by(iu_id = uid).first():
+            return redirect(url_for('individual_home'))
+        else:
+            return render_template('home.html', posts=posts)
     else:
         return render_template('index.html')
+    
+# @ROUTE DEFINTION
+# NAME:     Business Homepage
+# PATH:     /home_business
+# METHOD:   GET
+# DESC.:    The homepage where the business user will see
+@app.route('/home/business')
+@login_required
+def business_home():
+    if BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
+        return render_template('business_home.html')
+    else:
+        return render_template('404.html'), 404
+
+# @ROUTE DEFINTION
+# NAME:     Individual Homepage
+# PATH:     /home_individual
+# METHOD:   GET
+# DESC.:    The homepage where the individual user will see
+@app.route('/home/individual')
+@login_required
+def individual_home():
+    if IndividualUsers.query.filter_by(iu_id = current_user.get_id()).first():
+        return render_template('individual_home.html')
+    else:
+        return render_template('404.html'), 404
 
 # @ROUTE DEFINTION
 # NAME:     About Page
@@ -106,7 +124,7 @@ def register():
 # METHOD:   GET / POST
 # DESC.:    [GET]   The page where the individual user creates their account
 #           [POST]  The method which validates the registration info and register the user
-@app.route("/individual_register",methods=['GET', 'POST'])
+@app.route("/register/individual",methods=['GET', 'POST'])
 def individual_register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -152,15 +170,96 @@ def individual_register():
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
 
 # @ROUTE DEFINTION
+# NAME:     View Job Board (Individual)
+# PATH:     /job_board
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users view listed job
+@app.route('/individual/job_board', methods=['POST'])
+def view_job_board():
+    jobs = Jobs.query.all()
+    return render_template('job_board.html', title='工作板', jobs = jobs)
+
+# @ROUTE DEFINTION
+# NAME:     Apply Job
+# PATH:     /jobs/<job_id>/apply
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users view listed job
+@app.route('/individual/job_board/<string:job_id>/apply', methods=['GET','POST'])
+def apply_job(job_id, list_id):
+
+    #if the user is not current user, return 404
+    if not IndividualUsers.query.filter_by(iu_id = current_user.get_id()):
+        return render_template('404.html'), 404
+
+    form = ApplyJobForm()
+    
+    if form.validate_on_submit():
+        apid = str(uuid4())
+
+        # Ensure the generated application ID is unique
+        validate_apid = JobListings.query.filter_by(ap_id=apid).first()
+        while validate_apid:
+            apid = str(uuid4())
+            validate_apid = Jobs.query.filter_by(jb_id=jid).first()
+
+        application = JobApplications(
+                                    ap_creationTime = datetime.utcnow(),
+                                    ap_id = apid,
+                                    ap_status = 'pending',
+                                    ap_li_id = list_id,
+                                    ap_iu_id = current_user.get_id()
+                                    )
+        db.session.add(application)
+        db.session.commit()
+        flash(f'您已成功遞交工作申請!', 'success')
+        return redirect(url_for('view_job_board'))
+    return render_template('apply_job.html', title='申請工作',form = form,job = job_id, list = list_id)
+
+# @ROUTE DEFINTION
+# NAME:     View my jobs (individual)
+# PATH:     /individual/jobs
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users can view their jobs
+@app.route('/individual/jobs')
+def individual_my_jobs(iu_id):
+    return render_template('individual_my_jobs.html',title='我的工作')
+
+# @ROUTE DEFINTION
+# NAME:     View applied jobs (individual)
+# PATH:     /individual/jobs
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users can view their applied jobs
+@app.route('/individual/jobs/applied')
+def individual_applied_jobs():
+    applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
+    return render_template('individual_applied_jobs.html',title ='我的工作',applications=applications)
+
+# @ROUTE DEFINTION
+# NAME:     View enrolled jobs (individual)
+# PATH:     /individual/jobs/enrolled
+# METHOD:   GET
+# DESC.:    [GET]   The page where the individual users can view their applied jobs
+@app.route('/individual/jobs/enrolled')
+def individual_enrolled_jobs():
+    applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
+    enrollments = []
+    for application in applications:
+        nested_enrollments.append(Enrollments.query.filter_by(ap_iu_id=current_user.get_id).all())
+    enrollments = lambda l: [item for sublist in l for item in sublist]
+    return render_template('individual_enrolled_jobs.html',title ='我的工作',enrollments=enrollments)
+
+
+# @ROUTE DEFINTION
 # NAME:     Registration (Business)
 # PATH:     /business_register
 # METHOD:   GET / POST
 # DESC.:    [GET]   The page where the business user creates their account
 #           [POST]  The method which validates the registration info and register the user
-@app.route("/business_register",methods=['GET', 'POST'])
+@app.route("/register/business",methods=['GET', 'POST'])
 def business_register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
+
     form = BusinessRegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -178,6 +277,7 @@ def business_register():
                     ur_login = form.user_login.data,
                     ur_password_hash = hashed_password
                     )
+
         business_user = BusinessUsers(
                                     bu_id = uid,
                                     bu_address = 'NS', #not specified
@@ -193,6 +293,151 @@ def business_register():
         flash(f'{form.company_CName.data} 的商業帳號已成功註冊!', 'success')
         return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
+
+# @ROUTE DEFINTION
+# NAME:     Registration (Business)
+# PATH:     /business_post_job
+# METHOD:   GET / POST
+# DESC.:    [GET]   The page where the business user creates their account
+#           [POST]  The method which validates the job info and post a job
+#TODO:need to validate user type: business user
+@app.route("/business/jobs/new",methods=['GET', 'POST'])
+@login_required
+def business_post_job():
+
+    if not BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
+        return render_template('404.html'), 404
+
+    form = PostJobForm()
+
+    if not current_user.is_authenticated:
+            return redirect(url_for('home'))
+
+    if form.validate_on_submit():
+
+        jid = str(uuid4())
+
+        # Ensure the generated job ID is unique
+        validate_jid = Jobs.query.filter_by(jb_id=jid).first()
+        while validate_jid:
+            uid = str(uuid4())
+            validate_jid = Jobs.query.filter_by(jb_id=jid).first()
+
+        job = Jobs(
+                jb_creationTime = datetime.utcnow(),
+                jb_id = jid,
+                jb_title = form.job_title.data,
+                jb_description = form.job_description.data,
+                jb_expected_payment_days = form.job_expected_payment_days.data,
+                jb_bu_id = current_user.get_id(),
+                jb_jt_id = form.job_type.data,
+        )
+
+        liid = str(uuid4())
+
+        # Ensure the generated job listing ID is unique
+        validate_liid = Jobs.query.filter_by(li_id = llid).first()
+        while validate_liid:
+            uid = str(uuid4())
+            validate_liid = Jobs.query.filter_by(li_id = llid).first()
+
+        job_list = JobListings(
+                li_id = liid,
+                li_jb_id = jid,
+                li_starttime = form.list_start_time.data,
+                li_endtime = form.list_end_time.data,
+                li_salary_amt = form.list_salary.data,
+                li_salary_type = form.list_salary_type.data,
+                li_quota = form.list_quota.data
+        )
+
+        db.session.add(job)
+        db.session.add(job_list)
+        db.session.commit()
+
+        flash(f'您的工作已成功發布!', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('business_post_job.html', title = '發布工作', form = form)
+
+# @ROUTE DEFINTION
+# NAME:     View Job Posted
+# PATH:     /business/jobs
+# METHOD:   GET
+# DESC.:    The page where the user selects whether they need 
+#           a business account or an individual account
+@app.route("/business/jobs",methods=['GET', 'POST'])
+@login_required
+def business_view_jobs_posted():
+    if not BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
+        return render_template('404.html'), 404
+    jobs = Jobs.query.filter_by(jb_bu_id = current_user.get_id()).all()
+    return render_template('business_jobs_posted.html', title="已發布的工作", jobs = jobs)
+
+# @ROUTE DEFINTION
+# NAME:     View Specific Job
+# PATH:     /business/jobs/<job_id>
+# METHOD:   GET
+# DESC.:    The page where the business user view a specific job posted
+#TODO: separate specific job into business/individual view.
+@app.route('/jobs/<string:job_id>')
+#@login_required
+def job(job_id):
+    job = Jobs.query.get_or_404(job_id)
+    listings = JobListings.query.filter_by(li_jb_id=job.jb_id).all()
+    return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings)
+
+# @ROUTE DEFINTION
+# NAME:     View Job Applicants
+# PATH:     /business/jobs/<job_id>/<sting: list_id>/applicants
+# METHOD:   GET
+# DESC.:    The page where the business user view list of applicant of a specific job posted
+@app.route('/jobs/<string:job_id>/<string:list_id>/applications')
+#@login_required
+def job_list_applications(job_id, list_id):
+    applicantions = JobApplications.query.filter_by(ap_li_id=list_id).all()
+    listing = JobListings.query.filter_by(li_id = list_id).first()
+    return render_template('job_list_applications.html', title='工作申請', applicantions=applications, listing = listing)
+
+# @ROUTE DEFINTION
+# NAME:     View an Job Applicant
+# PATH:     /business/jobs/<job_id>/<sting: list_id>/applicants
+# METHOD:   GET
+# DESC.:    The page where the business user view specific job applicant of a specific job posted
+@app.route('/jobs/<string:job_id>/<string:list_id>/applicants/<string:app_id>')
+#@login_required
+def view_an_applicant(job_id, list_id, app_id):
+    applicantion = JobApplications.query.filter_by(ap_id=app_id).first()
+    applicant = IndividualUsers.query.filter_by(iu_id=application.ap_iu_id).first()
+    listing = JobListings.query.filter_by(li_id=application.ap_li_id).first()
+
+    form = AcceptApplicationForm()
+    
+    if form.validate_on_submit():
+        enid = str(uuid4())
+
+        # Ensure the generated application ID is unique
+        validate_enid = JobListings.query.filter_by(ap_id=application.ap_id).first()
+        while validate_enid:
+            enid = str(uuid4())
+            validate_enid = Jobs.query.filter_by(jb_id=jid).first()
+
+        enrollment = Enrollments(
+                                en_creationTime = datetime.utcnow(),
+                                en_id = enid,
+                                en_is_paid = 0,
+                                en_present_status = '',
+                                en_li_id = application.ap_li_id,
+                                en_ap_id = application.ap_id
+                                )
+        db.session.add(enrollment)
+        db.session.commit()
+        flash(f'工作申請已成功接受!', 'success')
+        applicantions = JobApplications.query.filter_by(ap_li_id=list_id).all()
+        return job_list_applications(job_id, list_id)
+    
+    return render_template('view_an_applicant.html',title='查看申請者',applicant=applicant,application = application,job_id = job_id,list_id = list_id)
+
 
 # =======================================
 #    INCOMPLETED / SUSPENDED ROUTES
@@ -246,7 +491,7 @@ def account():
 # PATH:     /business_register_confirm
 # METHOD:   TBC
 # DESC.:    TBC
-@app.route('/business_register_confirm', methods=['GET','POST'])
+@app.route('/business/register/confirm', methods=['GET','POST'])
 def business_register_confirm():
     return render_template('business_register_confirm.html',title = '註冊 - 商業帳戶資料確認')
 

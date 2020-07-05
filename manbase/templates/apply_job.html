@@ -1,0 +1,16 @@
+{% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+    <div class = 'content-section'> 
+        <form method = 'POST' action = ''>
+            {{ form.hidden_tag() }}
+            <fieldset class='form-group'>
+                <legend class = 'border-bottom mb-4'>確認工作申請</legend>
+            </fieldset>
+            <div class="form-group">
+                {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
+                }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends "layout.html" %} 
+
+{% block content %}
+    {% for job in jobs %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ job.jb_creationTime.strftime('%Y-%m-%d') }}</a>
+            </div>
+
+            <h2><a class="article-title" href="{{ url_for('business_job', job_id=job.jb_id) }}">{{ job.jb_title }}</a></h2>
+            <p class="article-content">{{ job.jb_description }}</p>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

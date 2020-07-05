@@ -1,0 +1,15 @@
+{% extends "layout.html" %} 
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+<legend>工作申請</legend>
+    <p>開始時間: {{listing.li_starttime}} </p>
+    <p>結束時間: {{listing.li_endtime}} </p>
+    {{ for application in applications }}
+        <article class="media content-section">
+            <div class="media-body">
+                <h2><a class="article-title" href="{{ url_for('view_an_applicant', iu_id = application.ap_iu_id) }}">{{ job.jb_title }}</a></h2>
+            </div>
+        </article>
+    {{ endfor}}
+{% endblock content %}
