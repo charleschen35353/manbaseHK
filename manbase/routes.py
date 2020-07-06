@@ -170,6 +170,7 @@ def individual_register():
         return redirect(url_for('home'))
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
 
+@login_required
 @app.route('/individual/profile/<string:iuid>')
 def individual_profile(iuid):
     profile = IndividualUsers.query.get_or_404(iuid)
@@ -183,6 +184,7 @@ def individual_profile(iuid):
     
     return render_template('individual_profile.html',title ='我的個人檔案',profile = profile, reviews = reviews)
 
+@login_required
 @app.route('/individual/profile/<string:iuid>/update', methods =['POST','GET'])
 def individual_profile_update(iuid):
     profile = IndividualUsers.query.get_or_404(iuid)
@@ -216,6 +218,7 @@ def individual_profile_update(iuid):
 # PATH:     /job_board
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users view listed job
+@login_required
 @app.route('/individual/job_board', methods=['POST'])
 def view_job_board():
     jobs = Jobs.query.all()
@@ -226,6 +229,7 @@ def view_job_board():
 # PATH:     /jobs/<job_id>/apply
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users view listed job
+@login_required
 @app.route('/individual/job_board/<string:job_id>/apply', methods=['GET','POST'])
 def apply_job(job_id, list_id):
 
@@ -262,6 +266,7 @@ def apply_job(job_id, list_id):
 # PATH:     /individual/jobs
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users can view their jobs
+@login_required
 @app.route('/individual/jobs')
 def individual_my_jobs(iu_id):
     return render_template('individual_my_jobs.html',title='我的工作')
@@ -271,6 +276,7 @@ def individual_my_jobs(iu_id):
 # PATH:     /individual/jobs
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users can view their applied jobs
+@login_required
 @app.route('/individual/jobs/applied')
 def individual_applied_jobs():
     applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
@@ -281,6 +287,7 @@ def individual_applied_jobs():
 # PATH:     /individual/jobs/enrolled
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users can view their applied jobs
+@login_required
 @app.route('/individual/jobs/enrolled')
 def individual_enrolled_jobs():
     applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
@@ -290,7 +297,7 @@ def individual_enrolled_jobs():
     enrollments = lambda l: [item for sublist in l for item in sublist]
     return render_template('individual_enrolled_jobs.html',title ='我的工作',enrollments=enrollments)
 
-
+@login_required
 @app.route('/individual/jobs/enrolled/<string:en_id>/rate',methods=['GET', 'POST'])
 def rate_n_review_on_business(en_id):
     enrollment = Enrollments.query.get_or_404(en_id)
