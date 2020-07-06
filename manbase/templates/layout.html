@@ -1,28 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-HK">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
+  <!-- Google Fonts -->
+  <link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@100;300;400;500;700;900&display=swap" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-main.css') }}">
 
   <!-- Main CSS -->
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}" />
+  <link rel="preload" href="{{ url_for('static', filename='main.css') }}" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
 
-  <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
-    rel="stylesheet" />
-
-  <!-- Line Awesome - CDN -->
-  <!-- TODO: self-serve this package -->
-  <link rel="stylesheet"
-    href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+  <!-- Line Awesome -->
+  <link rel="preload" href="{{ url_for('static', filename='fonts/line-awesome/css/line-awesome.min.css') }}" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
 
   <!-- Swup CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='swup-main.css') }}">
+  <link rel="preload" href="{{ url_for('static', filename='swup-main.css') }}" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+
+  <!-- Compiled Minified CSS (Temporarily Diabled for Easier Devevelopment) -->
+  <!-- <link rel="preload" href="{{ url_for('static', filename='out.css') }}" as="style"
+    onload="this.onload=null; this.rel='stylesheet'"> -->
 
   {% if title %}
   <title>Manbase - {{title}}</title>
@@ -33,6 +38,7 @@
 
 <body>
   <div class="main m-0" id="swup" style="overflow-x: hidden;">
+    {% include 'spinner.html' %}
     <header class="m-0">
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a href="{{ url_for('home') }}" class="navbar-brand">man<span class="text-primary">base</span> | 大社群</a>
@@ -102,6 +108,12 @@
       Copyright &copy; 2020 All rights reserved
     </footer>
 
+    {% if request.path in [url_for('business_register'), url_for('individual_register')] %}
+    {% include 'tos.html' %}
+    {% endif %}
+
+
+
     <!-- Google Analytics -->
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-41948260-3"></script>
@@ -126,25 +138,7 @@
     <script src="{{ url_for('static', filename='js/individual_register.js') }}"></script>
 
     <!-- Custom JS - Swup Init -->
-    <script>
-
-      const init = () => {
-        $("html, body").animate({ scrollTop: 0 }, "fast");
-
-        if (document.querySelector('#business_register')) {
-          business_register_on_load();
-        }
-        if (document.querySelector('#individual_register')) {
-          individual_register_on_load();
-        }
-      }
-
-      init();
-
-      const swup = new Swup();
-
-      swup.on('contentReplaced', init);
-    </script>
+    <script src="{{ url_for('static', filename='js/swup-main.js') }}"></script>
 </body>
 
 </html>

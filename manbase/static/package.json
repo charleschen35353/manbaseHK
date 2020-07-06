@@ -13,5 +13,8 @@
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
     "swup": "^2.0.10"
+  },
+  "devDependencies": {
+    "purify-css": "^1.2.5"
   }
 }

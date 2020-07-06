@@ -5,10 +5,13 @@
 {% from "_formhelpers.html" import render_field %}
 
 {% block content %}
-<div class='content-switch center-grid d-flex justify-content-center align-items-center'>
+<div class='content-switch center-grid d-flex justify-content-center align-items-center mb-3'>
     <div class="transparent-watermark-background d-flex justify-content-center align-items-center"
         style="min-height: 88vh;">
-        <img src="{{url_for('static', filename='img/stories/onboarding.gif')}}" alt="Login Animation" />
+        <video autoplay loop muted playsinline>
+            <source src="{{ url_for('static', filename='img/stories/onboarding.webm') }}" type="video/webm">
+            <source src="{{ url_for('static', filename='img/stories/onboarding.mp4') }}" type="video/webm">
+        </video>
     </div>
     <form method='POST' action=''
         class="d-flex flex-column col-11 col-md-7 shadow rounded p-4 p-md-5 bus-reg justify-content-between mt-3"
@@ -16,8 +19,7 @@
         {{ form.hidden_tag() }}
 
         <div class="text-center mb-3">
-            <h2 class="text-primary text-nowrap">馬上註冊 <wbr><span class="text-dark">man</span><span
-                    class="text-secondary">base</span><wbr>
+            <h2 class="text-primary">馬上註冊 <span class="text-dark">man</span><span class="text-secondary">base</span>
                 個人帳戶</h2>
             {% if form.errors %}
             {% for field, errors in form.errors.items() %}
@@ -60,7 +62,7 @@
                 {% if form.password.errors %}
                 {{ render_field(form.password, 
                                 class="form-control form-control-lg is-invalid", 
-                                style="font-family: sans-serif, 'Noto Sans TC';", 
+                                style="font-family: sans-serif, 'Noto Sans HK';", 
                                 placeholder="密碼")
                 }}
                 <div class="invalid-feedback">
@@ -71,7 +73,7 @@
                 {% else %}
                 {{ render_field(form.password, 
                                 class="form-control form-control-lg", 
-                                style="font-family: sans-serif, 'Noto Sans TC';", 
+                                style="font-family: sans-serif, 'Noto Sans HK';", 
                                 placeholder="密碼")
                 }}
                 {% endif %}
@@ -83,7 +85,7 @@
                 {% if form.confirm_password.errors %}
                 {{ render_field(form.confirm_password, 
                                 class="form-control form-control-lg is-invalid", 
-                                style="font-family: sans-serif, 'Noto Sans TC';", 
+                                style="font-family: sans-serif, 'Noto Sans HK';", 
                                 placeholder="重新輸入密碼")
                 }}
                 <div class="invalid-feedback">
@@ -94,7 +96,7 @@
                 {% else %}
                 {{ render_field(form.confirm_password,
                                 class="form-control form-control-lg",
-                                style="font-family: sans-serif, 'Noto Sans TC';",
+                                style="font-family: sans-serif, 'Noto Sans HK';",
                                 placeholder="重新輸入密碼")
                 }}
                 {% endif %}

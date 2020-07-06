@@ -1,28 +1,27 @@
-<!-- TODO: Add TOS -->
-<!-- TODO: Modify Client-side Validation -->
+<!-- TODO: Validate confirmed TOS on the client side -->
 <!-- TODO: Add autocomplete to all input fields -->
 {% extends "layout.html" %}
 {% from "_formhelpers.html" import render_field %}
 
-{% set has_error = False %}
-{% set error_section = 0 %}
-
 {% block content %}
 
-<div class="content-switch center-grid d-flex justify-content-center align-items-center">
+<div class="content-switch center-grid d-flex justify-content-center align-items-center mb-3">
     <div class="transparent-watermark-background d-flex justify-content-center align-items-center"
         style="min-height: 88vh; width: 100vw;">
-        <img src="{{url_for('static', filename='img/stories_secondary/business_register.gif')}}"
-            alt="Login Animation" />
+        <video autoplay loop muted playsinline>
+            <source src="{{ url_for('static', filename='img/stories_secondary/business_register.webm') }}"
+                type="video/webm">
+            <source src="{{ url_for('static', filename='img/stories_secondary/business_register.mp4') }}"
+                type="video/mp4">
+        </video>
     </div>
     <form method='POST'
         class="d-flex flex-column col-11 col-md-7 shadow rounded p-4 p-md-5 bus-reg justify-content-between mt-3"
         novalidate style="min-height: 75vh; background: rgba(255, 255, 255, 0.3);" id="business_register">
         {{ form.hidden_tag() }}
-        <div class="text-center text-nowrap">
-            <h2 class="text-secondary">馬上註冊<wbr> <span class="text-dark">man</span><span
-                    class="text-primary">base</span>
-                <wbr>商業帳戶</h2>
+        <div class="text-center">
+            <h2 class="text-secondary">馬上註冊<span class="text-dark">man</span><span class="text-primary">base</span>
+                商業帳戶</h2>
             {% if form.errors %}
             {% for field, errors in form.errors.items() %}
             <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
@@ -57,9 +56,9 @@
                 {{ render_field(form.password.label, class="form-control-label") }}
 
                 {% if form.password.errors %}
-                {{ render_field(form.password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif, 'Noto Sans TC';", placeholder="密碼", id="bus_reg_password")}}
+                {{ render_field(form.password, class="form-control form-control-lg is-invalid", placeholder="密碼", id="bus_reg_password")}}
                 {% else %}
-                {{ render_field(form.password, class="form-control form-control-lg", style="font-family: sans-serif, 'Noto Sans TC';", placeholder="密碼", id="bus_reg_password")}}
+                {{ render_field(form.password, class="form-control form-control-lg", placeholder="密碼", id="bus_reg_password")}}
                 {% endif %}
                 <small class="form-text text-muted">密碼必須有至少 8 個字元</small>
                 <div class="invalid-feedback d-block" id="bus_reg_password_errors">
@@ -73,9 +72,9 @@
             <div class="form-group">
                 {{ render_field(form.confirm_password.label, class="form-control-label") }}
                 {% if form.confirm_password.errors %}
-                {{ render_field(form.confirm_password, class="form-control form-control-lg is-invalid", style="font-family: sans-serif, 'Noto Sans TC';", placeholder="重新輸入密碼", id="bus_reg_repeat_password")}}
+                {{ render_field(form.confirm_password, class="form-control form-control-lg is-invalid", placeholder="重新輸入密碼", id="bus_reg_repeat_password")}}
                 {% else %}
-                {{ render_field(form.confirm_password, class="form-control form-control-lg", style="font-family: sans-serif, 'Noto Sans TC';", placeholder="重新輸入密碼", id="bus_reg_repeat_password") }}
+                {{ render_field(form.confirm_password, class="form-control form-control-lg", placeholder="重新輸入密碼", id="bus_reg_repeat_password") }}
                 {% endif %}
                 <div class="invalid-feedback d-block" id="bus_reg_repeat_password_errors">
                     {% if form.confirm_password.errors %}
@@ -86,9 +85,8 @@
                 </div>
             </div>
             <div class="row">
-                <button class="btn btn-secondary btn-block col-5 col-md-3 offset-7 offset-md-9 text-nowrap"
-                    id="bus_reg_sec_1_next" type="button">下一步：<wbr>公司資料 <i
-                        class="las la-arrow-circle-right"></i></button>
+                <button class="btn btn-secondary btn-block col-5 col-md-3 offset-7 offset-md-9" id="bus_reg_sec_1_next"
+                    type="button">下一步：公司資料 <i class="las la-arrow-circle-right"></i></button>
             </div>
         </div>
 
@@ -131,11 +129,10 @@
                 </div>
             </div>
             <div class="row">
-                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
-                    id="bus_reg_sec_2_prev" type="button"><i class="las la-arrow-circle-left"></i>
-                    上一步：<wbr>賬戶資料</button>
-                <button class="btn btn-secondary col-5 col-md-3 offset-1 text-nowrap" id="bus_reg_sec_2_next"
-                    type="button">下一步：<wbr>聯絡資料
+                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5" id="bus_reg_sec_2_prev"
+                    type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：賬戶資料</button>
+                <button class="btn btn-secondary col-5 col-md-3 offset-1" id="bus_reg_sec_2_next" type="button">下一步：聯絡資料
                     <i class="las la-arrow-circle-right"></i> </button>
             </div>
         </div>
@@ -201,17 +198,17 @@
             <!-- 驗證碼button moved to suspended_code.html-->
 
             <div class="form-group row">
-                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
-                    id="bus_reg_sec_3_prev" type="button"><i class="las la-arrow-circle-left"></i>
-                    上一步：<wbr>公司資料</button>
+                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5" id="bus_reg_sec_3_prev"
+                    type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：公司資料</button>
                 <!-- TODO: Find a way to put a check mark after the label -->
-                <button class="btn btn-secondary col-5 col-md-3 offset-1 text-nowrap" id="bus_reg_sec_3_next"
-                    type="button">下一步：確認<wbr>資料及條款
+                <button class="btn btn-secondary col-5 col-md-3 offset-1" id="bus_reg_sec_3_next"
+                    type="button">下一步：確認資料及條款
                     <i class="las la-arrow-circle-right"></i> </button>
             </div>
         </div>
         <div class="form-section" id="bus_reg_sec_4">
-            <h3 class="mt-2 text-nowrap">確認資料<wbr>及<wbr>條款
+            <h3 class="mt-2">確認資料及條款
             </h3>
             <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
                 &#9675;&#9675;&#9675;&#9679;</h5>
@@ -255,12 +252,12 @@
             <div class="row mx-2 my-3 align-items-center form-check">
                 {{ render_field(form.business_tos, class="form-check-input", id="agree_tos") }}
                 <label for="agree_tos" class="text-secondary text-break bus-reg-confirm form-check-label">我已經閱讀並同意<a
-                        href="#">《使用條款及細則》</a>。</label>
+                        href="#" data-toggle="modal" data-target="#tos">《使用條款及細則》</a>。</label>
             </div>
             <div class="form-group row">
-                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
-                    id="bus_reg_sec_4_prev" type="button"><i class="las la-arrow-circle-left"></i>
-                    上一步：<wbr>聯絡資料</button>
+                <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5" id="bus_reg_sec_4_prev"
+                    type="button"><i class="las la-arrow-circle-left"></i>
+                    上一步：聯絡資料</button>
                 <!-- TODO: Find a way to put a check mark after the label -->
                 {{ render_field(form.submit, class="btn btn-secondary col-5 col-md-3 offset-1", id="bus_reg_submit") }}
             </div>
@@ -272,6 +269,4 @@
 
     <hr>
 </div>
-
-
-{% endblock content%}
+{% endblock content %}

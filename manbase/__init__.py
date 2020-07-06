@@ -5,6 +5,8 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 import secrets
 from flask_uuid import FlaskUUID
+# TODO: Add support for flask_assets for JS Bundling
+# TODO: Add support for flask_minify for HTML and CSS Minifying
 
 csrf = CSRFProtect()
 
