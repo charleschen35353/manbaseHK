@@ -5,8 +5,8 @@ import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
-from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm,BusinessUpdateProfileForm,ConfirmAttendanceForm
-from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings, JobApplications, Enrollments, Review, Rating, Abnormality
+from manbase.forms import *
+from manbase.models import*
 from datetime import datetime
 from uuid import uuid4
 from collections import defaultdict 
@@ -211,8 +211,9 @@ def individual_profile(iuid):
 def individual_profile_update(iuid):
     profile = IndividualUsers.query.get_or_404(iuid)
     user = Users.query.get_or_404(iuid)
-    
+   
     form = IndividualUpdateProfileForm()
+
     if form.validate_on_submit():
         #TODO: add business address
         profile.iu_phone = form.individual_contact_number.data
@@ -221,6 +222,17 @@ def individual_profile_update(iuid):
         profile.iu_EName = form.individual_EName.data
         profile.iu_alias = form.individual_alias.data
         profile.iu_HKID = form.individual_HKID.data
+        
+        new_hashed_password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+        if bcrypt.check_password_hash(user.ur_password_hash, form.password.data):
+            if bcrypt.check_password_hash(new_hashed_password, form.password.data): 
+                flash('Password cannot be same as the past.')
+        else:
+            flash('wrong password.')
+            
+            
+
+
         if form.old_password.data and form.new_password.data and (form.old_password.data!=form.new_password.data) and (form.confirm_new_password.data == form.new_password.data):
             old_hashed_password = bcrypt.generate_password_hash(form.old_password.data).decode('utf-8')
             new_hashed_password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
@@ -233,7 +245,15 @@ def individual_profile_update(iuid):
         flash('您的個人資料已成功更新!', 'success')
         #TODO: return to last page
 
-    return render_template('business_profile_update.html', title='更新公司資料', form = form )
+    elif request.method == 'GET':
+        form.individual_contact_number.data = profile.iu_phone
+        form.individual_email.data = profile.iu_email 
+        form.individual_CName.data = profile.iu_CName
+        form.individual_EName.data = profile.iu_EName 
+        form.individual_alias.data = profile.iu_alias 
+        form.individual_HKID.data = profile.iu_HKID 
+
+    return render_template('individual_profile_update.html', title='更新個人資料', form = form )
 
 # @ROUTE DEFINTION
 # NAME:     View Job Board (Individual)

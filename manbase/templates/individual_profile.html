@@ -1,18 +1,19 @@
 {% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
 
 {% block content %}
-    <h1> 中文名字: {{profile.iu_CName}} </h1>>
-    <h1> 英文名字: {{profile.iu_EName}} </h1>>
-    <h1> 電話號碼: {{profile.iu_phone}} </h1>>
-    <h1> 電子郵箱: {{profile.iu_email}} </h1>>
-    <h1> 稱呼: {{profile.iu_alias}} </h1>>
-    <h1> 性別: {{profile.iu_gender}} </h1>>
-    <h1> 生日: {{profile.iu_birthday}} </h1>>
-    <h1> 教育程度: {{profile.bu_picName}} </h1>>
-    <h1> 自我介紹: {{profile.selfIntroduction}} </h1>>
+    <h1> 中文名字: {{profile.iu_CName}} </h1>
+    <h1> 英文名字: {{profile.iu_EName}} </h1>
+    <h1> 電話號碼: {{profile.iu_phone}} </h1>
+    <h1> 電子郵箱: {{profile.iu_email}} </h1>
+    <h1> 稱呼: {{profile.iu_alias}} </h1>
+    <h1> 性別: {{profile.iu_gender}} </h1>
+    <h1> 生日: {{profile.iu_birthday}} </h1>
+    <h1> 教育程度: {{profile.bu_picName}} </h1>
+    <h1> 自我介紹: {{profile.selfIntroduction}} </h1>
 
+    
     {% if not reviews %}
-        <h1> no comment on you G</h1>
+        <h1> no comment on you </h1>
     {% endif %}
 
     {% for review in reviews %}
@@ -23,8 +24,8 @@
 
     {% endfor %}
     
-    {% if profile.bu_id == current_user.get_id() %}
-        <a href="{{url_for('individual_profile_update',iuid=current_user.get_id())}}" class="btn btn-primary btn-large p-2">
+    {% if profile.iu_id == current_user.get_id() %}
+        <a href="{{url_for('individual_profile_update', iuid=current_user.get_id())}}" class="btn btn-primary btn-large p-2">
             <h4 class="m-0">更新個人檔案</h4>
         </a>
     {% endif %}

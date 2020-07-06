@@ -7,7 +7,7 @@
             {{ form.hidden_tag() }}
                 <fieldset class='form-group'>
                     <div class="text-center">
-                        <h2 class="text-secondary">更新個人帳戶資料 <span class="text-dark">man</span>
+                        <h2 class="text-secondary">更新個人帳戶資料 <span class="text-dark"></span>
                         {% if form.errors %}
                         {% for field, errors in form.errors.items() %}
                         <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>

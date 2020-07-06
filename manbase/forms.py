@@ -1,17 +1,11 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateTimeField, RadioField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from manbase.models import Users, BusinessUsers
+from manbase.models import Users, BusinessUsers, IndividualUsers
 from uuid import uuid4
+from flask_login import current_user
 
-def password_requirement(form, field):
-    # check if passwords contains 0-9 & a-z &A-Z and !@#$%
-    # TODO
-    if False:
-        raise ValidationError(
-            'Password must contain at least one number, one charater in upper case, one character in lower case, and a special character from \'@#!&*\'')
 
 # setting base error language as chinese
 class BaseForm(FlaskForm):
@@ -33,6 +27,14 @@ class IndividualRegistrationForm(BaseForm):
                            validators=[DataRequired(message = '名字不能為空'), Length(min=5, max=20)])
     password = PasswordField('密碼',
                              validators=[DataRequired(message = '密碼不能為空'), Length(min=5, max=32)])
+    #password validation 
+    #TODO to be implemented on client side instead
+    def password_requirement(form, field):
+        # check if passwords contains 0-9 & a-z &A-Z and !@#$%
+        # TODO
+        if False:
+            raise ValidationError(
+                'Password must contain at least one number, one charater in upper case, one character in lower case, and a special character from \'@#!&*\'')
     confirm_password = PasswordField('重新輸入密碼',
                                      validators=[DataRequired(), EqualTo('password', message="必須與已輸入密碼相同")])
     individual_contact_number = IntegerField('聯絡電話',
@@ -72,22 +74,25 @@ class IndividualRegistrationForm(BaseForm):
         if user:
             raise ValidationError('此個人電郵已存在，請重新輸入。')
 
-class IndividualUpdateProfileForm(IndividualRegistrationForm):
-    individual_contact_number = IntegerField('聯絡電話',
-                                        validators = [])
-    individual_email = StringField('電子郵箱',
-                                validators=[])
-    individual_CName = StringField('中文全名',
-                                validators = [])
-    individual_EName = StringField('英文名字', validators = [])
-    individual_alias = StringField('暱稱', validators = [])
-    individual_HKID = StringField('身分證字母加首四位數字', validators = [])
-    old_password = PasswordField('舊密碼',
-                             validators=[])
-    new_password = PasswordField('新密碼',
-                             validators=[])
+class IndividualUpdateProfileForm(BaseForm):
+
+    individual_contact_number = IntegerField('聯絡電話')
+    individual_email = StringField('電子郵箱')
+    individual_CName = StringField('中文全名')
+    individual_EName = StringField('英文名字')
+    individual_alias = StringField('暱稱')
+    individual_HKID = StringField('身分證字母加首四位數字')
+    old_password = PasswordField('舊密碼')
+    new_password = PasswordField('新密碼')
+
+    def password_requirement(form, field):
+    # check if passwords contains 0-9 & a-z &A-Z and !@#$%
+    # TODO
+        if False:
+            raise ValidationError(
+                    'Password must contain at least one number, one charater in upper case, one character in lower case, and a special character from \'@#!&*\'')
     confirm_new_password = PasswordField('重新輸入新密碼',
-                             validators=[EqualTo('password', message="must match password")])
+                                 validators=[EqualTo('password', message="must match password")])
     submit = SubmitField('更新個人帳戶')
 
 class UpdateAccountForm(BaseForm):
