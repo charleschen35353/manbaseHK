@@ -13,10 +13,10 @@
         <legend class="h3 mb-3 w-100 text-center">登入</legend>
 
         <div class="form-group">
-          {{ form.login.label }} {% if form.login.errors %} {{
-        render_field(form.login, class="form-control is-invalid",
-        placeholder="帳號") }}
-          <!error style>
+          {{ form.login.label }}
+            {% if form.login.errors %} 
+	          {{render_field(form.login, class="form-control is-invalid", placeholder="帳號") }}
+            <!error style>
             <div>
               {% for error in form.login.errors %}
               <div class="invalid-feedback d-block">{{ error }}</div>

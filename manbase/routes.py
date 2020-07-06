@@ -120,6 +120,26 @@ def register():
     return render_template('register.html', title='註冊')
 
 # @ROUTE DEFINTION
+# NAME:     Update Account Info
+# PATH:     /account
+# METHOD:   GET / POST
+# DESC.:    TBC
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
+def account():
+    if current_user.is_authenticated:
+        # TODO: Get the user info and render it into the homepage
+        uid = current_user.get_id()
+        if BusinessUsers.query.filter_by(bu_id = uid).first():
+            return redirect(url_for('business_profile', bid = uid))
+        elif IndividualUsers.query.filter_by(iu_id = uid).first():
+            return redirect(url_for('individual_profile', iuid = uid))
+        else:
+            return render_template('500.html')
+    else:
+        return render_template('index.html')
+
+# @ROUTE DEFINTION
 # NAME:     Registration (Individual)
 # PATH:     /individual_register
 # METHOD:   GET / POST
@@ -170,8 +190,9 @@ def individual_register():
         return redirect(url_for('home'))
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
 
-@login_required
+
 @app.route('/individual/profile/<string:iuid>')
+@login_required
 def individual_profile(iuid):
     profile = IndividualUsers.query.get_or_404(iuid)
     reviews = Review.query.filter_by(re_receiver_id=iuid).all()
@@ -182,10 +203,11 @@ def individual_profile(iuid):
         for rating in ratings:
             review[rating.rate_rc_id] = rating
     
-    return render_template('individual_profile.html',title ='我的個人檔案',profile = profile, reviews = reviews)
+    return render_template('individual_profile.html',title ='我的個人檔案', profile = profile, reviews = reviews)
 
-@login_required
+
 @app.route('/individual/profile/<string:iuid>/update', methods =['POST','GET'])
+@login_required
 def individual_profile_update(iuid):
     profile = IndividualUsers.query.get_or_404(iuid)
     user = Users.query.get_or_404(iuid)
@@ -218,8 +240,9 @@ def individual_profile_update(iuid):
 # PATH:     /job_board
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users view listed job
-@login_required
+
 @app.route('/individual/job_board', methods=['POST'])
+@login_required
 def view_job_board():
     jobs = Jobs.query.all()
     return render_template('job_board.html', title='工作板', jobs = jobs)
@@ -229,8 +252,9 @@ def view_job_board():
 # PATH:     /jobs/<job_id>/apply
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users view listed job
-@login_required
+
 @app.route('/individual/job_board/<string:job_id>/apply', methods=['GET','POST'])
+@login_required
 def apply_job(job_id, list_id):
 
     #if the user is not current user, return 404
@@ -266,8 +290,9 @@ def apply_job(job_id, list_id):
 # PATH:     /individual/jobs
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users can view their jobs
-@login_required
+
 @app.route('/individual/jobs')
+@login_required
 def individual_my_jobs(iu_id):
     return render_template('individual_my_jobs.html',title='我的工作')
 
@@ -276,8 +301,9 @@ def individual_my_jobs(iu_id):
 # PATH:     /individual/jobs
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users can view their applied jobs
-@login_required
+
 @app.route('/individual/jobs/applied')
+@login_required
 def individual_applied_jobs():
     applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
     return render_template('individual_applied_jobs.html',title ='我的工作',applications=applications)
@@ -287,8 +313,9 @@ def individual_applied_jobs():
 # PATH:     /individual/jobs/enrolled
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users can view their applied jobs
-@login_required
+
 @app.route('/individual/jobs/enrolled')
+@login_required
 def individual_enrolled_jobs():
     applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
     enrollments = []
@@ -297,8 +324,9 @@ def individual_enrolled_jobs():
     enrollments = lambda l: [item for sublist in l for item in sublist]
     return render_template('individual_enrolled_jobs.html',title ='我的工作',enrollments=enrollments)
 
-@login_required
+
 @app.route('/individual/jobs/enrolled/<string:en_id>/rate',methods=['GET', 'POST'])
+@login_required
 def rate_n_review_on_business(en_id):
     enrollment = Enrollments.query.get_or_404(en_id)
     job_list = JobListings.query.filter_by(enrollment.en_li_id).fisrt()
@@ -725,30 +753,7 @@ def save_picture(form_picture):
 
     return picture_fn
 
-# @ROUTE DEFINTION
-# NAME:     Update Account Info
-# PATH:     /account
-# METHOD:   GET / POST
-# DESC.:    TBC
-@app.route('/account', methods=['GET', 'POST'])
-@login_required
-def account():
-    form = UpdateAccountForm()
-    if form.validate_on_submit():
-        if form.picture.data:
-            picture_fn = save_picture(form.picture.data)
-            current_user.profile_image = picture_fn
-        current_user.username = form.username.data
-        current_user.email = form.email.data
-        # TODO: Update the new information on the remote database
-        '''db.session.commit()'''
-        flash("Account Info Updated")
-        return redirect(url_for('account'))
-    elif request.method == "GET":
-        form.username.data = current_user.username
-        form.email.data = current_user.email
-    image_file = url_for('static', filename = 'profile_pics/' + current_user.profile_image)
-    return render_template('account.html', title='account', image_file = image_file, form = form)
+
 
 # @ROUTE DEFINTION
 # NAME:     Confirm Business Registration
