@@ -26,6 +26,11 @@ class LoginForm(BaseForm):
     remember = BooleanField('請記住我')
     submit = SubmitField('登入')
 
+class CommentForm(BaseForm):
+    comment = StringField('留言',
+                           validators=[DataRequired(message = '留言不能為空'), Length(min=5, max=20)])
+    submit = SubmitField('遞交留言')
+
 # Individual Users
 # TODO: rewrite validators
 class IndividualRegistrationForm(BaseForm):

@@ -41,6 +41,47 @@
       </div>
     </div>
     
+    <div class = 'content-section'> 
+      <form method = 'POST' action = ''>
+          {{ commentForm.hidden_tag() }}
+          <fieldset class='form-group'>
+              <legend class = 'border-bottom mb-4'>發佈通知</legend>
+
+              <div class="form-group">
+                {{ commentForm.comment.label(class="form-control-label") }}
+                {% if commentForm.comment.errors %}
+                {{ render_field(commentForm.comment, class="form-control form-control-lg is-invalid")}}
+                <div class="invalid-feedback">
+                    {% for error in commentForm.comment.errors %}
+                    <small class='error'> {{error}} </small>
+                    {% endfor %}
+                </div>
+                {% else %}
+                  {{ render_field(commentForm.comment,class="form-control form-control-lg" )}}
+                {% endif %}
+              </div>
+
+          </fieldset>
+          <div class="form-group">
+              {{ render_field(commentForm.submit, class="btn btn-primary btn-large btn-block")
+              }}
+          </div>
+      </form>
+    </div>
+    
+    {% if ennoucements %}
+      {% for annoucement in annoucements %}
+        <p> sender: {{announcement.an_sender_id}} </p>
+        <p> message: {{announcement.an_message}} </p>
+        <p> isFromEmployer: {{announcement.an_isFromEmployer}} </p>
+        <p> reply to: {{announcement.an_replyTo}} </p>
+        <a href="{{url_for('reply_annoucement',an_id=annoucement.an_id)}}" class="btn btn-primary btn-large p-2">
+          <h4 class="m-0">註冊工作帳戶</h4>
+      </a>
+      {% endfor %}
+    {% else %}
+      <p> no comments yet </p>
+    {% endif %}
     <h2 class="article-title">{{ job.jb_title }}</h2>
     <p class="article-content">{{ job.jb_description }}</p>
     <p> The expected payment days is {{job.jb_expected_payment_days}} </p>

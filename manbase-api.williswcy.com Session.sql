@@ -171,8 +171,11 @@ CREATE TABLE announcement(
     an_message TEXT(255) NOT NULL,
     an_isDeleted TINYINT(1) DEFAULT 0,
     an_sender_id VARCHAR(255) NOT NULL,
+    an_isFromEmployer TINYINT(1) DEFAULT 0 NOT NULL,
+    an_replyTo VARCHAR(255),
 
-    FOREIGN KEY(an_sender_id) REFERENCES users(ur_id)
+    FOREIGN KEY(an_sender_id) REFERENCES users(ur_id),
+    FOREIGN KEY(an_replyTo) REFERENCES announcement(an_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE announcement_listings(
@@ -210,7 +213,6 @@ CREATE TABLE review(
     re_receiver_id VARCHAR(255) NOT NULL,
     re_sender_id VARCHAR(255) NOT NULL,
     re_comment TEXT(20000) NOT NULL,
-    re_isFollowUpNeeded TINYINT(1) NOT NULL,
     re_isDeleted TINYINT(1) DEFAULT 0,
     re_en_id VARCHAR(255) NOT NULL,
 

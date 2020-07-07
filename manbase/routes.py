@@ -5,8 +5,8 @@ import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, logout_user , current_user, login_required
 from manbase import app, db, bcrypt, login_manager
-from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm,BusinessUpdateProfileForm,ConfirmAttendanceForm
-from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings, JobApplications, Enrollments, Review, Rating, Abnormality
+from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm,BusinessUpdateProfileForm,ConfirmAttendanceForm,CommentForm
+from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings, JobApplications, Enrollments, Review, Rating, Abnormality, Announcement, AnnouncementListings
 from datetime import datetime
 from uuid import uuid4
 from collections import defaultdict 
@@ -517,7 +517,76 @@ def business_view_jobs_posted():
 def job(job_id):
     job = Jobs.query.get_or_404(job_id)
     listings = JobListings.query.filter_by(li_jb_id=job.jb_id).all()
-    return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings)
+
+    announcement_listings = []
+    announcements = []
+    
+    for listing in listings:
+        announcement_listings.append(AnnouncementListings.query.filter_by(anli_li_id = listing.li_id).all())
+    for announcement_listing in announcement_listings:
+        announcements.append(Announcement.query.filter_by(an_id = announcement_listing.anli_an_id).all())
+
+    enrolled_individuals_id = []
+    for listing in listings:
+        enrollments = Enrollments.query.filter_by(en_li_id=listing.li_id).all()
+        for enrollment in enrollments:
+            application = JobApplications.query.filter_by(ap_id=enrollment.en_ap_id)
+            enrolled_individuals_id.append(IndividualUsers.query.filter_by(iu_id=application.ap_iu_id).first().iu_id)
+        
+    #if its employer / enrolled employees, display discussion board
+    if current_user.get_id() == job.jb_bu_id or (current_user.get_id() in enrolled_individuals_id):
+        commentForm = CommentForm()
+        if commentForm.validate_on_submit():
+            
+            anid = str(uuid4())
+
+            # Ensure the generated job ID is unique
+            validate_anid = Announcement.query.filter_by(an_id=anid).first()
+            while validate_anid:
+                anid = str(uuid4())
+                validate_anid = Announcement.query.filter_by(an_id=anid).first()
+
+            if current_user.get_id() == job.jb_bu_id:
+                isFromEmployer = 1
+            else:
+                isFromEmployer = 0
+
+            announcement = Announcement(
+                    an_creationTime = datetime.utcnow(),
+                    an_id = anid,
+                    an_message = commentForm.comment.data,
+                    an_sender_id = current_user.get_id(),
+                    an_isFromEmployer = isFromEmployer
+                    )
+
+            for listing in listings:
+                liid = str(uuid4())
+
+                # Ensure the generated job listing ID is unique
+                validate_liid = Jobs.query.filter_by(li_id = llid).first()
+                while validate_liid:
+                    liid = str(uuid4())
+                    validate_liid = Jobs.query.filter_by(li_id = llid).first()
+                announcement_listing = AnnouncementListings(
+                                        anli_an_id = anid,
+                                        anli_li_id = listing.li_id,
+                                        anli_creationTime = datetime.utcnow()
+                )
+                db.session.add(announcement_listing)
+
+            db.session.add(announcement)
+            db.session.commit()
+
+            flash(f'您的留言已成功發布!', 'success')
+            return redirect(url_for('job', job_id=job_list_enrolled))
+
+        return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings, commentForm = commentForm, annoucements = annoucements)
+
+    return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings, commentForm = None, annoucements = None)
+
+@app.route('/jobs/<string: replyTo>/reply')
+def reply_annoucement(an_id):
+    return render_template('reply_annoucement.html',title='回覆留言', an_id=an_id)
 
 @app.route('/business/jobs/<string:job_id>/update')
 def business_job_update(job_id):
