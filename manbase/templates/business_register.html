@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<div class="content-switch center-grid d-flex justify-content-center align-items-center mb-3">
+<div class="content-switch center-grid d-flex justify-content-center align-items-center mb-3 transition-fade-up">
     <div class="transparent-watermark-background d-flex justify-content-center align-items-center"
         style="min-height: 88vh; width: 100vw;">
         <video autoplay loop muted playsinline>
@@ -17,7 +17,8 @@
     </div>
     <form method='POST'
         class="d-flex flex-column col-11 col-md-7 shadow rounded p-4 p-md-5 bus-reg justify-content-between mt-3"
-        novalidate style="min-height: 75vh; background: rgba(255, 255, 255, 0.3);" id="business_register">
+        novalidate style="min-height: 75vh; background: rgba(255, 255, 255, 0.3);" id="business_register"
+        data-swup-form="business_register">
         {{ form.hidden_tag() }}
         <div class="text-center">
             <h2 class="text-secondary">馬上註冊<span class="text-dark">man</span><span class="text-primary">base</span>

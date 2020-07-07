@@ -10,17 +10,21 @@ const init = () => {
     }
 
     $('#spinner').css('visibility', 'hidden');
+
+    gtag('event', 'page_view', { 'send_to': 'UA-41948260-3' });
 }
 
-const clickedLink = () => {
+const showSpinner = () => {
     $('#spinner').css('visibility', 'visible');
 }
 
 init();
 
-// TODO: Add the Form Plugin for Swup
-
-const swup = new Swup();
+const swup = new Swup({
+    plugins: [new SwupFormsPlugin(), new SwupGaPlugin()]
+});
 
 swup.on('contentReplaced', init);
-swup.on('clickLink', clickedLink);
+swup.on('clickLink', showSpinner);
+swup.on('submitForm', showSpinner);
+swup.on('samePage', () => $('#spinner').css('visibility', 'hidden'));
