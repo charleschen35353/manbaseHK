@@ -4,7 +4,8 @@ import cv2
 import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, logout_user , current_user, login_required
-from manbase import app, db, bcrypt, login_manager
+from flask_mail import Message
+from manbase import app, db, bcrypt, login_manager, ts, mail
 from manbase.forms import *
 from manbase.models import*
 from datetime import datetime
@@ -189,6 +190,21 @@ def individual_register():
         db.session.commit()
 
         flash(f'{form.individual_CName.data} 的個人帳號已成功註冊!', 'success')
+
+        subject = "Confirm your email"
+
+        token = ts.dumps(individual_user.iu_email, salt='email-confirm-key')
+
+        confirm_url = url_for(
+            'confirm_email',
+            token=token,
+            _external=True)
+
+        html = render_template('email_activate.html', confirm_url=confirm_url)
+
+        # 假设在myapp/util.py中定义了send_mail
+        send_email(user.email, subject, html)
+
         return redirect(url_for('home'))
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
 
@@ -780,6 +796,19 @@ def view_an_applicant(job_id, list_id, app_id):
 # =======================================
 #    INCOMPLETED / SUSPENDED ROUTES
 # =======================================
+@app.route("/email")
+def email():
+    #token = ts.dumps('manbasehk@gmail.com', salt='email-confirm-key')
+
+    #confirm_url = url_for('confirm_email',token=token, _external=True)
+
+    #html = render_template('email/activate.html', confirm_url=confirm_url)
+    # 假设在myapp/util.py中定义了send_mail
+    #send_email(user.email, subject, html)
+    msg = Message('Hello', sender = 'manbasehk@gmail.com', recipients = ['manbasehk@gmail.com'])
+    msg.body = "Hello Flask message sent from Flask-Mail"
+    mail.send(msg)
+    return "Sent"
 
 def save_picture(form_picture):
     """
