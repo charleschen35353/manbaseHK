@@ -35,7 +35,7 @@ def home():
         elif IndividualUsers.query.filter_by(iu_id = uid).first():
             return redirect(url_for('individual_home'))
         else:
-            return render_template('home.html', posts=posts)
+            return render_template('home.html')
     else:
         return render_template('index.html')
     
@@ -219,7 +219,7 @@ def individual_profile_update(iuid):
 @app.route('/individual/job_board', methods=['POST'])
 def view_job_board():
     jobs = Jobs.query.all()
-    return render_template('job_board.html', title='工作板', jobs = jobs)
+    return render_template('individual_job_board.html', title='工作板', jobs = jobs)
 
 # @ROUTE DEFINTION
 # NAME:     Apply Job
@@ -255,7 +255,7 @@ def apply_job(job_id, list_id):
         db.session.commit()
         flash(f'您已成功遞交工作申請!', 'success')
         return redirect(url_for('view_job_board'))
-    return render_template('apply_job.html', title='申請工作',form = form,job = job_id, list = list_id)
+    return render_template('individual_apply_job.html', title='申請工作',form = form,job = job_id, list = list_id)
 
 # @ROUTE DEFINTION
 # NAME:     View my jobs (individual)
@@ -587,7 +587,7 @@ def report_job_abnormality(job_id):
 @app.route('/business/jobs/<string:job_id>/enrolled')
 def job_list_enrolled(job_id,list_id):
     enrolled = Enrollments.query.filter_by(en_li_id=list_id).all()
-    return render_template('job_list_enrolled.html',title="錄用中", enrolled = enrolled)
+    return render_template('business_job_list_enrolled.html',title="錄用中", enrolled = enrolled)
 
 @app.route('/business/jobs/enrolled/<string:en_id>/attendance',methods=['GET', 'POST'])
 def confirm_attendance(en_id):
@@ -600,7 +600,7 @@ def confirm_attendance(en_id):
 
         #TODO: return to last page
     
-    return render_template('confirm_attendance.html', title='確認出席', form = form)
+    return render_template('business_confirm_attendance.html', title='確認出席', form = form)
 
 @app.route('/business/jobs/enrolled/<string:en_id>/rate',methods=['GET', 'POST'])
 def rate_n_review_on_individual(en_id):
@@ -654,7 +654,7 @@ def rate_n_review_on_individual(en_id):
 def job_list_applications(job_id, list_id):
     applicantions = JobApplications.query.filter_by(ap_li_id=list_id).all()
     listing = JobListings.query.filter_by(li_id = list_id).first()
-    return render_template('job_list_applications.html', title='工作申請', applicantions=applications, listing = listing)
+    return render_template('business_job_list_applications.html', title='工作申請', applicantions=applications, listing = listing)
 
 # @ROUTE DEFINTION
 # NAME:     View an Job Applicant
