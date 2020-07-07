@@ -38,6 +38,7 @@ CREATE TABLE business_users(
     bu_picName VARCHAR(36) NOT NULL, 
     bu_phone VARCHAR(8) NOT NULL, 
     bu_isSMSVerified TINYINT(1) DEFAULT 0,
+    bu_isEmailVerified TINYINT(1) DEFAULT 0,
     bu_businessLogo VARCHAR(255),
     bu_isDeleted TINYINT(1) DEFAULT 0,
     bu_BusinessVerificationStatus VARCHAR(1) DEFAULT 0, #0 is not verified, 1 is pending, 2 is verified
@@ -51,7 +52,7 @@ CREATE TABLE individual_users(
     iu_phone INT(8) NOT NULL, #how about region code
     iu_isSMSVerified TINYINT(1) DEFAULT 0,
     iu_profilePicture VARCHAR(2048),
-    iu_isIndentityVerified TINYINT(1) DEFAULT 0,
+    iu_isEmailVerified TINYINT(1) DEFAULT 0,
     iu_email VARCHAR(255),
     iu_CName VARCHAR(36) NOT NULL,
     iu_EName VARCHAR(36) NOT NULL,
@@ -194,6 +195,7 @@ CREATE TABLE verification(
     veri_type TINYTEXT NOT NULL,
     veri_doc VARCHAR(2048) NOT NULL,
     veri_ur_id VARCHAR(255) NOT NULL,
+    veri_isApproved TINYINT(1) DEFAULT 0,
 
     FOREIGN KEY(veri_ur_id) REFERENCES users(ur_id),
 
