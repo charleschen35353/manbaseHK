@@ -59,17 +59,17 @@ class IndividualRegistrationForm(BaseForm):
 
     submit = SubmitField('註冊個人帳戶')
 
-    def validate_user_login(self, user_login):
+    def validate_user_login(form, user_login):
         user = Users.query.filter_by(ur_login=user_login.data).first()
         if user:
             raise ValidationError('此帳戶已存在，請登入。')
 
-    def validate_individual_phone(self, company_CName):
+    def validate_individual_phone(form, individual_contact_number):
         user = IndividualUsers.query.filter_by(iu_phone=individual_contact_number.data).first()
         if user:
             raise ValidationError('此電話號碼已存在，請重新輸入。')
     
-    def validate_company_email(self, company_email):
+    def validate_individual_email(form, individual_email):
         user = IndividualUsers.query.filter_by(iu_email=individual_email.data).first()
         if user:
             raise ValidationError('此個人電郵已存在，請重新輸入。')
@@ -82,8 +82,14 @@ class IndividualUpdateProfileForm(BaseForm):
     individual_EName = StringField('英文名字')
     individual_alias = StringField('暱稱')
     individual_HKID = StringField('身分證字母加首四位數字')
+    individual_educationLevel = RadioField('教育程度', choices=[(0, "小學畢業或以下"), (1, "完成中三"), (2, "中學畢業"), (3, "大學（本科）畢業"), (4, "大學（碩士或以上）畢業"), (5, "保密")], coerce=int)
+    individual_language_Cantonese = BooleanField('廣東話',)
+    individual_language_English = BooleanField('英文')
+    individual_language_Putonghua = BooleanField('普通話')
+    individual_language_Other = StringField('其他')
     individual_intro = TextAreaField('自我介紹')
     submit = SubmitField('更新個人帳戶')
+
 
 class ChangePasswordForm(BaseForm):
 
@@ -100,6 +106,7 @@ class ChangePasswordForm(BaseForm):
     confirm_new_password = PasswordField('重新輸入新密碼',
                                  validators=[EqualTo('new_password', message="must match password")])
     submit = SubmitField('更新密碼')
+       
 
 class ApplyJobForm():
     submit = SubmitField('遞交申請')

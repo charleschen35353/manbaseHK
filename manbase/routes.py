@@ -151,6 +151,8 @@ def individual_register():
         return redirect(url_for('home'))
     form = IndividualRegistrationForm()
     if form.validate_on_submit():
+                
+    
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         uid = str(uuid4())
 
@@ -215,16 +217,31 @@ def individual_profile_update(iuid):
     form = IndividualUpdateProfileForm()
 
     if form.validate_on_submit():
-        #TODO: add business address
-        profile.iu_phone = form.individual_contact_number.data
-        profile.iu_email = form.individual_email.data
-        profile.iu_CName = form.individual_CName.data
-        profile.iu_EName = form.individual_EName.data
-        profile.iu_alias = form.individual_alias.data
-        profile.iu_HKID = form.individual_HKID.data
-        db.session.commit()
-        flash('您的個人資料已成功更新!', 'success')
-        return redirect(url_for('home'))
+        #server side validation
+        user = IndividualUsers.query.filter_by(iu_phone = form.individual_contact_number.data).first()    
+        if user and user.iu_id != iuid:
+            flash('Contact number {} taken. Update fails.'.format(form.individual_contact_number.data), 'fail')
+            return redirect(url_for('individual_profile_update', iuid = iuid))
+        user = IndividualUsers.query.filter_by(iu_email = form.individual_email.data).first()    
+        if user and user.iu_id != iuid:
+            flash('Email {} taken. Update fails.'.format(form.individual_email.data), 'fail')
+            return redirect(url_for('individual_profile_update', iuid = iuid))
+        else:
+            profile.iu_phone = form.individual_contact_number.data
+            profile.iu_email = form.individual_email.data
+            profile.iu_CName = form.individual_CName.data
+            profile.iu_EName = form.individual_EName.data
+            profile.iu_alias = form.individual_alias.data
+            profile.iu_HKID = form.individual_HKID.data
+            profile.iu_selfIntroduction = form.individual_intro.data
+            profile.iu_educationLevel = form.individual_educationLevel.data
+            profile.iu_language_Cantonese = form.individual_language_Cantonese.data
+            profile.iu_language_English = form.individual_language_English.data
+            profile.iu_language_Putonghua = form.individual_language_Putonghua.data
+            profile.iu_language_Other = form.individual_language_Other.data
+            db.session.commit()
+            flash('您的個人資料已成功更新!', 'success')
+            return redirect(url_for('individual_profile_update', iuid = iuid))
 
     elif request.method == 'GET':
         form.individual_contact_number.data = profile.iu_phone
@@ -233,12 +250,19 @@ def individual_profile_update(iuid):
         form.individual_EName.data = profile.iu_EName 
         form.individual_alias.data = profile.iu_alias 
         form.individual_HKID.data = profile.iu_HKID 
+        form.individual_intro.data = profile.iu_selfIntroduction
+        form.individual_educationLevel.data = int(profile.iu_educationLevel)
+        form.individual_language_Cantonese.data = profile.iu_language_Cantonese 
+        form.individual_language_English.data = profile.iu_language_English 
+        form.individual_language_Putonghua.data = profile.iu_language_Putonghua  
+        form.individual_language_Other.data = profile.iu_language_Other 
 
     return render_template('individual_profile_update.html', title='更新個人資料', form = form )
 
 @app.route('/change_password/update/<string:iuid>', methods =['POST','GET'])
 @login_required
 def update_password(iuid):
+
     user = Users.query.get_or_404(iuid)
    
     form = ChangePasswordForm()
@@ -263,7 +287,7 @@ def update_password(iuid):
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users view listed job
 
-@app.route('/individual/job_board', methods=['POST'])
+@app.route('/individual/job_board', methods=['POST', 'GET'])
 @login_required
 def view_job_board():
     jobs = Jobs.query.all()
