@@ -5,16 +5,44 @@ import matplotlib.image as pltimg
 from flask import render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, logout_user , current_user, login_required
 from flask_mail import Message
-from manbase import app, db, bcrypt, login_manager, ts, mail
+from manbase import app, db, bcrypt, login_manager, mail
 from manbase.forms import *
 from manbase.models import*
 from datetime import datetime
 from uuid import uuid4
 from collections import defaultdict 
+from itsdangerous import URLSafeTimedSerializer
+
+
+
+def send_email(to, subject, template):
+    msg = Message(
+        subject,
+        recipients=[to],
+        html=template,
+        sender=app.config['MAIL_DEFAULT_SENDER']
+    )
+    mail.send(msg)
 
 @login_manager.user_loader
 def load_user(ur_id):
     return Users.query.get(ur_id)
+
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+    except:
+        return False
+    return email
 
 # =======================================
 #           ROUTE DEFINITIONS
@@ -90,9 +118,15 @@ def login():
         user = Users.query.filter_by(ur_login=form.login.data).first()
         
         if user and bcrypt.check_password_hash(user.ur_password_hash, form.password.data):
-            login_user(user, remember = form.remember.data)
-            flash("成功登入.".format(form.login.data),"success")
-            return redirect(url_for('home'))
+            ind = IndividualUsers.query.filter_by(iu_id = user.ur_id).first()
+            if ind and ind.iu_isIdentityVerified:
+                login_user(user, remember = form.remember.data)
+                flash("成功登入.".format(form.login.data),"success")
+                return redirect(url_for('home'))
+            # business user??
+            else:
+                flash('登入失敗. 請以電子郵件確認啟用帳戶.', 'fail')
+                #return render_template("resend_confirm_email.html")
         else:
             flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')
     return render_template('login.html', title='Login', form=form)
@@ -139,6 +173,24 @@ def account():
             return render_template('500.html')
     else:
         return render_template('index.html')
+
+@app.route('/register/individual/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+
+    user = IndividualUser.query.filter_by(iu_email=email).first_or_404()
+    if user.iu_isIdentityVerified:
+        flash('Account already confirmed. Please login.', 'success')
+    else:
+        user.iu_isIdentityVerified = True
+        db.session.add(user)
+        db.session.commit()
+        flash('You have confirmed your account. Thanks!', 'success')
+    return redirect(url_for('home'))
+
 
 # @ROUTE DEFINTION
 # NAME:     Registration (Individual)
@@ -189,21 +241,12 @@ def individual_register():
         db.session.add(individual_user)
         db.session.commit()
 
-        flash(f'{form.individual_CName.data} 的個人帳號已成功註冊!', 'success')
-
-        subject = "Confirm your email"
-
-        token = ts.dumps(individual_user.iu_email, salt='email-confirm-key')
-
-        confirm_url = url_for(
-            'confirm_email',
-            token=token,
-            _external=True)
-
-        html = render_template('email_activate.html', confirm_url=confirm_url)
-
-        # 假设在myapp/util.py中定义了send_mail
-        send_email(user.email, subject, html)
+        flash(f'{form.individual_CName.data} 的個人帳號已成功註冊! 請確認電子郵件來以啟用帳戶！', 'success')
+        token = generate_confirmation_token(individual_user.iu_email)
+        confirm_url = url_for('confirm_email', token=token, _external=True)
+        html = render_template('confirm_email.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_email(individual_user.iu_email, subject, html)
 
         return redirect(url_for('home'))
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
@@ -803,7 +846,7 @@ def email():
     #confirm_url = url_for('confirm_email',token=token, _external=True)
 
     #html = render_template('email/activate.html', confirm_url=confirm_url)
-    # 假设在myapp/util.py中定义了send_mail
+
     #send_email(user.email, subject, html)
     msg = Message('Hello', sender = 'manbasehk@gmail.com', recipients = ['manbasehk@gmail.com'])
     msg.body = "Hello Flask message sent from Flask-Mail"
