@@ -20,6 +20,26 @@ class LoginForm(BaseForm):
     remember = BooleanField('請記住我')
     submit = SubmitField('登入')
 
+class ResetPasswordForm(BaseForm):
+    otp = PasswordField('one time password',
+                             validators=[DataRequired()])
+    password = PasswordField('密碼',
+                             validators=[DataRequired(), Length(min=5)])
+    confirm_password = PasswordField('重新輸入密碼',
+                                     validators=[DataRequired(), EqualTo('password', message="必須與已輸入密碼相同")])
+    submit = SubmitField('重置密碼')
+
+class ForgetPasswordForm(BaseForm):
+    email = StringField('電子郵箱',
+                                validators=[DataRequired(message = '電子郵箱不能為空'), Email()])
+    submit = SubmitField('send email')
+
+    def validate_individual_email(form, email):
+        ind = IndividualUsers.query.filter_by(iu_email = email.data).first()
+        bus = BusinessUsers.query.filter_by(bu_email = email.data).first()
+        if ind is None and bus is None:
+            raise ValidationError('此電郵不存在，請重新輸入。')
+
 # Individual Users
 # TODO: rewrite validators
 class IndividualRegistrationForm(BaseForm):
@@ -70,8 +90,9 @@ class IndividualRegistrationForm(BaseForm):
             raise ValidationError('此電話號碼已存在，請重新輸入。')
     
     def validate_individual_email(form, individual_email):
-        user = IndividualUsers.query.filter_by(iu_email=individual_email.data).first()
-        if user:
+        ind = IndividualUsers.query.filter_by(iu_email=individual_email.data).first()
+        bus = BusinessUsers.query.filter_by(bu_email=individual_email.data).first()
+        if ind is not None and bus is not None:
             raise ValidationError('此個人電郵已存在，請重新輸入。')
 
 class IndividualUpdateProfileForm(BaseForm):
@@ -149,8 +170,9 @@ class BusinessRegistrationForm(BaseForm):
                 '此商業名稱已存在，請重新輸入。')
     
     def validate_company_email(self, company_email):
-        user = BusinessUsers.query.filter_by(bu_email=company_email.data).first()
-        if user:
+        ind = IndividualUsers.query.filter_by(iu_email=company_email.data).first()
+        bus = BusinessUsers.query.filter_by(bu_email=company_email.data).first()
+        if ind is not None and bus is not None:
             raise ValidationError(
                 '此企業電郵已存在，請重新輸入。')
 

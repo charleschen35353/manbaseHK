@@ -28,6 +28,7 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_DEFAULT_SENDER'] = 'manbasehk@gmail.com' 
 # Using default error message translation
 app.config['WTF_I18N_ENABLED'] = False
+app.config['DEFAULT_STRING'] = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%'
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)

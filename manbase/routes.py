@@ -2,7 +2,10 @@ import secrets
 import os
 import cv2
 import matplotlib.image as pltimg
-from flask import render_template, url_for, flash, redirect, request, abort
+import secrets
+import math
+import random
+from flask import render_template, url_for, flash, redirect, request, abort, Markup
 from flask_login import login_user, logout_user , current_user, login_required
 from flask_mail import Message
 from manbase import app, db, bcrypt, login_manager, mail
@@ -11,38 +14,12 @@ from manbase.models import*
 from datetime import datetime
 from uuid import uuid4
 from collections import defaultdict 
-from itsdangerous import URLSafeTimedSerializer
-
-
-
-def send_email(to, subject, template):
-    msg = Message(
-        subject,
-        recipients=[to],
-        html=template,
-        sender=app.config['MAIL_DEFAULT_SENDER']
-    )
-    mail.send(msg)
+from manbase.utils import *
 
 @login_manager.user_loader
 def load_user(ur_id):
     return Users.query.get(ur_id)
 
-def generate_confirmation_token(email):
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
-
-def confirm_token(token, expiration=3600):
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    try:
-        email = serializer.loads(
-            token,
-            salt=app.config['SECURITY_PASSWORD_SALT'],
-            max_age=expiration
-        )
-    except:
-        return False
-    return email
 
 # =======================================
 #           ROUTE DEFINITIONS
@@ -103,6 +80,22 @@ def individual_home():
 def about():
     return render_template('about.html', title = "about us")
 
+@app.route('/resend_confirmation_email/<string:uid>')
+def resend_confirmation_email(uid):
+    ind = IndividualUsers.query.filter_by(iu_id = uid).first()
+    if ind: email = ind.iu_email
+    bus = BusinessUsers.query.filter_by(bu_id = uid).first()
+    if bus: email = bus.bu_email
+    assert ind is None and bus is not None or ind is not None and bus is None
+    token = generate_confirmation_token(email)
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    html = render_template('confirm_email.html', confirm_url=confirm_url)
+    subject = "Please confirm your email"
+    send_email(email, subject, html)
+    flash("Confirmation Email Resent.","success")
+    return redirect(url_for('login'))
+
+
 # @ROUTE DEFINTION
 # NAME:     Login Page
 # PATH:     /login
@@ -119,14 +112,18 @@ def login():
         
         if user and bcrypt.check_password_hash(user.ur_password_hash, form.password.data):
             ind = IndividualUsers.query.filter_by(iu_id = user.ur_id).first()
-            if ind and ind.iu_isIdentityVerified:
+            if ind and ind.iu_isEmailVerified:
                 login_user(user, remember = form.remember.data)
                 flash("成功登入.".format(form.login.data),"success")
                 return redirect(url_for('home'))
-            # business user??
+            bus = BusinessUsers.query.filter_by(bu_id = user.ur_id).first()
+            if bus and bus.iu_isEmailVerified:
+                login_user(user, remember = form.remember.data)
+                flash("成功登入.".format(form.login.data),"success")
+                return redirect(url_for('home'))
             else:
-                flash('登入失敗. 請以電子郵件確認啟用帳戶.', 'fail')
-                #return render_template("resend_confirm_email.html")
+                url = url_for('resend_confirmation_email', uid = user.ur_id )
+                flash(Markup('登入失敗. 請以電子郵件確認啟用帳戶. 沒有收到郵件？點擊 <a href="{}" class="alert-link">這裡</a>'.format(url)), 'fail')
         else:
             flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')
     return render_template('login.html', title='Login', form=form)
@@ -153,6 +150,72 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     return render_template('register.html', title='註冊')
+
+@app.route('/reset_password/<token>')
+def reset_password(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+    ind = IndividualUsers.query.filter_by(iu_email=email).first()
+    bus = BusniessUsers.query.filter_by(bu_email=email).first()
+    if ind and not bus:
+        user = Users.query.get_or_404(ind.iu_id)
+    elif bus and not ind:
+        user = Users.query.get_or_404(bus.bu_id)
+    else:  
+        flash('Error: Single email exists under two different account.', 'danger')
+        return redirect(url_for('500'))
+
+    
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        if bcrypt.check_password_hash(user.ur_otp,form.otp.data):
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            user.ur_password_hash = hashed_password
+            flash('You have successfully reset your password!', 'success')
+            return redirect(url_for(login))
+        else:
+             flash('Incorrect OTP!', 'fail')
+
+    return render_template("reset_password.html")
+
+
+@app.route('/forget_password', methods=['GET', 'POST'])
+def forget_password():
+    form = ForgetPasswordForm()
+
+    if form.validate_on_submit():
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+        length = len(app.config['DEFAULT_STRING']) 
+        otp = ""
+        for i in range(6) : 
+            otp += app.config['DEFAULT_STRING'] [math.floor(random.random() * length)] 
+        token = generate_confirmation_token(form.email.data)
+        reset_url = url_for('reset_password', token=token, _external=True)
+        html = render_template('reset_password_email.html', reset_url=reset_url, otp = otp)
+        subject = "Your email for password reset"
+        send_email(form.email.data, subject, html)
+       
+        ind = IndividualUsers.query.filter_by(iu_email=form.email.data).first()
+        bus = BusinessUsers.query.filter_by(bu_email=form.email.data).first()
+        user = None
+        if ind and not bus:
+            user = Users.query.get_or_404(ind.iu_id)
+        elif bus and not ind:
+            user = Users.query.get_or_404(bus.bu_id)
+        elif not bus and not ind:
+            flash('Email is not registered', 'fail')
+            return redirect(url_for('forget_password'))
+        else:  
+            flash('Error: Single email exists under two different account.', 'danger')
+            return render_template('500')
+
+        user.ur_otp = bcrypt.generate_password_hash(otp).decode('utf-8')
+        db.session.commit()
+        flash("您的密碼重置郵件已發送至您的電子信箱內.","success")
+        return redirect(url_for('home'))
+    return render_template('forget_password.html', title='忘記密碼', form = form)
 
 # @ROUTE DEFINTION
 # NAME:     Update Account Info
@@ -181,12 +244,11 @@ def confirm_email(token):
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
 
-    user = IndividualUser.query.filter_by(iu_email=email).first_or_404()
-    if user.iu_isIdentityVerified:
+    user = IndividualUsers.query.filter_by(iu_email=email).first_or_404()
+    if user.iu_isEmailVerified:
         flash('Account already confirmed. Please login.', 'success')
     else:
-        user.iu_isIdentityVerified = True
-        db.session.add(user)
+        user.iu_isEmailVerified = True
         db.session.commit()
         flash('You have confirmed your account. Thanks!', 'success')
     return redirect(url_for('home'))
@@ -242,6 +304,7 @@ def individual_register():
         db.session.commit()
 
         flash(f'{form.individual_CName.data} 的個人帳號已成功註冊! 請確認電子郵件來以啟用帳戶！', 'success')
+	
         token = generate_confirmation_token(individual_user.iu_email)
         confirm_url = url_for('confirm_email', token=token, _external=True)
         html = render_template('confirm_email.html', confirm_url=confirm_url)
@@ -519,13 +582,20 @@ def business_register():
                                     bu_CName = form.company_CName.data,
                                     bu_EName = form.company_EName.data,
                                     bu_picName = form.company_contact_person.data,
-                                    bu_phone = form.company_contact_number.data
+                                    bu_phone = form.company_contact_number.data,
+                                    bu_email = form.company_email.data
                                     )
         db.session.add(user)
         db.session.add(business_user)
         db.session.commit()
 
-        flash(f'{form.company_CName.data} 的商業帳號已成功註冊!', 'success')
+        token = generate_confirmation_token(busniness_user.bu_email)
+        confirm_url = url_for('confirm_email', token=token, _external=True)
+        html = render_template('confirm_email.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_email(busniness_user.bu_email, subject, html)
+
+        flash(f'{form.company_CName.data} 的商業帳號已成功註冊! 請確認電子郵件來以啟用帳戶！', 'success')
         return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
 
@@ -839,19 +909,7 @@ def view_an_applicant(job_id, list_id, app_id):
 # =======================================
 #    INCOMPLETED / SUSPENDED ROUTES
 # =======================================
-@app.route("/email")
-def email():
-    #token = ts.dumps('manbasehk@gmail.com', salt='email-confirm-key')
 
-    #confirm_url = url_for('confirm_email',token=token, _external=True)
-
-    #html = render_template('email/activate.html', confirm_url=confirm_url)
-
-    #send_email(user.email, subject, html)
-    msg = Message('Hello', sender = 'manbasehk@gmail.com', recipients = ['manbasehk@gmail.com'])
-    msg.body = "Hello Flask message sent from Flask-Mail"
-    mail.send(msg)
-    return "Sent"
 
 def save_picture(form_picture):
     """
