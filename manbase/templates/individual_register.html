@@ -155,7 +155,10 @@
 
             <!-- English Name -->
             <div class="form-group">
-                {{ form.individual_EName.label(class="form-control-label") }}
+                {{ form.individual_EName.label(class="form-control-label mb-0") }}
+                <p class="form-text text-muted my-1">
+                    可選填
+                </p>
                 {% if form.individual_EName.errors %}
                 {{ render_field(form.individual_EName,
                                 class="form-control form-control-lg is-invalid", 
@@ -169,9 +172,6 @@
                                 id="ind_register_e_name")
                 }}
                 {% endif %}
-                <p class="form-text text-muted">
-                    可選填
-                </p>
                 <div class="invalid-feedback d-block" id="ind_register_e_name_error">
                     {% if form.individual_EName.errors %}
                     {% for error in form.individual_EName.errors %}
@@ -183,7 +183,10 @@
 
             <!-- Nickname -->
             <div class="form-group">
-                {{ form.individual_alias.label(class="form-control-label") }}
+                {{ form.individual_alias.label(class="form-control-label mb-0") }}
+                <p class="form-text text-muted my-1">
+                    可選填
+                </p>
                 {% if form.individual_alias.errors %}
                 {{ render_field(form.individual_alias,
                                 class="form-control form-control-lg is-invalid",
@@ -197,9 +200,7 @@
                                 id="ind_register_nickname")
                 }}
                 {% endif %}
-                <p class="form-text text-muted">
-                    可選填
-                </p>
+
                 <div class="invalid-feedback d-block" id="ind_register_nickname">
                     {% if form.individual_alias.errors %}
                     {% for error in form.individual_alias.errors %}
@@ -261,23 +262,29 @@
             <!-- Tel Number -->
             <div class="form-group">
                 {{ form.individual_contact_number.label(class="form-control-label") }}
-                {% if form.individual_contact_number.errors %}
-                {{ render_field(form.individual_contact_number,
-                                class="form-control form-control-lg is-invalid", 
-                                id="ind_register_tel", 
-                                maxlength="8", 
-                                pattern="[0-9]{8}", 
-                                placeholder="00000000") 
-                }}
-                {% else %}
-                {{ render_field(form.individual_contact_number,
-                                class="form-control form-control-lg", 
-                                id="ind_register_tel", 
-                                maxlength="8", 
-                                pattern="[0-9]{8}", 
-                                placeholder="00000000") 
-                }}
-                {% endif %}
+                <div class="d-flex align-items-center">
+                    <p class="m-0 mr-2">(+852) </p>
+                    <div class="d-flex w-100">
+                        {% if form.individual_contact_number.errors %}
+                        {{ render_field(form.individual_contact_number,
+                                        class="form-control form-control-lg is-invalid", 
+                                        id="ind_register_tel", 
+                                        maxlength="8", 
+                                        pattern="[0-9]{8}", 
+                                        placeholder="00000000") 
+                        }}
+                        {% else %}
+                        {{ render_field(form.individual_contact_number,
+                                        class="form-control form-control-lg", 
+                                        id="ind_register_tel", 
+                                        maxlength="8", 
+                                        pattern="[0-9]{8}", 
+                                        placeholder="00000000") 
+                        }}
+                        {% endif %}
+                    </div>
+                </div>
+
                 <div class="invalid-feedback d-block" id="ind_register_tel_error">
                     {% if form.individual_contact_number.errors %}
                     {% for error in form.individual_contact_number.errors %}
@@ -315,12 +322,15 @@
                 {{ render_field(form.individual_gender.label, 
                                 class="form-control-label") 
                 }}
-                <!-- TODO: Update Subfield UI -->
-                {% for subfield in form.individual_gender %}
-                <div class="ind_register_genders">
-                    {{ subfield }} {{ subfield.label }}
+                <div class="row mx-md-n1">
+                    {% for subfield in form.individual_gender %}
+                    <div class="col-12 col-md-4 px-md-1 my-2">
+                        <div class="ind_register_genders d-grid p-2 align-items-center rounded-lg  bg-white border">
+                            {{ subfield }} {{ render_field(subfield.label, class="m-0") }}
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
                 <div class="invalid-feedback d-block" id="ind_register_gender_error">
                     {% if form.individual_gender.errors %}
                     {% for error in form.individual_gender.errors %}
@@ -338,13 +348,13 @@
                 {% if form.individual_birthday.errors %}
                 {{ render_field(form.individual_birthday,
                                 class="form-control form-control-lg is-invalid", 
-                                placeholder="0000-00-00", 
+                                placeholder="YYYY-MM-DD", 
                                 id="ind_register_dob") 
                 }}
                 {% else %}
                 {{ render_field(form.individual_birthday, 
                                 class="form-control form-control-lg", 
-                                placeholder="0000-00-00", 
+                                placeholder="YYYY-MM-DD", 
                                 id="ind_register_dob") 
                 }}
                 {% endif %}
@@ -379,12 +389,16 @@
                 <p class="form-text text-muted my-1">
                     可選填
                 </p>
-                {% for subfield in form.individual_educationLevel %}
-                <!-- TODO: Update Subfield UI - Education Level -->
-                <div class="ind_reg_edu_levels">
-                    {{ subfield }} {{ subfield.label }}
+                <div class="row mx-md-n1">
+                    {% for subfield in form.individual_educationLevel %}
+                    <div class="col-12 col-md-4 px-md-1 my-2">
+                        <div class="ind_reg_edu_levels d-grid p-2 align-items-center rounded-lg  bg-white border">
+                            {{ subfield }} {{ render_field(subfield.label, class="m-0") }}
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+
 
                 <div class="invalid-feedback d-block" id="ind_reg_edu_level_error">
                     {% if form.individual_educationLevel.errors %}
@@ -398,54 +412,57 @@
             <!-- Language -->
             <div class="form-group">
                 <h4>工作語言</h4>
-                <p class="form-text text-muted">
+                <p class="form-text text-muted mb-0">
                     可選填
                 </p>
-                <!-- TODO: Update Subfield UI - Languages -->
-                <div class="form-check">
-                    {% if form.individual_language_Cantonese.errors %}
-                    {{ render_field(form.individual_language_Cantonese,
-                                    class="form-check-input is-invalid",
+                <div class="row mx-md-n1">
+                    <div class="col-12 col-md-4 px-md-1 my-2">
+                        <div class="ind_reg_langs d-grid p-2 align-items-center rounded-lg  bg-white border">
+                            {% if form.individual_language_Cantonese.errors %}
+                            {{ render_field(form.individual_language_Cantonese,
+                                    class="is-invalid",
                                     id="ind_register_cantonese") 
-                    }}
-                    {% else %}
-                    {{ render_field(form.individual_language_Cantonese,
-                                    class="form-check-input bg-primary",
+                            }}
+                            {% else %}
+                            {{ render_field(form.individual_language_Cantonese,
                                     id="ind_register_cantonese")
-                    }}
-                    {% endif %}
-                    {{ form.individual_language_Cantonese.label(class="form-check-label") }}
-                </div>
+                            }}
+                            {% endif %}
+                            {{ form.individual_language_Cantonese.label(class="form-check-label") }}
+                        </div>
+                    </div>
 
-                <div class="form-check">
-                    {% if form.individual_language_English.errors %}
-                    {{ render_field(form.individual_language_English,
-                                    class="form-check-input is-invalid", 
+                    <div class="col-12 col-md-4 px-md-1 my-2">
+                        <div class="ind_reg_langs d-grid p-2 align-items-center rounded-lg bg-white border">
+                            {% if form.individual_language_English.errors %}
+                            {{ render_field(form.individual_language_English,
+                                    class="is-invalid", 
                                     id="ind_register_english")
-                    }}
-                    {% else %}
-                    {{ render_field(form.individual_language_English,
-                                    class="form-check-input",
+                            }}
+                            {% else %}
+                            {{ render_field(form.individual_language_English,
                                     id="ind_register_english")
-                    }}
-                    {% endif %}
+                            }}
+                            {% endif %}
 
-                    {{ form.individual_language_English.label(class="form-check-label") }}
-                </div>
-
-                <div class="form-check">
-                    {% if form.individual_language_Putonghua.errors %}
-                    {{ render_field(form.individual_language_Putonghua,
-                                    class="form-check-input is-invalid",
+                            {{ form.individual_language_English.label(class="form-check-label") }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 px-md-1 my-2">
+                        <div class="ind_reg_langs d-grid p-2 align-items-center rounded-lg bg-white border">
+                            {% if form.individual_language_Putonghua.errors %}
+                            {{ render_field(form.individual_language_Putonghua,
+                                    class=" is-invalid",
                                     id="ind_register_putonghua")
-                    }}
-                    {% else %}
-                    {{ render_field(form.individual_language_Putonghua,
-                                    class="form-check-input",
+                            }}
+                            {% else %}
+                            {{ render_field(form.individual_language_Putonghua,
                                     id="ind_register_putonghua")
-                    }}
-                    {% endif %}
-                    {{ form.individual_language_Putonghua.label(class="form-check-label") }}
+                            }}
+                            {% endif %}
+                            {{ form.individual_language_Putonghua.label(class="form-check-label") }}
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">

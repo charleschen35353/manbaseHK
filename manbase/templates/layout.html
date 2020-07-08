@@ -6,28 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
   <!-- Google Fonts -->
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@100;300;400;500;700;900&display=swap" as="style"
-    onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="stylesheet" rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@100;300;400;500;700;900&display=swap">
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-main.css') }}">
+  <link rel="stylesheet" rel="preload" as="style" href="{{ url_for('static', filename='bootstrap-main.css') }}">
 
   <!-- Main CSS -->
-  <link rel="preload" href="{{ url_for('static', filename='main.css') }}" as="style"
-    onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="stylesheet" rel="preload" as="style" href="{{ url_for('static', filename='main.css') }}">
 
   <!-- Line Awesome -->
-  <link rel="preload" href="{{ url_for('static', filename='fonts/line-awesome/css/line-awesome.min.css') }}" as="style"
-    onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="stylesheet" rel="preload" as="style"
+    href="{{ url_for('static', filename='fonts/line-awesome/css/line-awesome.min.css') }}">
 
   <!-- Swup CSS -->
-  <link rel="preload" href="{{ url_for('static', filename='swup-main.css') }}" as="style"
-    onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="stylesheet" rel="preload" as="style" href="{{ url_for('static', filename='swup-main.css') }}">
 
-  <!-- Compiled Minified CSS (Temporarily Diabled for Easier Devevelopment) -->
-  <!-- <link rel="preload" href="{{ url_for('static', filename='out.css') }}" as="style"
-    onload="this.onload=null; this.rel='stylesheet'"> -->
+  <!-- Compiled Minified CSS (Temporarily Disabled for Easier Devevelopment) -->
+  <!--<link rel="stylesheet" rel="preload" as="style" href="{{ url_for('static', filename='out.css') }}">-->
+
 
   {% if title %}
   <title>Manbase - {{title}}</title>

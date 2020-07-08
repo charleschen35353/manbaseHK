@@ -73,6 +73,48 @@ const individual_register_on_load = () => {
         });
     });
 
+    // Block Radio Buttons
+
+    for (const class_name of ['.ind_register_genders', '.ind_reg_edu_levels']) {
+        $(class_name).each((_, el) => {
+
+            const radio = $(el).children("input:first");
+
+            $(el).click(() => {
+                $(radio).prop("checked", true).change();
+            });
+
+            $(radio).change((el) => {
+                $(class_name).each((_, el) => {
+                    $(el).removeClass("bg-primary text-white").addClass("bg-white text-dark");
+                });
+
+                if ($(el.target).is(':checked')) {
+                    $(el.target).parent().addClass("bg-primary text-white").removeClass("bg-white text-dark");
+                }
+            });
+        });
+    }
+
+    // Language Checkboxes
+    $('.ind_reg_langs').each((_, el) => {
+        const checkbox = $(el).children("input:first");
+
+        $(el).click(() => {
+            $(checkbox).prop("checked", !$(checkbox).is(':checked')).change();
+        });
+
+        $(checkbox).change(el => {
+            if ($(el.target).is(':checked')) {
+                $(el.target).parent().addClass("bg-primary text-white").removeClass("bg-white text-dark");
+            } else {
+                $(el.target).parent().removeClass("bg-primary text-white").addClass("bg-white text-dark");
+            }
+        });
+    });
+
+
+
     // Auto-Formatting
 
     /* Suspending
