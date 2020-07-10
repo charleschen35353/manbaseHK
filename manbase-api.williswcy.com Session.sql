@@ -39,6 +39,7 @@ CREATE TABLE business_users(
     bu_phone VARCHAR(8) NOT NULL, 
     bu_isSMSVerified TINYINT(1) DEFAULT 0,
     bu_isEmailVerified TINYINT(1) DEFAULT 0,
+    bu_confirmation_sent_on TIMESTAMP,
     bu_businessLogo VARCHAR(255),
     bu_isDeleted TINYINT(1) DEFAULT 0,
     bu_BusinessVerificationStatus VARCHAR(1) DEFAULT 0, #0 is not verified, 1 is pending, 2 is verified
@@ -53,6 +54,7 @@ CREATE TABLE individual_users(
     iu_isSMSVerified TINYINT(1) DEFAULT 0,
     iu_profilePicture VARCHAR(2048),
     iu_isEmailVerified TINYINT(1) DEFAULT 0,
+    iu_confirmation_sent_on TIMESTAMP,
     iu_email VARCHAR(255),
     iu_CName VARCHAR(36) NOT NULL,
     iu_EName VARCHAR(36) NOT NULL,

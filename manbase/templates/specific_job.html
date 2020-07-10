@@ -45,7 +45,7 @@
       <form method = 'POST' action = ''>
           {{ commentForm.hidden_tag() }}
           <fieldset class='form-group'>
-              <legend class = 'border-bottom mb-4'>發佈通知</legend>
+              <legend class = 'border-bottom mb-4'>留言</legend>
 
               <div class="form-group">
                 {{ commentForm.comment.label(class="form-control-label") }}
@@ -69,7 +69,25 @@
       </form>
     </div>
     
-    {% if ennoucements %}
+    {% if job.jb_bu_id == current_user.get_id() or IndividualUsers.query.filter_by(iu_id = current_user.get_id()).first()%}
+
+      {% if annoucements %}
+        {% for annoucement in annoucements %}
+          <p> sender: {{announcement.an_sender_id}} </p>
+          <p> message: {{announcement.an_message}} </p>
+          <p> isFromEmployer: {{announcement.an_isFromEmployer}} </p>
+          <p> reply to: {{announcement.an_replyTo}} </p>
+          <a href="{{url_for('reply_annoucement',an_id=annoucement.an_id)}}" class="btn btn-primary btn-large p-2">
+            <h4 class="m-0">註冊工作帳戶</h4>
+        </a>
+        {% endfor %}
+      {% else %}
+        <p> no comments yet </p>
+      {% endif %}
+      
+    {% endif %}
+
+    {% if annoucements %}
       {% for annoucement in annoucements %}
         <p> sender: {{announcement.an_sender_id}} </p>
         <p> message: {{announcement.an_message}} </p>
@@ -82,6 +100,7 @@
     {% else %}
       <p> no comments yet </p>
     {% endif %}
+
     <h2 class="article-title">{{ job.jb_title }}</h2>
     <p class="article-content">{{ job.jb_description }}</p>
     <p> The expected payment days is {{job.jb_expected_payment_days}} </p>

@@ -580,12 +580,64 @@ def job(job_id):
             flash(f'您的留言已成功發布!', 'success')
             return redirect(url_for('job', job_id=job_list_enrolled))
 
+        #TODO: specific job individual user and business user validation without importing the db to html
+        #TODO: listing reply under each comment using an_replyTo
         return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings, commentForm = commentForm, annoucements = annoucements)
 
     return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings, commentForm = None, annoucements = None)
 
 @app.route('/jobs/<string: replyTo>/reply')
 def reply_annoucement(an_id):
+    li_id = AnnouncementListings.query.filter_by(anli_an_id=an_id).first().anli_li_id
+    job_id = JobListings.query.filter_by(li_id = li_id).first().li_jb_id
+    job = Jobs.query.filter_by(jb_id = job_id).first()
+
+    commentForm = CommentForm()
+        if commentForm.validate_on_submit():
+            
+            anid = str(uuid4())
+
+            # Ensure the generated announcement ID is unique
+            validate_anid = Announcement.query.filter_by(an_id=anid).first()
+            while validate_anid:
+                anid = str(uuid4())
+                validate_anid = Announcement.query.filter_by(an_id=anid).first()
+
+            if current_user.get_id() == job.jb_bu_id:
+                isFromEmployer = 1
+            else:
+                isFromEmployer = 0
+
+            announcement = Announcement(
+                    an_creationTime = datetime.utcnow(),
+                    an_id = anid,
+                    an_message = commentForm.comment.data,
+                    an_sender_id = current_user.get_id(),
+                    an_isFromEmployer = isFromEmployer,
+                    an_replyTo = an_id
+                    )
+
+            for listing in listings:
+                liid = str(uuid4())
+
+                # Ensure the generated job listing ID is unique
+                validate_liid = Jobs.query.filter_by(li_id = llid).first()
+                while validate_liid:
+                    liid = str(uuid4())
+                    validate_liid = Jobs.query.filter_by(li_id = llid).first()
+                announcement_listing = AnnouncementListings(
+                                        anli_an_id = anid,
+                                        anli_li_id = listing.li_id,
+                                        anli_creationTime = datetime.utcnow()
+                )
+                db.session.add(announcement_listing)
+
+            db.session.add(announcement)
+            db.session.commit()
+            flash(f'您的回覆已成功發布!', 'success')
+            
+            #TODO: back to last page
+
     return render_template('reply_annoucement.html',title='回覆留言', an_id=an_id)
 
 @app.route('/business/jobs/<string:job_id>/update')
