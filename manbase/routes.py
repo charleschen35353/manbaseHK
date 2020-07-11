@@ -151,14 +151,15 @@ def register():
         return redirect(url_for('home'))
     return render_template('register.html', title='註冊')
 
-@app.route('/reset_password/<token>')
+@app.route('/reset_password/<token>',  methods=['GET', 'POST'])
 def reset_password(token):
     try:
         email = confirm_token(token)
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
+
     ind = IndividualUsers.query.filter_by(iu_email=email).first()
-    bus = BusniessUsers.query.filter_by(bu_email=email).first()
+    bus = BusinessUsers.query.filter_by(bu_email=email).first()
     if ind and not bus:
         user = Users.query.get_or_404(ind.iu_id)
     elif bus and not ind:
@@ -170,52 +171,86 @@ def reset_password(token):
     
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        if bcrypt.check_password_hash(user.ur_otp,form.otp.data):
+        if bcrypt.check_password_hash(user.ur_otp_hash,form.otp.data):
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
             user.ur_password_hash = hashed_password
+            user.ur_otp_hash = None
+            db.session.commit()
             flash('You have successfully reset your password!', 'success')
-            return redirect(url_for(login))
+            return redirect(url_for('login'))
         else:
              flash('Incorrect OTP!', 'fail')
 
-    return render_template("reset_password.html")
+    return render_template("reset_password.html", form = form)
 
 
-@app.route('/forget_password', methods=['GET', 'POST'])
-def forget_password():
-    form = ForgetPasswordForm()
+
+@app.route('/forget_password/<string:selection>', methods=['GET', 'POST'])
+def forget_password(selection):
+    form = None
+    if selection == "contact":
+        return redirect(url_for("contact us"))    
+    elif selection == "Account":
+        form = ForgetPasswordFormAccount()
+    elif selection == 'Phone':
+        form = ForgetPasswordFormPhone()
+    else:
+        return redirect(url_for("404"))
 
     if form.validate_on_submit():
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+        data = form.data.data 
+        email = ""
+        if selection == "Account":
+            #retrieve email via login
+            user = Users.query.filter_by(ur_login = data).first()
+            ind = IndividualUsers.query.filter_by(iu_id = user.ur_id).first()
+            bus = BusinessUsers.query.filter_by(bu_id = user.ur_id).first()
+            if ind: email = ind.iu_email
+            elif bus: email = bus.bu_email
+        elif selection == 'Phone':
+            #retrieve email via phone
+            ind = IndividualUsers.query.filter_by(iu_phone = data).first()
+            bus = BusinessUsers.query.filter_by(bu_phone = data).first()
+            
+            if ind: 
+                email = ind.iu_email
+                user = Users.query.filter_by(ur_id = ind.iu_id).first()
+            elif bus: 
+                email = bus.bu_email
+                user = Users.query.filter_by(ur_id = bus.bu_id).first()
+              
+    
         length = len(app.config['DEFAULT_STRING']) 
         otp = ""
         for i in range(6) : 
             otp += app.config['DEFAULT_STRING'] [math.floor(random.random() * length)] 
-        token = generate_confirmation_token(form.email.data)
+
+        token = generate_confirmation_token(email)
         reset_url = url_for('reset_password', token=token, _external=True)
         html = render_template('reset_password_email.html', reset_url=reset_url, otp = otp)
         subject = "Your email for password reset"
-        send_email(form.email.data, subject, html)
+        send_email(email, subject, html)
        
-        ind = IndividualUsers.query.filter_by(iu_email=form.email.data).first()
-        bus = BusinessUsers.query.filter_by(bu_email=form.email.data).first()
-        user = None
-        if ind and not bus:
-            user = Users.query.get_or_404(ind.iu_id)
-        elif bus and not ind:
-            user = Users.query.get_or_404(bus.bu_id)
-        elif not bus and not ind:
-            flash('Email is not registered', 'fail')
-            return redirect(url_for('forget_password'))
-        else:  
-            flash('Error: Single email exists under two different account.', 'danger')
-            return render_template('500')
-
-        user.ur_otp = bcrypt.generate_password_hash(otp).decode('utf-8')
+        user.ur_otp_hash = bcrypt.generate_password_hash(otp).decode('utf-8')
         db.session.commit()
         flash("您的密碼重置郵件已發送至您的電子信箱內.","success")
         return redirect(url_for('home'))
-    return render_template('forget_password.html', title='忘記密碼', form = form)
+    return render_template('forget_password.html', title='忘記密碼', form = form, method = selection)
+
+@app.route('/forget_password_selection', methods=['GET', 'POST'])
+def forget_password_selection():
+    form = ForgetPasswordSelectionForm()
+
+    if form.validate_on_submit():
+        selection = None
+        if form.selection.data == 1:
+            selection = 'Account'
+        elif form.selection.data == 2:
+            selection = 'Phone' 
+        elif form.selection.data == 3:
+            selection = 'Contact'
+        return redirect(url_for('forget_password', selection = selection))
+    return render_template('forget_password_selection.html', title='忘記密碼', form = form)
 
 # @ROUTE DEFINTION
 # NAME:     Update Account Info

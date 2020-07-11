@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateTimeField, RadioField, DateField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
 from manbase.models import Users, BusinessUsers, IndividualUsers
 from uuid import uuid4
 from flask_login import current_user
@@ -29,16 +29,31 @@ class ResetPasswordForm(BaseForm):
                                      validators=[DataRequired(), EqualTo('password', message="必須與已輸入密碼相同")])
     submit = SubmitField('重置密碼')
 
-class ForgetPasswordForm(BaseForm):
-    email = StringField('電子郵箱',
-                                validators=[DataRequired(message = '電子郵箱不能為空'), Email()])
-    submit = SubmitField('send email')
+class ForgetPasswordSelectionForm(BaseForm):
+    selection =  RadioField('Retrieval Method', choices=[(1, "Login ID"), (2, "Contact Phone Number(Verified)"), (3, "Contact Us")],  
+                            validators=[DataRequired()], coerce=int, default = 1)
+   
+    submit = SubmitField('Select')
 
-    def validate_individual_email(form, email):
-        ind = IndividualUsers.query.filter_by(iu_email = email.data).first()
-        bus = BusinessUsers.query.filter_by(bu_email = email.data).first()
+
+class ForgetPasswordFormAccount(BaseForm):
+    data = StringField('', validators=[DataRequired()])
+    submit = SubmitField('Reset Password')
+    
+    def validate_data(form, data):
+        user = Users.query.filter_by(ur_login=data.data).first()
+        if not user:
+            raise ValidationError('此帳戶不存在。')
+
+class ForgetPasswordFormPhone(BaseForm):
+    data = StringField('', validators=[DataRequired()])
+    submit = SubmitField('Reset Password')
+    
+    def validate_data(form, data):
+        ind = IndividualUsers.query.filter_by(iu_phone=data.data).first()
+        bus = BusinessUsers.query.filter_by(bu_phone=data.data).first()
         if ind is None and bus is None:
-            raise ValidationError('此電郵不存在，請重新輸入。')
+            raise ValidationError('此聯絡電話不存在。')
 
 # Individual Users
 # TODO: rewrite validators
@@ -85,14 +100,15 @@ class IndividualRegistrationForm(BaseForm):
             raise ValidationError('此帳戶已存在，請登入。')
 
     def validate_individual_phone(form, individual_contact_number):
-        user = IndividualUsers.query.filter_by(iu_phone=individual_contact_number.data).first()
-        if user:
+        ind = IndividualUsers.query.filter_by(iu_phone=individual_contact_number.data).first()
+        bus = BusinesslUsers.query.filter_by(bu_phone=individual_contact_number.data).first()
+        if ind is not None or bus is not None:
             raise ValidationError('此電話號碼已存在，請重新輸入。')
     
     def validate_individual_email(form, individual_email):
         ind = IndividualUsers.query.filter_by(iu_email=individual_email.data).first()
         bus = BusinessUsers.query.filter_by(bu_email=individual_email.data).first()
-        if ind is not None and bus is not None:
+        if ind is not None or bus is not None:
             raise ValidationError('此個人電郵已存在，請重新輸入。')
 
 class IndividualUpdateProfileForm(BaseForm):
