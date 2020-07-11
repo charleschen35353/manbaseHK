@@ -8,7 +8,14 @@ CREATE TABLE users(
     ur_id VARCHAR(255) PRIMARY KEY,
     ur_login VARCHAR(36) NOT NULL,
     ur_password_hash VARCHAR(255) NOT NULL,
-    ur_isDeleted TINYINT(1) DEFAULT 0
+    ur_isDeleted TINYINT(1) DEFAULT 0,
+    ur_phone VARCHAR(8) NOT NULL, 
+    ur_email VARCHAR(255) NOT NULL,
+    ur_email_key VARCHAR(255),
+    ur_sms_key VARCHAR(255),
+    ur_reset_key VARCHAR(255),
+    ur_isSMSVerified TINYINT(1) DEFAULT 0,
+    ur_isEmailVerified TINYINT(1) DEFAULT 0,
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE districts(
@@ -32,13 +39,9 @@ CREATE TABLE business_users(
     bu_id VARCHAR(255) PRIMARY KEY,
     bu_ind_id VARCHAR(255),
     bu_address VARCHAR(255),
-    bu_email VARCHAR(255),
     bu_CName VARCHAR(36) NOT NULL,
     bu_EName VARCHAR(36), #optional
     bu_picName VARCHAR(36) NOT NULL, 
-    bu_phone VARCHAR(8) NOT NULL, 
-    bu_isSMSVerified TINYINT(1) DEFAULT 0,
-    bu_isEmailVerified TINYINT(1) DEFAULT 0,
     bu_confirmation_sent_on TIMESTAMP,
     bu_businessLogo VARCHAR(255),
     bu_isDeleted TINYINT(1) DEFAULT 0,
@@ -50,12 +53,8 @@ CREATE TABLE business_users(
 
 CREATE TABLE individual_users(
     iu_id VARCHAR(255) PRIMARY KEY,
-    iu_phone INT(8) NOT NULL, #how about region code
-    iu_isSMSVerified TINYINT(1) DEFAULT 0,
     iu_profilePicture VARCHAR(2048),
-    iu_isEmailVerified TINYINT(1) DEFAULT 0,
     iu_confirmation_sent_on TIMESTAMP,
-    iu_email VARCHAR(255),
     iu_CName VARCHAR(36) NOT NULL,
     iu_EName VARCHAR(36) NOT NULL,
     iu_alias VARCHAR(36) NOT NULL,

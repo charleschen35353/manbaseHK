@@ -70,7 +70,7 @@
     </div>
     
     {% if job.jb_bu_id == current_user.get_id() or IndividualUsers.query.filter_by(iu_id = current_user.get_id()).first()%}
-
+      
       {% if annoucements %}
         {% for annoucement in annoucements %}
           <p> sender: {{announcement.an_sender_id}} </p>
