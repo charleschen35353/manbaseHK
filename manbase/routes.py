@@ -291,13 +291,8 @@ def individual_register():
                     ur_id = uid,
                     ur_login = form.user_login.data,
                     ur_password_hash = hashed_password,
-<<<<<<< HEAD
                     ur_phone = form.individual_contact_number.data,
                     ur_email = form.individual_email.data
-=======
-                    ur_email = form.individual_email.data,
-                    ur_phone = form.individual_contact_number.data,
->>>>>>> 812a3805ffe6cc388b9e86da26dca107f65670c7
                     )
         individual_user = IndividualUsers(
                                     iu_id = uid,
