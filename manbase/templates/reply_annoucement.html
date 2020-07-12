@@ -1,0 +1,35 @@
+{% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
+{% from manbase.models import BusinessUsers, IndividualUsers %}
+
+
+{% block content %}
+
+    <div class = 'content-section'> 
+        <form method = 'POST' action = ''>
+            {{ commentForm.hidden_tag() }}
+            <fieldset class='form-group'>
+                <legend class = 'border-bottom mb-4'>回覆留言</legend>
+
+                <div class="form-group">
+                {{ commentForm.comment.label(class="form-control-label") }}
+                {% if commentForm.comment.errors %}
+                {{ render_field(commentForm.comment, class="form-control form-control-lg is-invalid")}}
+                <div class="invalid-feedback">
+                    {% for error in commentForm.comment.errors %}
+                    <small class='error'> {{error}} </small>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ render_field(commentForm.comment,class="form-control form-control-lg" )}}
+                {% endif %}
+                </div>
+
+            </fieldset>
+            <div class="form-group">
+                {{ render_field(commentForm.submit, class="btn btn-primary btn-large btn-block")
+                }}
+            </div>
+        </form>
+    </div>
+    
+{% endblock content %}

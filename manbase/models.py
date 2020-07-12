@@ -5,10 +5,6 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 
-@login_manager.user_loader
-def load_user(user_id):
-    return users.query.get(int(user_id))
-
 Base = automap_base(db.Model)
 # Reflect the tables
 engine = create_engine("mysql+pymysql://public:b05qv-x4xca@test.manbasehk.com:3306/manbasedb")
