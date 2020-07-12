@@ -18,6 +18,7 @@ matplotlib = "*"
 flask-uuid = "*"
 flask-migrate = "*"
 pymysql = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.8"

@@ -77,7 +77,6 @@ const business_register_on_load = () => {
             error = true;
             $(account).addClass('is-invalid');
 
-            // TODO: Update to Chinese Warning
             $(account_errors).append("<p class='error'>帳號不能為空</p>");
         } else {
             $(account).addClass('is-valid');
@@ -89,7 +88,6 @@ const business_register_on_load = () => {
             error = true;
             $(password).addClass('is-invalid');
 
-            // TODO: Update to Chinese Warning
             $(password_errors).append("<p class='error'>您的密碼必須有至少 8 個字元。</p>")
         } else {
             $(password).addClass('is-valid');
@@ -99,7 +97,6 @@ const business_register_on_load = () => {
             error = true;
             $(repeat_password).addClass('is-invalid');
 
-            // TODO: Update to Chinese Warning
             $(repeat_password_errors).append("<p class='error'>您重複輸入的密碼必須與上面的相同。</p>")
         } else {
             $(repeat_password).addClass('is-valid');
@@ -180,7 +177,6 @@ const business_register_on_load = () => {
     });
 
     $('#bus_reg_sec_3_next').click(() => {
-        // TODO: Client-side Validation
         const pic = $('#bus_reg_person_in_charge');
         const phone = $('#bus_reg_phone_num');
         const email = $('#bus_reg_email');
@@ -206,7 +202,6 @@ const business_register_on_load = () => {
         if ($(pic).val().length == 0) {
             error = true;
             $(pic).addClass('is-invalid');
-            // TODO: Update to Chinese warning
             $(pic_errors).append("<p class='error'>您必須提供聯絡人的名稱。</p>");
         } else {
             $(pic).addClass('is-valid');
@@ -228,7 +223,6 @@ const business_register_on_load = () => {
         if (!(email_regex.test($(email).val()))) {
             error = true;
             $(email).addClass('is-invalid');
-            // TODO: Update to Chinese warning
             $(email_errors).append("<p class='error'>您必須提供有效的電子郵箱地址。</p>");
         } else {
             $(email).addClass('is-valid');
@@ -239,7 +233,6 @@ const business_register_on_load = () => {
         // Fill in Empty Confirm Values
         $(".bus-reg-confirm").each((index, element) => {
             if ($(element).html() == '') {
-                // TODO: Update to Chinese warning
                 $(element).html("<span class='text-info'>未填寫</span>");
             }
         });

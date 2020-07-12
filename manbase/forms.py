@@ -1,17 +1,11 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateTimeField, RadioField, DateField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from manbase.models import Users, BusinessUsers
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateTimeField, RadioField, DateField, TextAreaField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
+from manbase.models import Users, BusinessUsers, IndividualUsers
 from uuid import uuid4
+from flask_login import current_user
 
-def password_requirement(form, field):
-    # check if passwords contains 0-9 & a-z &A-Z and !@#$%
-    # TODO
-    if False:
-        raise ValidationError(
-            'Password must contain at least one number, one charater in upper case, one character in lower case, and a special character from \'@#!&*\'')
 
 # setting base error language as chinese
 class BaseForm(FlaskForm):
@@ -26,6 +20,44 @@ class LoginForm(BaseForm):
     remember = BooleanField('請記住我')
     submit = SubmitField('登入')
 
+class CommentForm(BaseForm):
+    comment = StringField('留言',
+                           validators=[DataRequired(message = '留言不能為空'), Length(min=5, max=20)])
+    submit = SubmitField('遞交留言')
+class ResetPasswordForm(BaseForm):
+    otp = PasswordField('one time password',
+                             validators=[DataRequired()])
+    password = PasswordField('密碼',
+                             validators=[DataRequired(), Length(min=5)])
+    confirm_password = PasswordField('重新輸入密碼',
+                                     validators=[DataRequired(), EqualTo('password', message="必須與已輸入密碼相同")])
+    submit = SubmitField('重置密碼')
+
+class ForgetPasswordSelectionForm(BaseForm):
+    selection =  RadioField('Retrieval Method', choices=[(1, "Login ID"), (2, "Contact Phone Number(Verified)"), (3, "Contact Us")],  
+                            validators=[DataRequired()], coerce=int, default = 1)
+   
+    submit = SubmitField('Select')
+
+
+class ForgetPasswordFormAccount(BaseForm):
+    data = StringField('', validators=[DataRequired()])
+    submit = SubmitField('Reset Password')
+    
+    def validate_data(form, data):
+        user = Users.query.filter_by(ur_login=data.data).first()
+        if not user:
+            raise ValidationError('此帳戶不存在。')
+
+class ForgetPasswordFormPhone(BaseForm):
+    data = StringField('', validators=[DataRequired()])
+    submit = SubmitField('Reset Password')
+    
+    def validate_data(form, data):
+        user = Users.query.filter_by(ur_phone=data.data).first()
+        if not user:
+            raise ValidationError('此聯絡電話不存在。')
+
 # Individual Users
 # TODO: rewrite validators
 class IndividualRegistrationForm(BaseForm):
@@ -33,6 +65,14 @@ class IndividualRegistrationForm(BaseForm):
                            validators=[DataRequired(message = '名字不能為空'), Length(min=5, max=20)])
     password = PasswordField('密碼',
                              validators=[DataRequired(message = '密碼不能為空'), Length(min=5, max=32)])
+    #password validation 
+    #TODO to be implemented on client side instead
+    def password_requirement(form, field):
+        # check if passwords contains 0-9 & a-z &A-Z and !@#$%
+        # TODO
+        if False:
+            raise ValidationError(
+                'Password must contain at least one number, one charater in upper case, one character in lower case, and a special character from \'@#!&*\'')
     confirm_password = PasswordField('重新輸入密碼',
                                      validators=[DataRequired(), EqualTo('password', message="必須與已輸入密碼相同")])
     individual_contact_number = IntegerField('聯絡電話',
@@ -45,10 +85,10 @@ class IndividualRegistrationForm(BaseForm):
     individual_alias = StringField('暱稱', validators = [])
     individual_HKID = StringField('身分證字母加首四位數字', validators = [DataRequired()])
     # DEBUG: removed validators
-    individual_gender = RadioField('性別', choices=[(0, "女性"), (1, "男性")], validators=[], coerce=int)
+    individual_gender = RadioField('性別', choices=[(0, "女性"), (1, "男性"), (2, "保密")], validators=[], coerce=int)
     individual_birthday = DateField('出生日期', validators=[DataRequired()])
     # DEBUG: removed validators
-    individual_educationLevel = RadioField('教育程度', choices=[(0, "小學畢業或以下"), (1, "完成中三"), (2, "中學畢業"), (3, "大學（本科）畢業"), (4, "大學（碩士或以上）畢業")],  validators=[], coerce=int)
+    individual_educationLevel = RadioField('教育程度', choices=[(0, "小學畢業或以下"), (1, "完成中三"), (2, "中學畢業"), (3, "大學（本科）畢業"), (4, "大學（碩士或以上）畢業"), (5, "保密")],  validators=[], coerce=int)
     individual_language_Cantonese = BooleanField('廣東話', validators=[])
     individual_language_English = BooleanField('英文', validators=[])
     individual_language_Putonghua = BooleanField('普通話', validators=[])
@@ -57,62 +97,54 @@ class IndividualRegistrationForm(BaseForm):
 
     submit = SubmitField('註冊個人帳戶')
 
-    def validate_user_login(self, user_login):
+    def validate_user_login(form, user_login):
         user = Users.query.filter_by(ur_login=user_login.data).first()
         if user:
             raise ValidationError('此帳戶已存在，請登入。')
 
-    def validate_individual_phone(self, company_CName):
-        user = IndividualUsers.query.filter_by(iu_phone=individual_contact_number.data).first()
+    def validate_individual_phone(form, individual_contact_number):
+        user = Users.query.filter_by(ur_phone=individual_contact_number.data).first()
         if user:
             raise ValidationError('此電話號碼已存在，請重新輸入。')
     
-    def validate_company_email(self, company_email):
-        user = IndividualUsers.query.filter_by(iu_email=individual_email.data).first()
+    def validate_individual_email(form, individual_email):
+        user = Users.query.filter_by(ur_phone=individual_email.data).first()
         if user:
-            raise ValidationError('此個人電郵已存在，請重新輸入。')
+            raise ValidationError('此電郵已存在，請重新輸入。')
 
-class IndividualUpdateProfileForm(IndividualRegistrationForm):
-    individual_contact_number = IntegerField('聯絡電話',
-                                        validators = [])
-    individual_email = StringField('電子郵箱',
-                                validators=[])
-    individual_CName = StringField('中文全名',
-                                validators = [])
-    individual_EName = StringField('英文名字', validators = [])
-    individual_alias = StringField('暱稱', validators = [])
-    individual_HKID = StringField('身分證字母加首四位數字', validators = [])
-    old_password = PasswordField('舊密碼',
-                             validators=[])
-    new_password = PasswordField('新密碼',
-                             validators=[])
-    confirm_new_password = PasswordField('重新輸入新密碼',
-                             validators=[EqualTo('password', message="must match password")])
+class IndividualUpdateProfileForm(BaseForm):
+
+    individual_contact_number = IntegerField('聯絡電話')
+    individual_email = StringField('電子郵箱')
+    individual_CName = StringField('中文全名')
+    individual_EName = StringField('英文名字')
+    individual_alias = StringField('暱稱')
+    individual_HKID = StringField('身分證字母加首四位數字')
+    individual_educationLevel = RadioField('教育程度', choices=[(0, "小學畢業或以下"), (1, "完成中三"), (2, "中學畢業"), (3, "大學（本科）畢業"), (4, "大學（碩士或以上）畢業"), (5, "保密")], coerce=int)
+    individual_language_Cantonese = BooleanField('廣東話',)
+    individual_language_English = BooleanField('英文')
+    individual_language_Putonghua = BooleanField('普通話')
+    individual_language_Other = StringField('其他')
+    individual_intro = TextAreaField('自我介紹')
     submit = SubmitField('更新個人帳戶')
 
-class UpdateAccountForm(BaseForm):
 
-    username = StringField('Username',
-                           validators=[DataRequired(), Length(min=5, max=20)])
-    email = StringField('Email',
-                        validators=[DataRequired(), Email()])
-    picture = FileField('Updtae Profile Picture', validators=[
-                        FileAllowed(['jpg', 'png', 'jpeg'])])
-    submit = SubmitField('Update')
+class ChangePasswordForm(BaseForm):
 
-    def validate_username(self, username):
-        if username.data != current_user.username:
-            user = Users.query.filter_by(username=username.data).first()
-            if user:
-                raise ValidationError(
-                    'Username is taken. Please choose a different one')
+    old_password = PasswordField('舊密碼')
+    new_password = PasswordField('新密碼',
+                             validators=[DataRequired(message = '密碼不能為空'), Length(min=5, max=32)])
 
-    def validate_email(self, email):
-        if email.data != current_user.email:
-            user = Users.query.filter_by(email=email.data).first()
-            if user:
-                raise ValidationError(
-                    'Email is taken. Please choose a different one')
+    def password_requirement(form, field):
+    # check if passwords contains 0-9 & a-z &A-Z and !@#$%
+    # TODO
+        if False:
+            raise ValidationError(
+                    'Password must contain at least one number, one charater in upper case, one character in lower case, and a special character from \'@#!&*\'')
+    confirm_new_password = PasswordField('重新輸入新密碼',
+                                 validators=[EqualTo('new_password', message="must match password")])
+    submit = SubmitField('更新密碼')
+       
 
 class ApplyJobForm():
     submit = SubmitField('遞交申請')
@@ -155,10 +187,10 @@ class BusinessRegistrationForm(BaseForm):
                 '此商業名稱已存在，請重新輸入。')
     
     def validate_company_email(self, company_email):
-        user = BusinessUsers.query.filter_by(bu_email=company_email.data).first()
+        user = Users.query.filter_by(ur_email=company_email.data).first()
         if user:
             raise ValidationError(
-                '此企業電郵已存在，請重新輸入。')
+                '此電郵已存在，請重新輸入。')
 
 class BusinessUpdateProfileForm(BusinessRegistrationForm):
     company_address = StringField('公司地址',
@@ -224,3 +256,28 @@ class ReportAbnormalityForm():
     message = StringField('問題描述',
                         validators = [DataRequired(message = '問題描述不能為空')])
     submit = SubmitField('錯誤報吿')
+
+'''
+class UpdateAccountForm(BaseForm):
+
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=5, max=20)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    picture = FileField('Updtae Profile Picture', validators=[
+                        FileAllowed(['jpg', 'png', 'jpeg'])])
+    submit = SubmitField('Update')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = Users.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError(
+                    'Username is taken. Please choose a different one')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = Users.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError(
+                    'Email is taken. Please choose a different one')'''

@@ -9,9 +9,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@swup/forms-plugin": "^1.0.1",
+    "@swup/ga-plugin": "^1.0.1",
     "bootstrap": "^4.5.0",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
     "swup": "^2.0.10"
+  },
+  "devDependencies": {
+    "purify-css": "^1.2.5"
   }
 }

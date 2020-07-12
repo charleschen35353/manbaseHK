@@ -21,9 +21,11 @@
         <h1> 評論: {{review.re_comment}} </h1>>
 
     {% endfor %}
-
-    <a href="{{url_for('business_profile_update',bid=current_user.get_id())}}" class="btn btn-primary btn-large p-2">
-        <h4 class="m-0">更新公司檔案</h4>
-    </a>
+    
+    {% if profile.bu_id == current_user.get_id() %}
+        <a href="{{url_for('business_profile_update',bid=current_user.get_id())}}" class="btn btn-primary btn-large p-2">
+            <h4 class="m-0">更新公司檔案</h4>
+        </a>
+    {% endif %}
 
 {% endblock content %}

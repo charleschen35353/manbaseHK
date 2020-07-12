@@ -7,7 +7,7 @@
             {{ form.hidden_tag() }}
                 <fieldset class='form-group'>
                     <div class="text-center">
-                        <h2 class="text-secondary">更新個人帳戶資料 <span class="text-dark">man</span>
+                        <h2 class="text-secondary">更新個人帳戶資料 <span class="text-dark"></span>
                         {% if form.errors %}
                         {% for field, errors in form.errors.items() %}
                         <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
@@ -98,51 +98,131 @@
                         {{ render_field(form.individual_HKID,class="form-control form-control-lg" )}}
                         {% endif %}
                     </div>
-
+                
+                    <!-- Education -->
                     <div class="form-group">
-                        {{ form.old_password.label(class="form-control-label") }}
-                        {% if form.old_password.errors %}
-                        {{ render_field(form.old_password, class="form-control form-control-lg is-invalid")}}
+                        {{ form.individual_educationLevel.label(class="form-control-label h4 mb-0") }}
+                        
+                        {% for subfield in form.individual_educationLevel %}
+                        <div class="">
+                            {{ render_field(subfield, class="text-primary") }} {{ subfield.label }}
+                        </div>
+                        {% endfor %}
+                        {% if form.individual_educationLevel.errors %}
                         <div class="invalid-feedback">
-                            {% for error in form.old_password.errors %}
+                            {% for error in form.individual_educationLevel.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <!-- Language -->
+                    <div class="form-group">
+                        <h4>工作語言</h4>
+                        <div class="form-check">
+                            {% if form.individual_language_Cantonese.errors %}
+                            {{  render_field(form.individual_language_Cantonese,class="form-check-input is-invalid") }}
+                            {% else %}
+                            {{ render_field(form.individual_language_Cantonese,class="form-check-input bg-primary") }}
+                            {% endif %}
+
+                            {{ form.individual_language_Cantonese.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="form-check">
+                            {% if form.individual_language_English.errors %}
+                            {{  render_field(form.individual_language_English,class="form-check-input is-invalid") }}
+                            {% else %}
+                            {{ render_field(form.individual_language_English,class="form-check-input") }}
+                            {% endif %}
+
+                            {{ form.individual_language_English.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="form-check">
+                            {% if form.individual_language_Putonghua.errors %}
+                            {{  render_field(form.individual_language_Putonghua,class="form-check-input is-invalid") }}
+                            {% else %}
+                            {{ render_field(form.individual_language_Putonghua,class="form-check-input") }}
+                            {% endif %}
+
+                            {{ form.individual_language_Putonghua.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.individual_language_Other.label(class="form-control-label") }}
+                            {% if form.individual_language_Other.errors %}
+                            {{ render_field(form.individual_language_Other,
+                                            class="form-control form-control-lg is-invalid", 
+                                            placeholder="其他工作語言") 
+                            }}
+                            {% else %}
+                            {{ render_field(form.individual_language_Other,
+                                            class="form-control form-control-lg", 
+                                            placeholder="其他工作語言") 
+                            }}
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                可選填
+                            </small>
+                        </div>
+
+                        <div class="invalid-feedback d-block">
+                            {% if form.individual_language_Cantonese.errors %}
+                            {% for error in form.individual_language_Cantonese.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                            {% endif %}
+
+                            {% if form.individual_language_English.errors %}
+                            {% for error in form.individual_language_English.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                            {% endif %}
+
+                            {% if form.individual_language_Putonghua.errors %}
+                            {% for error in form.individual_language_Putonghua.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                            {% endif %}
+
+                            {% if form.individual_language_Other.errors %}
+                            {% for error in form.individual_language_Other.errors %}
+                            <small class='error'> {{error}} </small>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        {{ form.individual_intro.label(class="form-control-label") }}
+                        {% if form.individual_intro.errors %}
+                        {{ render_field(form.individual_intro, class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.individual_intro.errors %}
                             <small class='error'> {{error}} </small>
                             {% endfor %}
                         </div>
                         {% else %}
-                        {{ render_field(form.old_password,class="form-control form-control-lg" )}}
+                        {{ render_field(form.individual_intro,class="form-control form-control-lg" )}}
                         {% endif %}
                     </div>
-
-                    <div class="form-group">
-                        {{ form.new_password.label(class="form-control-label") }}
-                        {% if form.new_password.errors %}
-                        {{ render_field(form.new_password, class="form-control form-control-lg is-invalid")}}
-                        <div class="invalid-feedback">
-                            {% for error in form.new_password.errors %}
-                            <small class='error'> {{error}} </small>
-                            {% endfor %}
-                        </div>
-                        {% else %}
-                        {{ render_field(form.new_password,class="form-control form-control-lg" )}}
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group">
-                        {{ form.confirm_new_password.label(class="form-control-label") }}
-                        {% if form.confirm_new_password.errors %}
-                        {{ render_field(form.confirm_new_password, class="form-control form-control-lg is-invalid")}}
-                        <div class="invalid-feedback">
-                            {% for error in form.confirm_new_password.errors %}
-                            <small class='error'> {{error}} </small>
-                            {% endfor %}
-                        </div>
-                        {% else %}
-                        {{ render_field(form.confirm_new_password,class="form-control form-control-lg" )}}
-                        {% endif %}
-                    </div>
-
+	                
                 </fieldset>
                 
+                <div class = "form-group">
+                    <a href="{{url_for('update_password', iuid=current_user.get_id())}}" class="btn btn-primary btn-large p-2">
+                        <h4 class="m-0">更新密碼</h4>
+                    </a>            
+                </div>  
+
+                <div class = "form-group">
+                    <a href="{{url_for('individual_profile', iuid=current_user.get_id())}}" class="btn btn-primary btn-large p-2">
+                        <h4 class="m-0">prev</h4>
+                    </a>            
+                </div>  
+
+
                 <div class="form-group">
                     {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
                     }}

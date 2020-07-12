@@ -5,6 +5,10 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 import secrets
 from flask_uuid import FlaskUUID
+# TODO: Add support for flask_assets for JS Bundling
+# TODO: Add support for flask_minify for HTML and CSS Minifying
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Mail
 
 csrf = CSRFProtect()
 
@@ -14,15 +18,24 @@ app = Flask(__name__)
 #       Use 'localhost' instead for deployment
 uri = 'mysql+pymysql://public:b05qv-x4xca@test.manbasehk.com:3306/manbasedb'
 app.config['SECRET_KEY'] = secrets.token_hex(16)
+app.config['KEY_LENGTH'] = len(app.config['SECRET_KEY'])
+app.config['SECURITY_PASSWORD_SALT'] = 'P@ssWoRdSaltManb@seHK'
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'manbasehk@gmail.com'
+app.config['MAIL_PASSWORD'] = 'manbasehk2020'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_DEFAULT_SENDER'] = 'manbasehk@gmail.com' 
 # Using default error message translation
 app.config['WTF_I18N_ENABLED'] = False
+app.config['DEFAULT_STRING'] = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%'
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 uuid = FlaskUUID(app)
 login_manager = LoginManager(app)
-
+mail = Mail(app)
 from manbase import routes

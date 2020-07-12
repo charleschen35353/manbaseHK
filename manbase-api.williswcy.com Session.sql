@@ -8,7 +8,14 @@ CREATE TABLE users(
     ur_id VARCHAR(255) PRIMARY KEY,
     ur_login VARCHAR(36) NOT NULL,
     ur_password_hash VARCHAR(255) NOT NULL,
-    ur_isDeleted TINYINT(1) DEFAULT 0
+    ur_isDeleted TINYINT(1) DEFAULT 0,
+    ur_phone VARCHAR(8) NOT NULL, 
+    ur_email VARCHAR(255) NOT NULL,
+    ur_email_key VARCHAR(255),
+    ur_sms_key VARCHAR(255),
+    ur_reset_key VARCHAR(255),
+    ur_isSMSVerified TINYINT(1) DEFAULT 0,
+    ur_isEmailVerified TINYINT(1) DEFAULT 0,
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE districts(
@@ -32,12 +39,10 @@ CREATE TABLE business_users(
     bu_id VARCHAR(255) PRIMARY KEY,
     bu_ind_id VARCHAR(255),
     bu_address VARCHAR(255),
-    bu_email VARCHAR(255),
     bu_CName VARCHAR(36) NOT NULL,
     bu_EName VARCHAR(36), #optional
     bu_picName VARCHAR(36) NOT NULL, 
-    bu_phone VARCHAR(8) NOT NULL, 
-    bu_isSMSVerified TINYINT(1) DEFAULT 0,
+    bu_confirmation_sent_on TIMESTAMP,
     bu_businessLogo VARCHAR(255),
     bu_isDeleted TINYINT(1) DEFAULT 0,
     bu_BusinessVerificationStatus VARCHAR(1) DEFAULT 0, #0 is not verified, 1 is pending, 2 is verified
@@ -48,11 +53,8 @@ CREATE TABLE business_users(
 
 CREATE TABLE individual_users(
     iu_id VARCHAR(255) PRIMARY KEY,
-    iu_phone INT(8) NOT NULL, #how about region code
-    iu_isSMSVerified TINYINT(1) DEFAULT 0,
     iu_profilePicture VARCHAR(2048),
-    iu_isIndentityVerified TINYINT(1) DEFAULT 0,
-    iu_email VARCHAR(255),
+    iu_confirmation_sent_on TIMESTAMP,
     iu_CName VARCHAR(36) NOT NULL,
     iu_EName VARCHAR(36) NOT NULL,
     iu_alias VARCHAR(36) NOT NULL,
@@ -171,8 +173,11 @@ CREATE TABLE announcement(
     an_message TEXT(255) NOT NULL,
     an_isDeleted TINYINT(1) DEFAULT 0,
     an_sender_id VARCHAR(255) NOT NULL,
+    an_isFromEmployer TINYINT(1) DEFAULT 0 NOT NULL,
+    an_replyTo VARCHAR(255),
 
-    FOREIGN KEY(an_sender_id) REFERENCES users(ur_id)
+    FOREIGN KEY(an_sender_id) REFERENCES users(ur_id),
+    FOREIGN KEY(an_replyTo) REFERENCES announcement(an_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE announcement_listings(
@@ -191,6 +196,7 @@ CREATE TABLE verification(
     veri_type TINYTEXT NOT NULL,
     veri_doc VARCHAR(2048) NOT NULL,
     veri_ur_id VARCHAR(255) NOT NULL,
+    veri_isApproved TINYINT(1) DEFAULT 0,
 
     FOREIGN KEY(veri_ur_id) REFERENCES users(ur_id),
 
@@ -210,7 +216,6 @@ CREATE TABLE review(
     re_receiver_id VARCHAR(255) NOT NULL,
     re_sender_id VARCHAR(255) NOT NULL,
     re_comment TEXT(20000) NOT NULL,
-    re_isFollowUpNeeded TINYINT(1) NOT NULL,
     re_isDeleted TINYINT(1) DEFAULT 0,
     re_en_id VARCHAR(255) NOT NULL,
 
