@@ -2,18 +2,24 @@ import secrets
 import os
 import cv2
 import matplotlib.image as pltimg
-from flask import render_template, url_for, flash, redirect, request, abort
+import secrets
+import math
+import random
+from flask import render_template, url_for, flash, redirect, request, abort, Markup
 from flask_login import login_user, logout_user , current_user, login_required
-from manbase import app, db, bcrypt, login_manager
-from manbase.forms import BusinessRegistrationForm,IndividualRegistrationForm, LoginForm, UpdateAccountForm, PostJobForm,BusinessUpdateProfileForm,ConfirmAttendanceForm
-from manbase.models import Users, BusinessUsers, IndividualUsers, Jobs, JobListings, JobApplications, Enrollments, Review, Rating, Abnormality
+from flask_mail import Message
+from manbase import app, db, bcrypt, login_manager, mail
+from manbase.forms import *
+from manbase.models import*
 from datetime import datetime
 from uuid import uuid4
 from collections import defaultdict 
+from manbase.utils import *
 
 @login_manager.user_loader
 def load_user(ur_id):
     return Users.query.get(ur_id)
+
 
 # =======================================
 #           ROUTE DEFINITIONS
@@ -74,6 +80,22 @@ def individual_home():
 def about():
     return render_template('about.html', title = "about us")
 
+@app.route('/resend_confirmation_email/<string:uid>')
+def resend_confirmation_email(uid):
+    #uid always exists
+    user = Users.query.filter_by(ur_id = uid).first()
+    try:
+        token = generate_confirmation_token_for(user, "email")
+    except:
+        return redirect(url_for('500'))
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    html = render_template('confirm_email.html', confirm_url=confirm_url)
+    subject = "Please confirm your email"
+    send_email(user.ur_email, subject, html)
+    flash("Confirmation Email Resent.","success")
+    return redirect(url_for('login'))
+
+
 # @ROUTE DEFINTION
 # NAME:     Login Page
 # PATH:     /login
@@ -86,12 +108,15 @@ def login():
         return redirect(url_for('home')) 
     form = LoginForm()
     if form.validate_on_submit():
-        user = Users.query.filter_by(ur_login=form.login.data).first()
-        
+        user = Users.query.filter_by(ur_login=form.login.data).first()   
         if user and bcrypt.check_password_hash(user.ur_password_hash, form.password.data):
-            login_user(user, remember = form.remember.data)
-            flash("成功登入.".format(form.login.data),"success")
-            return redirect(url_for('home'))
+            if user and user.ur_isEmailVerified:
+                login_user(user, remember = form.remember.data)
+                flash("成功登入.".format(form.login.data),"success")
+                return redirect(url_for('home'))
+            else:
+                url = url_for('resend_confirmation_email', uid = user.ur_id )
+                flash(Markup('登入失敗. 請以電子郵件確認啟用帳戶. 沒有收到郵件？點擊 <a href="{}" class="alert-link">這裡</a>'.format(url)), 'fail')
         else:
             flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')
     return render_template('login.html', title='Login', form=form)
@@ -119,6 +144,125 @@ def register():
         return redirect(url_for('home'))
     return render_template('register.html', title='註冊')
 
+@app.route('/reset_password/<token>',  methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = confirm_token_for(token, "reset")
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+
+    user = Users.query.filter_by(ur_email=email).first()
+    
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        if bcrypt.check_password_hash(user.ur_otp_hash,form.otp.data):
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            user.ur_password_hash = hashed_password
+            user.ur_otp_hash = None
+            db.session.commit()
+            flash('You have successfully reset your password!', 'success')
+            return redirect(url_for('login'))
+        else:
+             flash('Incorrect OTP!', 'fail')
+
+    return render_template("reset_password.html", form = form)
+
+
+
+@app.route('/forget_password/<string:selection>', methods=['GET', 'POST'])
+def forget_password(selection):
+    form = None
+    if selection == "Contact":
+        return redirect(url_for("contact us"))    
+    elif selection == "Account":
+        form = ForgetPasswordFormAccount()
+    elif selection == 'Phone':
+        form = ForgetPasswordFormPhone()
+    else:
+        return redirect(url_for("404"))
+
+    if form.validate_on_submit():
+        data = form.data.data 
+        
+        if selection == "Account":
+            #retrieve email via login
+            user = Users.query.filter_by(ur_login = data).first()
+
+        elif selection == 'Phone':
+            user = Users.query.filter_by(ur_phone = data).first()
+              
+        length = len(app.config['DEFAULT_STRING']) 
+        otp = ""
+        for i in range(6) : 
+            otp += app.config['DEFAULT_STRING'] [math.floor(random.random() * length)] 
+
+        try:
+            token = generate_confirmation_token_for(user, "reset")
+        except:
+            return redirect(url_for('500'))
+        reset_url = url_for('reset_password', token=token, _external=True)
+        html = render_template('reset_password_email.html', reset_url=reset_url, otp = otp)
+        subject = "Your email for password reset"
+        send_email(user.ur_email, subject, html)
+       
+        user.ur_otp_hash = bcrypt.generate_password_hash(otp).decode('utf-8')
+        db.session.commit()
+        flash("您的密碼重置郵件已發送至您的電子信箱內.","success")
+        return redirect(url_for('home'))
+    return render_template('forget_password.html', title='忘記密碼', form = form, method = selection)
+
+@app.route('/forget_password_selection', methods=['GET', 'POST'])
+def forget_password_selection():
+    form = ForgetPasswordSelectionForm()
+
+    if form.validate_on_submit():
+        selection = None
+        if form.selection.data == 1:
+            selection = 'Account'
+        elif form.selection.data == 2:
+            selection = 'Phone' 
+        elif form.selection.data == 3:
+            selection = 'Contact'
+        return redirect(url_for('forget_password', selection = selection))
+    return render_template('forget_password_selection.html', title='忘記密碼', form = form)
+
+# @ROUTE DEFINTION
+# NAME:     Update Account Info
+# PATH:     /account
+# METHOD:   GET / POST
+# DESC.:    TBC
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
+def account():
+    if current_user.is_authenticated:
+        # TODO: Get the user info and render it into the homepage
+        uid = current_user.get_id()
+        if BusinessUsers.query.filter_by(bu_id = uid).first():
+            return redirect(url_for('business_profile', bid = uid))
+        elif IndividualUsers.query.filter_by(iu_id = uid).first():
+            return redirect(url_for('individual_profile', iuid = uid))
+        else:
+            return render_template('500.html')
+    else:
+        return render_template('index.html')
+
+@app.route('/register/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = confirm_token_for(token, "email")
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+
+    user = Users.query.filter_by(ur_email=email).first_or_404()
+    if user.ur_isEmailVerified:
+        flash('Account already confirmed. Please login.', 'success')
+    else:
+        user.ur_isEmailVerified = True
+        db.session.commit()
+        flash('You have confirmed your account. Thanks!', 'success')
+    return redirect(url_for('home'))
+
+
 # @ROUTE DEFINTION
 # NAME:     Registration (Individual)
 # PATH:     /individual_register
@@ -131,6 +275,8 @@ def individual_register():
         return redirect(url_for('home'))
     form = IndividualRegistrationForm()
     if form.validate_on_submit():
+                
+    
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         uid = str(uuid4())
 
@@ -144,12 +290,12 @@ def individual_register():
                     ur_creationTime = datetime.utcnow(), 
                     ur_id = uid,
                     ur_login = form.user_login.data,
-                    ur_password_hash = hashed_password
+                    ur_password_hash = hashed_password,
+                    ur_phone = form.individual_contact_number.data,
+                    ur_email = form.individual_email.data
                     )
         individual_user = IndividualUsers(
                                     iu_id = uid,
-                                    iu_phone = form.individual_contact_number.data,
-                                    iu_email = form.individual_email.data,
                                     iu_CName = form.individual_CName.data,
                                     iu_EName = form.individual_EName.data,
                                     iu_alias = form.individual_alias.data,
@@ -166,11 +312,23 @@ def individual_register():
         db.session.add(individual_user)
         db.session.commit()
 
-        flash(f'{form.individual_CName.data} 的個人帳號已成功註冊!', 'success')
+        flash(f'{form.individual_CName.data} 的個人帳號已成功註冊! 請確認電子郵件來以啟用帳戶！', 'success')
+        try:
+            token = generate_confirmation_token_for(user, "email")
+        except:
+            return redirect(url_for("500"))
+
+        confirm_url = url_for('confirm_email', token=token, _external=True)
+        html = render_template('confirm_email.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_email(user.ur_email, subject, html)
+
         return redirect(url_for('home'))
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
 
+
 @app.route('/individual/profile/<string:iuid>')
+@login_required
 def individual_profile(iuid):
     profile = IndividualUsers.query.get_or_404(iuid)
     reviews = Review.query.filter_by(re_receiver_id=iuid).all()
@@ -181,42 +339,89 @@ def individual_profile(iuid):
         for rating in ratings:
             review[rating.rate_rc_id] = rating
     
-    return render_template('individual_profile.html',title ='我的個人檔案',profile = profile, reviews = reviews)
+    return render_template('individual_profile.html',title ='我的個人檔案', profile = profile, reviews = reviews)
+
 
 @app.route('/individual/profile/<string:iuid>/update', methods =['POST','GET'])
+@login_required
 def individual_profile_update(iuid):
     profile = IndividualUsers.query.get_or_404(iuid)
     user = Users.query.get_or_404(iuid)
-    
     form = IndividualUpdateProfileForm()
-    if form.validate_on_submit():
-        #TODO: add business address
-        profile.iu_phone = form.individual_contact_number.data
-        profile.iu_email = form.individual_email.data
-        profile.iu_CName = form.individual_CName.data
-        profile.iu_EName = form.individual_EName.data
-        profile.iu_alias = form.individual_alias.data
-        profile.iu_HKID = form.individual_HKID.data
-        if form.old_password.data and form.new_password.data and (form.old_password.data!=form.new_password.data) and (form.confirm_new_password.data == form.new_password.data):
-            old_hashed_password = bcrypt.generate_password_hash(form.old_password.data).decode('utf-8')
-            new_hashed_password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
-            if old_hased_password == user.ur_password_hash:
-                user.ur_password_hash = new_hashed_password
-                flash('您的密碼已成功更新!', 'success')
-            else:
-                flash('wrong password')
-        db.commit()
-        flash('您的個人資料已成功更新!', 'success')
-        #TODO: return to last page
 
-    return render_template('business_profile_update.html', title='更新公司資料', form = form )
+    if form.validate_on_submit():
+        #server side validation
+        check_user = Users.query.filter_by(ur_phone = form.individual_contact_number.data).first()    
+        if check_user and check_user.ur_id != iuid:
+            flash('Contact number {} taken. Update fails.'.format(form.individual_contact_number.data), 'fail')
+            return redirect(url_for('individual_profile_update', iuid = iuid))
+
+        check_user = Users.query.filter_by(ur_email = form.individual_email.data).first()    
+        if check_user and check_user.ur_id != iuid:
+            flash('Email {} taken. Update fails.'.format(form.individual_email.data), 'fail')
+            return redirect(url_for('individual_profile_update', iuid = iuid))
+        else:
+            user.ur_phone = form.individual_contact_number.data
+            user.ur_email = form.individual_email.data
+            profile.iu_CName = form.individual_CName.data
+            profile.iu_EName = form.individual_EName.data
+            profile.iu_alias = form.individual_alias.data
+            profile.iu_HKID = form.individual_HKID.data
+            profile.iu_selfIntroduction = form.individual_intro.data
+            profile.iu_educationLevel = form.individual_educationLevel.data
+            profile.iu_language_Cantonese = form.individual_language_Cantonese.data
+            profile.iu_language_English = form.individual_language_English.data
+            profile.iu_language_Putonghua = form.individual_language_Putonghua.data
+            profile.iu_language_Other = form.individual_language_Other.data
+            db.session.commit()
+            flash('您的個人資料已成功更新!', 'success')
+            return redirect(url_for('individual_profile_update', iuid = iuid))
+
+    elif request.method == 'GET':	
+        form.individual_contact_number.data = user.ur_phone
+        form.individual_email.data = user.ur_email 
+        form.individual_CName.data = profile.iu_CName
+        form.individual_EName.data = profile.iu_EName 
+        form.individual_alias.data = profile.iu_alias 
+        form.individual_HKID.data = profile.iu_HKID 
+        form.individual_intro.data = profile.iu_selfIntroduction
+        form.individual_educationLevel.data = int(profile.iu_educationLevel)
+        form.individual_language_Cantonese.data = profile.iu_language_Cantonese 
+        form.individual_language_English.data = profile.iu_language_English 
+        form.individual_language_Putonghua.data = profile.iu_language_Putonghua  
+        form.individual_language_Other.data = profile.iu_language_Other 
+
+    return render_template('individual_profile_update.html', title='更新個人資料', form = form )
+
+@app.route('/change_password/update/<string:iuid>', methods =['POST','GET'])
+@login_required
+def update_password(iuid):
+
+    user = Users.query.get_or_404(iuid)
+    form = ChangePasswordForm()
+    
+    if form.validate_on_submit():
+        if bcrypt.check_password_hash(user.ur_password_hash, form.old_password.data):
+            if not bcrypt.check_password_hash(user.ur_password_hash, form.new_password.data):
+                new_hashed_password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+                user.ur_password_hash = new_hashed_password
+                db.session.commit()
+                flash('您的密碼已成功更新!', 'success') 
+                return redirect(url_for('individual_profile_update', iuid = iuid))
+            else:
+                flash('Your new password cannot be same as the old one.', 'fail')
+        else:
+            flash('Wrong password. Please input correct old password.', 'fail')
+    return render_template('update_password.html', title='update password', form = form )
 
 # @ROUTE DEFINTION
 # NAME:     View Job Board (Individual)
 # PATH:     /job_board
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users view listed job
-@app.route('/individual/job_board', methods=['POST'])
+
+@app.route('/individual/job_board', methods=['POST', 'GET'])
+@login_required
 def view_job_board():
     jobs = Jobs.query.all()
     return render_template('job_board.html', title='工作板', jobs = jobs)
@@ -226,7 +431,9 @@ def view_job_board():
 # PATH:     /jobs/<job_id>/apply
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users view listed job
+
 @app.route('/individual/job_board/<string:job_id>/apply', methods=['GET','POST'])
+@login_required
 def apply_job(job_id, list_id):
 
     #if the user is not current user, return 404
@@ -262,7 +469,9 @@ def apply_job(job_id, list_id):
 # PATH:     /individual/jobs
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users can view their jobs
+
 @app.route('/individual/jobs')
+@login_required
 def individual_my_jobs(iu_id):
     return render_template('individual_my_jobs.html',title='我的工作')
 
@@ -271,7 +480,9 @@ def individual_my_jobs(iu_id):
 # PATH:     /individual/jobs
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users can view their applied jobs
+
 @app.route('/individual/jobs/applied')
+@login_required
 def individual_applied_jobs():
     applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
     return render_template('individual_applied_jobs.html',title ='我的工作',applications=applications)
@@ -281,7 +492,9 @@ def individual_applied_jobs():
 # PATH:     /individual/jobs/enrolled
 # METHOD:   GET
 # DESC.:    [GET]   The page where the individual users can view their applied jobs
+
 @app.route('/individual/jobs/enrolled')
+@login_required
 def individual_enrolled_jobs():
     applications = JobApplications.query.filter_by(ap_iu_id=current_user.get_id).all()
     enrollments = []
@@ -292,6 +505,7 @@ def individual_enrolled_jobs():
 
 
 @app.route('/individual/jobs/enrolled/<string:en_id>/rate',methods=['GET', 'POST'])
+@login_required
 def rate_n_review_on_business(en_id):
     enrollment = Enrollments.query.get_or_404(en_id)
     job_list = JobListings.query.filter_by(enrollment.en_li_id).fisrt()
@@ -379,13 +593,20 @@ def business_register():
                                     bu_CName = form.company_CName.data,
                                     bu_EName = form.company_EName.data,
                                     bu_picName = form.company_contact_person.data,
-                                    bu_phone = form.company_contact_number.data
+                                    bu_phone = form.company_contact_number.data,
+                                    bu_email = form.company_email.data
                                     )
         db.session.add(user)
         db.session.add(business_user)
         db.session.commit()
 
-        flash(f'{form.company_CName.data} 的商業帳號已成功註冊!', 'success')
+        token = generate_confirmation_token(busniness_user.bu_email)
+        confirm_url = url_for('confirm_email', token=token, _external=True)
+        html = render_template('confirm_email.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_email(busniness_user.bu_email, subject, html)
+
+        flash(f'{form.company_CName.data} 的商業帳號已成功註冊! 請確認電子郵件來以啟用帳戶！', 'success')
         return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
 
@@ -700,6 +921,7 @@ def view_an_applicant(job_id, list_id, app_id):
 #    INCOMPLETED / SUSPENDED ROUTES
 # =======================================
 
+
 def save_picture(form_picture):
     """
     A utility function which helps save the profile picture in 'static/profile_pics',
@@ -718,30 +940,7 @@ def save_picture(form_picture):
 
     return picture_fn
 
-# @ROUTE DEFINTION
-# NAME:     Update Account Info
-# PATH:     /account
-# METHOD:   GET / POST
-# DESC.:    TBC
-@app.route('/account', methods=['GET', 'POST'])
-@login_required
-def account():
-    form = UpdateAccountForm()
-    if form.validate_on_submit():
-        if form.picture.data:
-            picture_fn = save_picture(form.picture.data)
-            current_user.profile_image = picture_fn
-        current_user.username = form.username.data
-        current_user.email = form.email.data
-        # TODO: Update the new information on the remote database
-        '''db.session.commit()'''
-        flash("Account Info Updated")
-        return redirect(url_for('account'))
-    elif request.method == "GET":
-        form.username.data = current_user.username
-        form.email.data = current_user.email
-    image_file = url_for('static', filename = 'profile_pics/' + current_user.profile_image)
-    return render_template('account.html', title='account', image_file = image_file, form = form)
+
 
 # @ROUTE DEFINTION
 # NAME:     Confirm Business Registration
