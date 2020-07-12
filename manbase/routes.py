@@ -144,12 +144,12 @@ def individual_register():
                     ur_creationTime = datetime.utcnow(), 
                     ur_id = uid,
                     ur_login = form.user_login.data,
-                    ur_password_hash = hashed_password
+                    ur_password_hash = hashed_password,
+                    ur_email = form.individual_email.data,
+                    ur_phone = form.individual_contact_number.data,
                     )
         individual_user = IndividualUsers(
                                     iu_id = uid,
-                                    iu_phone = form.individual_contact_number.data,
-                                    iu_email = form.individual_email.data,
                                     iu_CName = form.individual_CName.data,
                                     iu_EName = form.individual_EName.data,
                                     iu_alias = form.individual_alias.data,
@@ -370,7 +370,8 @@ def business_register():
                     ur_creationTime = datetime.utcnow(), 
                     ur_id = uid,
                     ur_login = form.user_login.data,
-                    ur_password_hash = hashed_password
+                    ur_password_hash = hashed_password,
+                    ur_phone = form.company_contact_number.data
                     )
 
         business_user = BusinessUsers(
@@ -378,8 +379,7 @@ def business_register():
                                     bu_address = 'NS', #not specified
                                     bu_CName = form.company_CName.data,
                                     bu_EName = form.company_EName.data,
-                                    bu_picName = form.company_contact_person.data,
-                                    bu_phone = form.company_contact_number.data
+                                    bu_picName = form.company_contact_person.data
                                     )
         db.session.add(user)
         db.session.add(business_user)
