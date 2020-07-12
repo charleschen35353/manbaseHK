@@ -82,16 +82,16 @@ def about():
 
 @app.route('/resend_confirmation_email/<string:uid>')
 def resend_confirmation_email(uid):
-    ind = IndividualUsers.query.filter_by(iu_id = uid).first()
-    if ind: email = ind.iu_email
-    bus = BusinessUsers.query.filter_by(bu_id = uid).first()
-    if bus: email = bus.bu_email
-    assert ind is None and bus is not None or ind is not None and bus is None
-    token = generate_confirmation_token(email)
+    #uid always exists
+    user = Users.query.filter_by(ur_id = uid).first()
+    try:
+        token = generate_confirmation_token_for(user, "email")
+    except:
+        return redirect(url_for('500'))
     confirm_url = url_for('confirm_email', token=token, _external=True)
     html = render_template('confirm_email.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
-    send_email(email, subject, html)
+    send_email(user.ur_email, subject, html)
     flash("Confirmation Email Resent.","success")
     return redirect(url_for('login'))
 
@@ -108,16 +108,9 @@ def login():
         return redirect(url_for('home')) 
     form = LoginForm()
     if form.validate_on_submit():
-        user = Users.query.filter_by(ur_login=form.login.data).first()
-        
+        user = Users.query.filter_by(ur_login=form.login.data).first()   
         if user and bcrypt.check_password_hash(user.ur_password_hash, form.password.data):
-            ind = IndividualUsers.query.filter_by(iu_id = user.ur_id).first()
-            if ind and ind.iu_isEmailVerified:
-                login_user(user, remember = form.remember.data)
-                flash("成功登入.".format(form.login.data),"success")
-                return redirect(url_for('home'))
-            bus = BusinessUsers.query.filter_by(bu_id = user.ur_id).first()
-            if bus and bus.iu_isEmailVerified:
+            if user and user.ur_isEmailVerified:
                 login_user(user, remember = form.remember.data)
                 flash("成功登入.".format(form.login.data),"success")
                 return redirect(url_for('home'))
@@ -154,20 +147,11 @@ def register():
 @app.route('/reset_password/<token>',  methods=['GET', 'POST'])
 def reset_password(token):
     try:
-        email = confirm_token(token)
+        email = confirm_token_for(token, "reset")
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
 
-    ind = IndividualUsers.query.filter_by(iu_email=email).first()
-    bus = BusinessUsers.query.filter_by(bu_email=email).first()
-    if ind and not bus:
-        user = Users.query.get_or_404(ind.iu_id)
-    elif bus and not ind:
-        user = Users.query.get_or_404(bus.bu_id)
-    else:  
-        flash('Error: Single email exists under two different account.', 'danger')
-        return redirect(url_for('500'))
-
+    user = Users.query.filter_by(ur_email=email).first()
     
     form = ResetPasswordForm()
     if form.validate_on_submit():
@@ -188,7 +172,7 @@ def reset_password(token):
 @app.route('/forget_password/<string:selection>', methods=['GET', 'POST'])
 def forget_password(selection):
     form = None
-    if selection == "contact":
+    if selection == "Contact":
         return redirect(url_for("contact us"))    
     elif selection == "Account":
         form = ForgetPasswordFormAccount()
@@ -199,37 +183,27 @@ def forget_password(selection):
 
     if form.validate_on_submit():
         data = form.data.data 
-        email = ""
+        
         if selection == "Account":
             #retrieve email via login
             user = Users.query.filter_by(ur_login = data).first()
-            ind = IndividualUsers.query.filter_by(iu_id = user.ur_id).first()
-            bus = BusinessUsers.query.filter_by(bu_id = user.ur_id).first()
-            if ind: email = ind.iu_email
-            elif bus: email = bus.bu_email
+
         elif selection == 'Phone':
-            #retrieve email via phone
-            ind = IndividualUsers.query.filter_by(iu_phone = data).first()
-            bus = BusinessUsers.query.filter_by(bu_phone = data).first()
-            
-            if ind: 
-                email = ind.iu_email
-                user = Users.query.filter_by(ur_id = ind.iu_id).first()
-            elif bus: 
-                email = bus.bu_email
-                user = Users.query.filter_by(ur_id = bus.bu_id).first()
+            user = Users.query.filter_by(ur_phone = data).first()
               
-    
         length = len(app.config['DEFAULT_STRING']) 
         otp = ""
         for i in range(6) : 
             otp += app.config['DEFAULT_STRING'] [math.floor(random.random() * length)] 
 
-        token = generate_confirmation_token(email)
+        try:
+            token = generate_confirmation_token_for(user, "reset")
+        except:
+            return redirect(url_for('500'))
         reset_url = url_for('reset_password', token=token, _external=True)
         html = render_template('reset_password_email.html', reset_url=reset_url, otp = otp)
         subject = "Your email for password reset"
-        send_email(email, subject, html)
+        send_email(user.ur_email, subject, html)
        
         user.ur_otp_hash = bcrypt.generate_password_hash(otp).decode('utf-8')
         db.session.commit()
@@ -272,18 +246,18 @@ def account():
     else:
         return render_template('index.html')
 
-@app.route('/register/individual/confirm/<token>')
+@app.route('/register/confirm/<token>')
 def confirm_email(token):
     try:
-        email = confirm_token(token)
+        email = confirm_token_for(token, "email")
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
 
-    user = IndividualUsers.query.filter_by(iu_email=email).first_or_404()
-    if user.iu_isEmailVerified:
+    user = Users.query.filter_by(ur_email=email).first_or_404()
+    if user.ur_isEmailVerified:
         flash('Account already confirmed. Please login.', 'success')
     else:
-        user.iu_isEmailVerified = True
+        user.ur_isEmailVerified = True
         db.session.commit()
         flash('You have confirmed your account. Thanks!', 'success')
     return redirect(url_for('home'))
@@ -316,12 +290,12 @@ def individual_register():
                     ur_creationTime = datetime.utcnow(), 
                     ur_id = uid,
                     ur_login = form.user_login.data,
-                    ur_password_hash = hashed_password
+                    ur_password_hash = hashed_password,
+                    ur_phone = form.individual_contact_number.data,
+                    ur_email = form.individual_email.data
                     )
         individual_user = IndividualUsers(
                                     iu_id = uid,
-                                    iu_phone = form.individual_contact_number.data,
-                                    iu_email = form.individual_email.data,
                                     iu_CName = form.individual_CName.data,
                                     iu_EName = form.individual_EName.data,
                                     iu_alias = form.individual_alias.data,
@@ -339,12 +313,15 @@ def individual_register():
         db.session.commit()
 
         flash(f'{form.individual_CName.data} 的個人帳號已成功註冊! 請確認電子郵件來以啟用帳戶！', 'success')
-	
-        token = generate_confirmation_token(individual_user.iu_email)
+        try:
+            token = generate_confirmation_token_for(user, "email")
+        except:
+            return redirect(url_for("500"))
+
         confirm_url = url_for('confirm_email', token=token, _external=True)
         html = render_template('confirm_email.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
-        send_email(individual_user.iu_email, subject, html)
+        send_email(user.ur_email, subject, html)
 
         return redirect(url_for('home'))
     return render_template('individual_register.html', title='註冊 - 個人帳戶', form = form)
@@ -370,22 +347,22 @@ def individual_profile(iuid):
 def individual_profile_update(iuid):
     profile = IndividualUsers.query.get_or_404(iuid)
     user = Users.query.get_or_404(iuid)
-   
     form = IndividualUpdateProfileForm()
 
     if form.validate_on_submit():
         #server side validation
-        user = IndividualUsers.query.filter_by(iu_phone = form.individual_contact_number.data).first()    
-        if user and user.iu_id != iuid:
+        check_user = Users.query.filter_by(ur_phone = form.individual_contact_number.data).first()    
+        if check_user and check_user.ur_id != iuid:
             flash('Contact number {} taken. Update fails.'.format(form.individual_contact_number.data), 'fail')
             return redirect(url_for('individual_profile_update', iuid = iuid))
-        user = IndividualUsers.query.filter_by(iu_email = form.individual_email.data).first()    
-        if user and user.iu_id != iuid:
+
+        check_user = Users.query.filter_by(ur_email = form.individual_email.data).first()    
+        if check_user and check_user.ur_id != iuid:
             flash('Email {} taken. Update fails.'.format(form.individual_email.data), 'fail')
             return redirect(url_for('individual_profile_update', iuid = iuid))
         else:
-            profile.iu_phone = form.individual_contact_number.data
-            profile.iu_email = form.individual_email.data
+            user.ur_phone = form.individual_contact_number.data
+            user.ur_email = form.individual_email.data
             profile.iu_CName = form.individual_CName.data
             profile.iu_EName = form.individual_EName.data
             profile.iu_alias = form.individual_alias.data
@@ -400,9 +377,9 @@ def individual_profile_update(iuid):
             flash('您的個人資料已成功更新!', 'success')
             return redirect(url_for('individual_profile_update', iuid = iuid))
 
-    elif request.method == 'GET':
-        form.individual_contact_number.data = profile.iu_phone
-        form.individual_email.data = profile.iu_email 
+    elif request.method == 'GET':	
+        form.individual_contact_number.data = user.ur_phone
+        form.individual_email.data = user.ur_email 
         form.individual_CName.data = profile.iu_CName
         form.individual_EName.data = profile.iu_EName 
         form.individual_alias.data = profile.iu_alias 
@@ -421,7 +398,6 @@ def individual_profile_update(iuid):
 def update_password(iuid):
 
     user = Users.query.get_or_404(iuid)
-   
     form = ChangePasswordForm()
     
     if form.validate_on_submit():

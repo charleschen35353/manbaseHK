@@ -50,9 +50,8 @@ class ForgetPasswordFormPhone(BaseForm):
     submit = SubmitField('Reset Password')
     
     def validate_data(form, data):
-        ind = IndividualUsers.query.filter_by(iu_phone=data.data).first()
-        bus = BusinessUsers.query.filter_by(bu_phone=data.data).first()
-        if ind is None and bus is None:
+        user = Users.query.filter_by(ur_phone=data.data).first()
+        if not user:
             raise ValidationError('此聯絡電話不存在。')
 
 # Individual Users
@@ -100,16 +99,14 @@ class IndividualRegistrationForm(BaseForm):
             raise ValidationError('此帳戶已存在，請登入。')
 
     def validate_individual_phone(form, individual_contact_number):
-        ind = IndividualUsers.query.filter_by(iu_phone=individual_contact_number.data).first()
-        bus = BusinesslUsers.query.filter_by(bu_phone=individual_contact_number.data).first()
-        if ind is not None or bus is not None:
+        user = Users.query.filter_by(ur_phone=individual_contact_number.data).first()
+        if user:
             raise ValidationError('此電話號碼已存在，請重新輸入。')
     
     def validate_individual_email(form, individual_email):
-        ind = IndividualUsers.query.filter_by(iu_email=individual_email.data).first()
-        bus = BusinessUsers.query.filter_by(bu_email=individual_email.data).first()
-        if ind is not None or bus is not None:
-            raise ValidationError('此個人電郵已存在，請重新輸入。')
+        user = Users.query.filter_by(ur_phone=individual_email.data).first()
+        if user:
+            raise ValidationError('此電郵已存在，請重新輸入。')
 
 class IndividualUpdateProfileForm(BaseForm):
 
@@ -186,11 +183,10 @@ class BusinessRegistrationForm(BaseForm):
                 '此商業名稱已存在，請重新輸入。')
     
     def validate_company_email(self, company_email):
-        ind = IndividualUsers.query.filter_by(iu_email=company_email.data).first()
-        bus = BusinessUsers.query.filter_by(bu_email=company_email.data).first()
-        if ind is not None and bus is not None:
+        user = Users.query.filter_by(ur_email=user_email.data).first()
+        if user:
             raise ValidationError(
-                '此企業電郵已存在，請重新輸入。')
+                '此電郵已存在，請重新輸入。')
 
 class BusinessUpdateProfileForm(BusinessRegistrationForm):
     company_address = StringField('公司地址',

@@ -16,7 +16,8 @@ app = Flask(__name__)
 #       Use 'localhost' instead for deployment
 uri = 'mysql+pymysql://public:b05qv-x4xca@test.manbasehk.com:3306/manbasedb'
 app.config['SECRET_KEY'] = secrets.token_hex(16)
-app.config['SECURITY_PASSWORD_SALT'] = "passwordkey" # to change
+app.config['KEY_LENGTH'] = len(app.config['SECRET_KEY'])
+app.config['SECURITY_PASSWORD_SALT'] = 'P@ssWoRdSaltManb@seHK'
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAIL_SERVER']='smtp.gmail.com'
