@@ -26,7 +26,7 @@ def generate_confirmation_token_for(user, purpose):
     db.session.commit()
     return serializer.dumps(user.ur_email + key, salt=app.config['SECURITY_PASSWORD_SALT'])
 
-def confirm_token_for(token, purpose ,expiration=3600): # TODO need to set previous sent email invalid
+def confirm_token_for(token, purpose ,expiration=3600): 
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
     try:
         email_concatenated = serializer.loads(
