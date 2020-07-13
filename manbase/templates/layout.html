@@ -136,9 +136,10 @@
     <script src="{{ url_for('static', filename='node_modules/swup/dist/swup.min.js') }}"></script>
 
     <!-- Swup Form Plugin -->
+    <!-- TODO: Disable encoding on the character @ -->
     <script
-      src="{{ url_for('static', filename='node_modules/@swup/forms-plugin/dist/SwupFormsPlugin.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='node_modules/@swup/ga-plugin/dist/SwupGaPlugin.min.js') }}"></script>
+      src="{{ url_for('static', filename='node_modules/@swup/forms-plugin/dist/SwupFormsPlugin.min.js') | replace('%40', '@') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/@swup/ga-plugin/dist/SwupGaPlugin.min.js') | replace('%40', '@') }}"></script>
 
     <!-- Custom JS - Registration Forms -->
     <script src="{{ url_for('static', filename='js/business_register.js') }}"></script>
