@@ -187,6 +187,43 @@ const individual_register_on_load = () => {
 
   $('#ind_reg_sec_2_next').click(() => {
     // TODO: Client-side Validation
+    let error = false;
+    const hkid_regex = /([A-Z]){1,2}\d{4}/;
+
+    for (const field of section_2_fields) {
+      $('#' + field).removeClass('is-valid is-invalid');
+      $('#' + field + '_error').empty();
+    }
+
+    if ($('#ind_register_c_name').val().length == 0) {
+      error = true;
+      $('#ind_register_c_name').addClass('is-invalid');
+
+      // TODO: Update the error message to Chinese
+      $('#ind_register_c_name_error').append(
+        "<p class='error'>CHINESE_NAME_EMPTY_ERROR</p>"
+      );
+    } else {
+      $('#ind_register_c_name').addClass('is-valid');
+    }
+
+    // No Validation for English Name and Nick Name
+    $('#ind_register_e_name').addClass('is-valid');
+    $('#ind_register_nickname').addClass('is-valid');
+
+    if (!(hkid_regex.test($('#ind_register_hkid').val()))) {
+      error = true;
+      $('#ind_register_hkid').addClass('is-invalid');
+
+      // TODO: Update the error message to Chinese
+      $('#ind_register_hkid_error').append(
+        "<p class='error'>HKID_INVALID_ERROR</p>"
+      );
+    } else {
+      $('#ind_register_hkid').addClass('is-valid');
+    }
+
+    if (error) return;
 
     $('#ind_reg_sec_2').fadeToggle({
       duration: ANIMATION_DURATION,
