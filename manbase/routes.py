@@ -585,7 +585,8 @@ def business_register():
                     ur_id = uid,
                     ur_login = form.user_login.data,
                     ur_password_hash = hashed_password,
-                    ur_phone = form.company_contact_number.data
+                    ur_phone = form.company_contact_number.data,
+                    ur_email = form.company_email.data
                     )
 
         business_user = BusinessUsers(
