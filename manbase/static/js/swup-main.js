@@ -21,7 +21,8 @@ const showSpinner = () => {
 init();
 
 const swup = new Swup({
-    plugins: [new SwupFormsPlugin(), new SwupGaPlugin()]
+    plugins: [new SwupFormsPlugin(), new SwupGaPlugin()],
+    cache: false,
 });
 
 swup.on('contentReplaced', init);

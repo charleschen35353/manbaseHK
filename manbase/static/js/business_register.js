@@ -47,7 +47,9 @@ const business_register_on_load = () => {
 
     // BUTTONS AND VALIDATIONS
 
-    const ANIMATION_DURATION = 200;
+    const ANIMATION_DURATION = 100;
+
+    const scrollTop = () => $("html, body").animate({ scrollTop: 0 }, ANIMATION_DURATION);
 
     $('#bus_reg_sec_1').show();
 
@@ -110,6 +112,7 @@ const business_register_on_load = () => {
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_2').fadeToggle();
+                scrollTop();
                 $('#bus_reg_company_name_chinese').focus();
             }
         });
@@ -120,6 +123,7 @@ const business_register_on_load = () => {
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_1').fadeToggle();
+                scrollTop();
             }
         });
     });
@@ -162,6 +166,7 @@ const business_register_on_load = () => {
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_3').fadeToggle();
+                scrollTop();
                 $('#bus_reg_person_in_charge').focus();
             }
         });
@@ -172,6 +177,7 @@ const business_register_on_load = () => {
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_2').fadeToggle();
+                scrollTop();
             }
         });
     });
@@ -241,6 +247,7 @@ const business_register_on_load = () => {
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_4').fadeToggle();
+                scrollTop();
             }
         });
     });
@@ -250,6 +257,7 @@ const business_register_on_load = () => {
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_3').fadeToggle();
+                scrollTop();
             }
         });
     });

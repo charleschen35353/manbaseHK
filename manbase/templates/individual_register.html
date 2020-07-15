@@ -349,13 +349,17 @@
                 {{ render_field(form.individual_birthday,
                                 class="form-control form-control-lg is-invalid", 
                                 placeholder="YYYY-MM-DD", 
-                                id="ind_register_dob") 
+                                id="ind_register_dob",
+                                type="date",
+                                pattern="\d{4}-\d{2}-\d{2}") 
                 }}
                 {% else %}
                 {{ render_field(form.individual_birthday, 
                                 class="form-control form-control-lg", 
                                 placeholder="YYYY-MM-DD", 
-                                id="ind_register_dob") 
+                                id="ind_register_dob",
+                                type="date",
+                                pattern="\d{4}-\d{2}-\d{2}") 
                 }}
                 {% endif %}
                 <div class="invalid-feedback d-block" id="ind_register_dob_error">
@@ -392,7 +396,7 @@
                 <div class="row mx-md-n1">
                     {% for subfield in form.individual_educationLevel %}
                     <div class="col-12 col-md-4 px-md-1 my-2">
-                        <div class="ind_reg_edu_levels d-grid p-2 align-items-center rounded-lg  bg-white border">
+                        <div class="ind_register_edu_levels d-grid p-2 align-items-center rounded-lg  bg-white border">
                             {{ subfield }} {{ render_field(subfield.label, class="m-0") }}
                         </div>
                     </div>
@@ -594,8 +598,8 @@
                                 class="form-check-input", 
                                 id="ind_register_agree_tos")
                 }}
-                <label for="agree_tos" class="text-break bus-reg-confirm form-check-label">我已經閱讀並同意<a href="#"
-                        class="text-primary" data-toggle="modal" data-target="#tos">《使用條款及細則》</a>。</label>
+                <label for="ind_register_agree_tos" class="text-break ind-reg-confirm form-check-label">我已經閱讀並同意<a
+                        href="#" class="text-primary" data-toggle="modal" data-target="#tos">《使用條款及細則》</a>。</label>
             </div>
             <!-- Sections Button -->
             <div class="form-group row">
