@@ -88,7 +88,7 @@ class IndividualRegistrationForm(BaseForm):
     individual_gender = RadioField('性別', choices=[(0, "女性"), (1, "男性"), (2, "保密")], validators=[], coerce=int)
     individual_birthday = DateField('出生日期', validators=[DataRequired()])
     # DEBUG: removed validators
-    individual_educationLevel = RadioField('教育程度', choices=[(0, "小學畢業或以下"), (1, "完成中三"), (2, "中學畢業"), (3, "大學（本科）畢業"), (4, "大學（碩士或以上）畢業"), (5, "保密")],  validators=[], coerce=int)
+    individual_educationLevel = RadioField('教育程度', choices=[(0, "小學畢業或以下"), (1, "完成中三"), (2, "中學畢業"), (3, "大學（本科）畢業"), (4, "大學（碩士或以上）畢業"), (5, "保密")], default=0, validators=[], coerce=int)
     individual_language_Cantonese = BooleanField('廣東話', validators=[])
     individual_language_English = BooleanField('英文', validators=[])
     individual_language_Putonghua = BooleanField('普通話', validators=[])
@@ -108,7 +108,7 @@ class IndividualRegistrationForm(BaseForm):
             raise ValidationError('此電話號碼已存在，請重新輸入。')
     
     def validate_individual_email(form, individual_email):
-        user = Users.query.filter_by(ur_phone=individual_email.data).first()
+        user = Users.query.filter_by(ur_email=individual_email.data).first()
         if user:
             raise ValidationError('此電郵已存在，請重新輸入。')
 

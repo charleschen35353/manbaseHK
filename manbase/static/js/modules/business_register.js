@@ -65,11 +65,11 @@ const business_register_on_load = () => {
 
         let error = false;
 
-        for (el of [account, password, repeat_password]) {
+        for (const el of [account, password, repeat_password]) {
             $(el).removeClass('is-valid is-invalid');
         }
 
-        for (el of [account_errors, password_errors, repeat_password_errors]) {
+        for (const el of [account_errors, password_errors, repeat_password_errors]) {
             $(el).empty();
         }
 
@@ -218,7 +218,7 @@ const business_register_on_load = () => {
             error = true;
             $(phone).addClass('is-invalid');
 
-            error_msg = $(phone).val().length != 8 ? "聯絡電話必須是 8 個數字。" : "您的電話必須是有效的香港電話號碼。";
+            const error_msg = $(phone).val().length != 8 ? "聯絡電話必須是 8 個數字。" : "您的電話必須是有效的香港電話號碼。";
 
             $(phone_errors).append("<p class='error'>" + error_msg + "</p>")
         } else {

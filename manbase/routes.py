@@ -585,7 +585,8 @@ def business_register():
                     ur_id = uid,
                     ur_login = form.user_login.data,
                     ur_password_hash = hashed_password,
-                    ur_phone = form.company_contact_number.data
+                    ur_phone = form.company_contact_number.data,
+                    ur_email = form.company_email.data
                     )
 
         business_user = BusinessUsers(
@@ -599,7 +600,7 @@ def business_register():
         db.session.add(business_user)
         db.session.commit()
 
-        token = generate_confirmation_token(busniness_user.bu_email)
+        token = generate_confirmation_token_for(user, 'email')
         confirm_url = url_for('confirm_email', token=token, _external=True)
         html = render_template('confirm_email.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
