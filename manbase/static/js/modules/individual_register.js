@@ -1,3 +1,7 @@
+import moment from '../../node_modules/moment/dist/moment.js';
+
+moment.locale('zh-hk');
+
 const individual_register_on_load = () => {
   const section_1_fields = [
     'ind_register_account',
@@ -31,6 +35,25 @@ const individual_register_on_load = () => {
   const ANIMATION_DURATION = 100;
   const scrollTop = () => $("html, body").animate({ scrollTop: 0 }, ANIMATION_DURATION);
 
+  const checkGenderSelection = () => {
+    let selected = false;
+
+    $('.ind_register_genders').each((_, el) => {
+      $(el).removeClass('border-danger');
+
+      if ($(el).children("input:first").is(":checked")) {
+        selected = true;
+      }
+    })
+
+    if (!selected) {
+      $('.ind_register_genders').each((_, el) => {
+        $(el).addClass('border-danger');
+      })
+    }
+
+    return selected;
+  }
   // Copying input fields values into respective confirm fields
   // in the last section
   for (const field of fields) {
@@ -41,6 +64,10 @@ const individual_register_on_load = () => {
       $('#confirm_' + field).html(current_value);
     });
   }
+
+  $('#ind_register_hkid').on('change paste keyup', el => {
+    $(el.target).val($(el.target).val().toUpperCase());
+  })
 
 
   // Block Radio Buttons
@@ -113,7 +140,7 @@ const individual_register_on_load = () => {
   $('#ind_reg_sec_1_next').click(() => {
     let error = false;
 
-    for (el of section_1_fields) {
+    for (const el of section_1_fields) {
       $('#' + el).removeClass('is-valid is-invalid');
       $('#' + el + '_error').empty();
     }
@@ -186,8 +213,8 @@ const individual_register_on_load = () => {
   });
 
   $('#ind_reg_sec_2_next').click(() => {
-    // TODO: Client-side Validation
     let error = false;
+
     const hkid_regex = /([A-Z]){1,2}\d{4}/;
 
     for (const field of section_2_fields) {
@@ -221,6 +248,7 @@ const individual_register_on_load = () => {
       );
     } else {
       $('#ind_register_hkid').addClass('is-valid');
+      $('#ind_register_hkid_error').empty();
     }
 
     if (error) return;
@@ -248,7 +276,71 @@ const individual_register_on_load = () => {
   });
 
   $('#ind_reg_sec_3_next').click(() => {
-    // TODO: Client-side Validation
+    let error = false;
+    const email_regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+    for (const field of section_3_fields) {
+      $('#' + field).removeClass('is-valid is-invalid');
+      $('#' + field + '_error').empty();
+    }
+
+    // Must provide a valid phone number
+    if ($('#ind_register_tel').val().length != 8 || !(['5', '6', '7', '8', '9'].includes($('#ind_register_tel').val().charAt(0)))) {
+      error = true;
+      $('#ind_register_tel').addClass('is-invalid');
+
+      // TODO: Update the error message to Chinese
+      const error_msg = $('#ind_register_tel').val().length != 8 ? 'PHONE_LENGTH_ERROR' : 'PHONE_INVALID';
+
+      $('#ind_register_tel_error').append(
+        "<p class='error'>" + error_msg + "</p>"
+      );
+    } else {
+      $('#ind_register_tel').addClass('is-valid');
+    }
+
+    // Must provide a valid email address
+    if (!(email_regex.test($('#ind_register_email').val()))) {
+      error = true;
+
+      $('#ind_register_email').addClass('is-invalid');
+
+      // TODO: Update the error message to Chinese
+      $('#ind_register_email_error').append(
+        "<p class='error'>EMAIL_INVALID_ERROR</p>"
+      );
+    } else {
+      $('#ind_register_email').addClass('is-valid');
+    }
+
+    if (!(checkGenderSelection())) {
+      error = true;
+
+      // TODO: Update the error message to Chinese
+      $('#ind_register_gender_error').append(
+        "<p class='error'>GENDER_SELECTION_ERROR</p>"
+      );
+    }
+
+    // Date Of Birth must be present, and applicants must be at least 15 years old
+    let input_dob = moment($('#ind_register_dob').val(), "YYYY-MM-DD");
+    let valid_age = moment().subtract(15, "years");
+
+    if (!(input_dob.isValid() && input_dob < valid_age)) {
+      error = true;
+
+      $('#ind_register_dob').addClass('is-invalid');
+
+      const error_msg = input_dob.isValid() ? 'AGE_LIMITATION_ERROR' : 'AGE_INVALID_ERROR';
+
+      $('#ind_register_dob_error').append(
+        "<p class='error'>" + error_msg + "</p>"
+      );
+    } else {
+      $('#ind_register_dob').addClass('is-valid');
+    }
+
+    if (error) return;
 
     $('#ind_reg_sec_3').fadeToggle({
       duration: ANIMATION_DURATION,
@@ -278,7 +370,12 @@ const individual_register_on_load = () => {
     // Update Language Label
     updateLangLabel();
 
-    // TODO: Update Empty lables
+    // Fill in Empty Confirm Values
+    $(".ind-reg-confirm").each((_, element) => {
+      if ($(element).html() == '') {
+        $(element).html("<span class='text-info'>未填寫</span>");
+      }
+    });
 
     $('#ind_reg_sec_4').fadeToggle({
       duration: ANIMATION_DURATION,
@@ -364,3 +461,5 @@ const individual_register_on_load = () => {
     }
   });
 };
+
+export default individual_register_on_load;

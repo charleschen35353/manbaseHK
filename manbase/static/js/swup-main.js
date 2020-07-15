@@ -1,6 +1,9 @@
+import individual_register_on_load from './modules/individual_register.js';
+import business_register_on_load from './modules/business_register.js';
+
 const init = () => {
     $('#spinner').css('visibility', 'visible');
-    $("html, body").animate({ scrollTop: 0 }, "fast");
+    $("html, body").animate({ scrollTop: 0 }, 100);
 
     if (document.querySelector('#business_register')) {
         business_register_on_load();
@@ -12,6 +15,20 @@ const init = () => {
     $('#spinner').css('visibility', 'hidden');
 
     gtag('event', 'page_view', { 'send_to': 'UA-41948260-3' });
+
+    $('.navbar-brand').click(() => {
+        $('#main-nav').collapse('hide');
+    });
+
+    $('#main_content').click(() => {
+        $('#main-nav').collapse('hide');
+    });
+
+    $('.nav-item').each((_, el) => {
+        $(el).click(() => {
+            $('#main-nav').collapse('hide');
+        });
+    })
 }
 
 const showSpinner = () => {

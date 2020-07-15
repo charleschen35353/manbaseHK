@@ -278,3 +278,5 @@ const business_register_on_load = () => {
         }
     });
 };
+
+export default business_register_on_load;

@@ -22,7 +22,7 @@
   <!-- Swup CSS -->
   <link rel="stylesheet" rel="preload" as="style" href="{{ url_for('static', filename='swup-main.css') }}">
 
-  <!-- Compiled Minified CSS (Temporarily Disabled for Easier Devevelopment) -->
+  <!-- Compiled Minified CSS (Temporarily Disabled for Easier Development) -->
   <!--<link rel="stylesheet" rel="preload" as="style" href="{{ url_for('static', filename='out.css') }}">-->
 
 
@@ -48,7 +48,7 @@
           <ul class="navbar-nav ml-auto text-center">
             <li class="nav-item">
               <a href="{{ url_for('home') }}"
-                class="nav-link {% if request.path == url_for('about') %} active {% endif %}">首頁</a>
+                class="nav-link {% if request.path == url_for('home') %} active {% endif %}">首頁</a>
             </li>
             <li class="nav-item">
               <a href="{{ url_for('about') }}"
@@ -82,9 +82,9 @@
     </header>
 
     {% if request.path in [url_for('login'), url_for('register')] %}
-    <div class="content-switch center-grid">
+    <div class="content-switch center-grid" id="main_content">
       {% else %}
-      <div class="content-switch">
+      <div class="content-switch" id="main_content">
         {% endif %}
 
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -128,25 +128,21 @@
     </script>
 
     <!-- jQuery, Popper.js, and Bootstrap JS -->
-    <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
     <!-- Swup -->
-    <script src="{{ url_for('static', filename='node_modules/swup/dist/swup.min.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='node_modules/swup/dist/swup.min.js') }}"></script>
 
     <!-- Swup Form Plugin -->
-    <!-- TODO: Disable encoding on the character @ -->
-    <script
+    <script defer
       src="{{ url_for('static', filename='node_modules/@swup/forms-plugin/dist/SwupFormsPlugin.min.js') | replace('%40', '@') }}"></script>
-    <script src="{{ url_for('static', filename='node_modules/@swup/ga-plugin/dist/SwupGaPlugin.min.js') | replace('%40', '@') }}"></script>
-
-    <!-- Custom JS - Registration Forms -->
-    <script src="{{ url_for('static', filename='js/business_register.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/individual_register.js') }}"></script>
+    <script defer
+      src="{{ url_for('static', filename='node_modules/@swup/ga-plugin/dist/SwupGaPlugin.min.js') | replace('%40', '@') }}"></script>
 
     <!-- Custom JS - Swup Init -->
-    <script src="{{ url_for('static', filename='js/swup-main.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/swup-main.js') }}"></script>
 </body>
 
 </html>
