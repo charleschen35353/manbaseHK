@@ -104,15 +104,15 @@
         {% block content %}
         {% endblock %}
       </div>
+      {% if request.path in [url_for('business_register'), url_for('individual_register')] %}
+      {% include 'tos.html' %}
+      {% endif %}
     </div>
 
     <footer class="d-flex justify-content-center align-self-end text-center">
       Copyright &copy; 2020 All rights reserved
     </footer>
 
-    {% if request.path in [url_for('business_register'), url_for('individual_register')] %}
-    {% include 'tos.html' %}
-    {% endif %}
 
 
 

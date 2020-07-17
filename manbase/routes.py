@@ -610,7 +610,7 @@ def business_register():
         confirm_url = url_for('confirm_email', token=token, _external=True)
         html = render_template('confirm_email.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
-        send_email(busniness_user.bu_email, subject, html)
+        send_email(user.ur_email, subject, html)
 
         flash(f'{form.company_CName.data} 的商業帳號已成功註冊! 請確認電子郵件來以啟用帳戶！', 'success')
         return redirect(url_for('home'))

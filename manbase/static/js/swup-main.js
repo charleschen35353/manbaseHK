@@ -40,6 +40,7 @@ init();
 const swup = new Swup({
     plugins: [new SwupFormsPlugin(), new SwupGaPlugin()],
     cache: false,
+    containers: ["#swup"]
 });
 
 swup.on('contentReplaced', init);
