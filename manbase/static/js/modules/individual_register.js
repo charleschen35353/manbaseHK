@@ -151,9 +151,8 @@ const individual_register_on_load = () => {
       error = true;
       $('#ind_register_account').addClass('is-invalid');
 
-      // TODO: Update the error message to Chinese
       $('#ind_register_account_error').append(
-        "<p class='error'>ACCOUNT_NOT_EMPTY_ERROR</p>"
+        "<p class='error'>帳號不能為空。</p>"
       );
     } else {
       $('#ind_register_account').addClass('is-valid');
@@ -164,9 +163,8 @@ const individual_register_on_load = () => {
       error = true;
       $('#ind_register_password').addClass('is-invalid');
 
-      // TODO: Update the error message to Chinese
       $('#ind_register_password_error').append(
-        "<p class='error'>PASSWORD_POLICY_VIOLATED</p>"
+        "<p class='error'>您的密碼必須有至少 8 個字元。</p>"
       );
     } else {
       $('#ind_register_password').addClass('is-valid');
@@ -180,9 +178,8 @@ const individual_register_on_load = () => {
       error = true;
       $('#ind_register_confirm_password').addClass('is-invalid');
 
-      // TODO: Update the error message to CHINESE
       $('#ind_register_confirm_password_error').append(
-        "<p class='error'>REPEAT_PASSWORD_VERIFICATION_FAILED</p>"
+        "<p class='error'>您重複輸入的密碼必須與上面的相同。</p>"
       );
     } else {
       $('#ind_register_confirm_password').addClass('is-valid');
@@ -226,9 +223,8 @@ const individual_register_on_load = () => {
       error = true;
       $('#ind_register_c_name').addClass('is-invalid');
 
-      // TODO: Update the error message to Chinese
       $('#ind_register_c_name_error').append(
-        "<p class='error'>CHINESE_NAME_EMPTY_ERROR</p>"
+        "<p class='error'>您必須提供您的中文全名。</p>"
       );
     } else {
       $('#ind_register_c_name').addClass('is-valid');
@@ -242,9 +238,8 @@ const individual_register_on_load = () => {
       error = true;
       $('#ind_register_hkid').addClass('is-invalid');
 
-      // TODO: Update the error message to Chinese
       $('#ind_register_hkid_error').append(
-        "<p class='error'>HKID_INVALID_ERROR</p>"
+        "<p class='error'>您的身分證號碼無效。請核對並重新輸入。</p>"
       );
     } else {
       $('#ind_register_hkid').addClass('is-valid');
@@ -289,8 +284,7 @@ const individual_register_on_load = () => {
       error = true;
       $('#ind_register_tel').addClass('is-invalid');
 
-      // TODO: Update the error message to Chinese
-      const error_msg = $('#ind_register_tel').val().length != 8 ? 'PHONE_LENGTH_ERROR' : 'PHONE_INVALID';
+      const error_msg = $('#ind_register_tel').val().length != 8 ? '聯絡電話必須是 8 個數字。' : '您的電話必須是有效的香港電話號碼。';
 
       $('#ind_register_tel_error').append(
         "<p class='error'>" + error_msg + "</p>"
@@ -305,9 +299,8 @@ const individual_register_on_load = () => {
 
       $('#ind_register_email').addClass('is-invalid');
 
-      // TODO: Update the error message to Chinese
       $('#ind_register_email_error').append(
-        "<p class='error'>EMAIL_INVALID_ERROR</p>"
+        "<p class='error'>您必須提供有效的電子郵箱地址。</p>"
       );
     } else {
       $('#ind_register_email').addClass('is-valid');
@@ -316,14 +309,15 @@ const individual_register_on_load = () => {
     if (!(checkGenderSelection())) {
       error = true;
 
-      // TODO: Update the error message to Chinese
       $('#ind_register_gender_error').append(
-        "<p class='error'>GENDER_SELECTION_ERROR</p>"
+        "<p class='error'>請選擇您的性別。</p>"
       );
+    } else {
+      $('#ind_register_gender_error').empty();
     }
 
     // Date Of Birth must be present, and applicants must be at least 15 years old
-    let input_dob = moment($('#ind_register_dob').val(), "YYYY-MM-DD");
+    let input_dob = moment($('#ind_register_dob').val(), "YYYY-MM-DD", true);
     let valid_age = moment().subtract(15, "years");
 
     if (!(input_dob.isValid() && input_dob < valid_age)) {
@@ -331,7 +325,7 @@ const individual_register_on_load = () => {
 
       $('#ind_register_dob').addClass('is-invalid');
 
-      const error_msg = input_dob.isValid() ? 'AGE_LIMITATION_ERROR' : 'AGE_INVALID_ERROR';
+      const error_msg = input_dob.isValid() ? '對不起，您必須年滿 15 歲，方能申請 Man<span class="text-primary">base</span> 賬號。' : '您輸入的出生日期無效。請重新輸入。';
 
       $('#ind_register_dob_error').append(
         "<p class='error'>" + error_msg + "</p>"

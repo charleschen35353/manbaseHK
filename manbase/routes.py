@@ -248,11 +248,17 @@ def account():
 
 @app.route('/register/confirm/<token>')
 def confirm_email(token):
+    email = '' 
+
     try:
         email = confirm_token_for(token, "email")
     except:
+        # DEBUG
+        raise
         flash('The confirmation link is invalid or has expired.', 'danger')
 
+    # DEBUG
+    print(email)
     user = Users.query.filter_by(ur_email=email).first_or_404()
     if user.ur_isEmailVerified:
         flash('Account already confirmed. Please login.', 'success')

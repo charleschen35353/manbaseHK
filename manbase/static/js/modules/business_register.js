@@ -79,7 +79,7 @@ const business_register_on_load = () => {
             error = true;
             $(account).addClass('is-invalid');
 
-            $(account_errors).append("<p class='error'>帳號不能為空</p>");
+            $(account_errors).append("<p class='error'>帳號不能為空。</p>");
         } else {
             $(account).addClass('is-valid');
         }
@@ -150,7 +150,6 @@ const business_register_on_load = () => {
         if ($(c_name).val().length == 0) {
             error = true;
             $(c_name).addClass('is-invalid');
-            // TODO: Update to Chinese warning
             $(c_name_errors).append("<p class='error'>您必須提供企業的中文名稱。</p>");
         } else {
             $(c_name).addClass('is-valid')

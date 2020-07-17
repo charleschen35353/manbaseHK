@@ -19,13 +19,24 @@
         data-swup-form="individual_register">
         {{ form.hidden_tag() }}
 
-        <div class="text-center mb-3">
-            <h2 class="text-primary">馬上註冊 <span class="text-dark">man</span><span class="text-secondary">base</span>
+        <div class="text-center">
+            <h2 class="text-primary mb-2">馬上註冊 <span class="text-dark">man</span><span
+                    class="text-secondary">base</span>
                 個人帳戶</h2>
             {% if form.errors %}
-            {% for field, errors in form.errors.items() %}
-            <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
-            {% endfor %}
+            <div class="container border-left border-danger bg-white p-2 rounded shadow-sm mb-3"
+                style="border-width: 5px !important;">
+                <div class="d-flex flex-row align-items-center">
+                    <div class="mx-2 mx-md-3">
+                        <i class="las la-exclamation-triangle text-danger h1 m-0"></i>
+                    </div>
+                    <div class="w-100">
+                        {% for field, errors in form.errors.items() %}
+                        <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
             {% endif %}
         </div>
 
@@ -301,12 +312,14 @@
                 {{ render_field(form.individual_email,
                                 class="form-control form-control-lg is-invalid", 
                                 placeholder="example@email.com",
-                                id="ind_register_email") }}
+                                id="ind_register_email",
+                                type="email") }}
                 {% else %}
                 {{ render_field(form.individual_email,
                                 class="form-control form-control-lg", 
                                 placeholder="example@email.com",
-                                id="ind_register_email") }}
+                                id="ind_register_email",
+                                type="email") }}
                 {% endif %}
                 <div class="invalid-feedback d-block" , id="ind_register_email_error">
                     {% if form.individual_email.errors %}
@@ -351,7 +364,8 @@
                                 placeholder="YYYY-MM-DD", 
                                 id="ind_register_dob",
                                 type="date",
-                                pattern="\d{4}-\d{2}-\d{2}") 
+                                pattern="\d{4}-\d{2}-\d{2}",
+                                max="9999-12-31") 
                 }}
                 {% else %}
                 {{ render_field(form.individual_birthday, 
@@ -359,7 +373,8 @@
                                 placeholder="YYYY-MM-DD", 
                                 id="ind_register_dob",
                                 type="date",
-                                pattern="\d{4}-\d{2}-\d{2}") 
+                                pattern="\d{4}-\d{2}-\d{2}",
+                                max="9999-12-31") 
                 }}
                 {% endif %}
                 <div class="invalid-feedback d-block" id="ind_register_dob_error">

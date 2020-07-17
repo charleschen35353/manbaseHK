@@ -1,4 +1,5 @@
 from manbase import app, mail, db
+from manbase.models import *
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
 import secrets
@@ -37,7 +38,7 @@ def confirm_token_for(token, purpose ,expiration=3600):
         print(email_concatenated)
         key = email_concatenated[len(email_concatenated) - app.config['KEY_LENGTH']:len(email_concatenated)]
         email = email_concatenated[:len(email_concatenated) - app.config['KEY_LENGTH']]
-        user = User.query.filter_by(ur_email = email).first()
+        user = Users.query.filter_by(ur_email = email).first()
         if purpose == "reset":
             if user.ur_reset_key != key: return False
         elif purpose == "email":
