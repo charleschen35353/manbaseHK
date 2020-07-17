@@ -37,7 +37,7 @@ app.config['DEFAULT_STRING'] = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL
 #        The SERVER_NAME must be set
 #        NOT SURE IF THIS IS THE CASE FOR PRODUCTION, WHERE
 #        A SUBDOMAIN IS NOT PRESENT
-app.config['SERVER_NAME'] = 'localhost' if app['DEBUG'] else 'test.manbasehk.com'
+app.config['SERVER_NAME'] = 'localhost' if app.config['DEBUG'] else 'test.manbasehk.com'
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
