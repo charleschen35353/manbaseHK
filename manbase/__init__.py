@@ -33,6 +33,12 @@ app.config['MAIL_DEFAULT_SENDER'] = 'manbasehk@gmail.com'
 app.config['WTF_I18N_ENABLED'] = False
 app.config['DEFAULT_STRING'] = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%'
 
+# DEBUG: For the CSRF Token to Work in the Testing Server, 
+#        The SERVER_NAME must be set
+#        NOT SURE IF THIS IS THE CASE FOR PRODUCTION, WHERE
+#        A SUBDOMAIN IS NOT PRESENT
+app.config['SERVER_NAME'] = 'localhost' if app['DEBUG'] else 'test.manbasehk.com'
+
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 uuid = FlaskUUID(app)
