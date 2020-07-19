@@ -10,7 +10,7 @@
         <h4 class="m-0">查看工作板</h4>
     </a>
 
-    <a href="{{url_for('individual_my_jobs')}}" class="btn btn-primary btn-large p-2">
+    <a href="{{url_for('individual_my_jobs', iuid=current_user.ur_id)}}" class="btn btn-primary btn-large p-2">
         <h4 class="m-0">查看我的工作</h4>
     </a>
 
