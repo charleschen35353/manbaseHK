@@ -25,6 +25,7 @@ class CommentForm(BaseForm):
     comment = StringField('留言',
                            validators=[DataRequired(message = '留言不能為空'), Length(min=5, max=20)])
     submit = SubmitField('遞交留言')
+    
 class ResetPasswordForm(BaseForm):
     otp = PasswordField('one time password',
                              validators=[DataRequired()])
@@ -33,6 +34,7 @@ class ResetPasswordForm(BaseForm):
     confirm_password = PasswordField('重新輸入密碼',
                                      validators=[DataRequired(), EqualTo('password', message="必須與已輸入密碼相同")])
     submit = SubmitField('重置密碼')
+   
 
 class ForgetPasswordSelectionForm(BaseForm):
     selection =  RadioField('Retrieval Method', choices=[(1, "Login ID"), (2, "Contact Phone Number(Verified)"), (3, "Contact Us")],  
@@ -256,6 +258,12 @@ class RateAndReviewOnBusinessForm():
     administration_score = RadioField('管理人員評分',
                         validators = [DataRequired(message = '管理人員不能為空')])
     submit = SubmitField('遞交評論')
+    
+class SMSForm(BaseForm):
+    otp = PasswordField('一次性密碼',
+                             validators=[DataRequired()])
+    
+    submit = SubmitField('遞交')
 
 class ReportAbnormalityForm():
     message = StringField('問題描述',

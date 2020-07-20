@@ -1,19 +1,12 @@
-import secrets
-import os
-import cv2
-import matplotlib.image as pltimg
-import secrets
-import math
-import random
 from flask import render_template, url_for, flash, redirect, request, abort, Markup
 from flask_login import login_user, logout_user , current_user, login_required
 from flask_mail import Message
-from manbase import app, db, bcrypt, login_manager, mail
-from manbase.forms import *
-from manbase.models import *
 from datetime import datetime
 from uuid import uuid4
 from collections import defaultdict 
+from manbase import *
+from manbase.forms import *
+from manbase.models import *
 from manbase.utils import *
 
 @login_manager.user_loader
@@ -101,13 +94,20 @@ def confirm_email(token):
 
 
 @app.route('/request_confirmation_email/<string:uid>', methods = ['GET'])
+@login_required
 def request_confirmation_email(uid):
+    #login user shall be who is verifying
+    if uid != current_user.ur_id:
+        return redirect(url_for('500'))
+
     #uid always exists
     user = Users.query.filter_by(ur_id = uid).first()
+
     try:
         token = generate_confirmation_token_for(user, "email")
     except:
         return redirect(url_for('500'))
+        
     confirm_url = url_for('confirm_email', token=token, _external=True)
     html = render_template('confirm_email.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
@@ -115,6 +115,44 @@ def request_confirmation_email(uid):
     flash("Confirmation Email Sent.","success")
     return redirect(url_for('home'))
 
+@app.route('/request_confirmation_SMS/<string:uid>', methods = ['GET'])
+@login_required
+def request_confirmation_SMS(uid):
+    #login user shall be who is verifying
+    if uid != current_user.ur_id:
+        return redirect(url_for('500'))
+        
+    #uid always exists
+    user = Users.query.filter_by(ur_id = uid).first()
+    
+    #generate otp
+    otp = generate_otp_for(user)
+    #msg = "歡迎加入大社群Manbase。您的一次性密碼為: {} 。請妥善保管。".format(otp)    
+    msg = 'Welcome to ManbaseHK. Your OTP is {}'.format(otp)
+    send_SMS("852"+str(user.ur_phone), msg)
+    flash("OTP Sent. Please check your phone.","success")
+    return redirect(url_for('confirm_SMS', uid = uid))
+
+
+@app.route('/confirm_SMS/<string:uid>',  methods=['GET', 'POST'])
+@login_required
+def confirm_SMS(uid):
+    form = SMSForm()
+    #login user shall be who is verifying
+    if uid != current_user.ur_id:
+        return redirect(url_for('500'))
+    user = Users.query.filter_by(ur_id = uid).first()
+    if form.validate_on_submit():
+        if bcrypt.check_password_hash(user.ur_otp_hash,form.otp.data):
+            user.ur_isSMSVerified = True
+            user.ur_otp_hash = None
+            db.session.commit()
+            flash('You have successfully confirm your phone number!', 'success')
+            return redirect(url_for('home'))
+        else:
+             flash('Incorrect OTP!', 'fail')
+
+    return render_template("confirm_SMS.html", form = form)
 
 # @ROUTE DEFINTION
 # NAME:     Login Page
@@ -214,10 +252,7 @@ def forget_password(selection):
         elif selection == 'Phone':
             user = Users.query.filter_by(ur_phone = data).first()
               
-        length = len(app.config['DEFAULT_STRING']) 
-        otp = ""
-        for i in range(6) : 
-            otp += app.config['DEFAULT_STRING'] [math.floor(random.random() * length)] 
+        otp = generate_otp_for(user)
 
         try:
             token = generate_confirmation_token_for(user, "reset")
@@ -229,8 +264,6 @@ def forget_password(selection):
         subject = "Your email for password reset"
         send_email(user.ur_email, subject, html)
        
-        user.ur_otp_hash = bcrypt.generate_password_hash(otp).decode('utf-8')
-        db.session.commit()
         flash("您的密碼重置郵件已發送至您的電子信箱內.","success")
         return redirect(url_for('home'))
     return render_template('forget_password.html', title='忘記密碼', form = form, method = selection)
@@ -1046,24 +1079,6 @@ def view_an_applicant(job_id, list_id, app_id):
 #    INCOMPLETED / SUSPENDED ROUTES
 # =======================================
 
-
-def save_picture(form_picture):
-    """
-    A utility function which helps save the profile picture in 'static/profile_pics',
-    and return the new name of the profile picture
-    """
-    # Rename the profile picture
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-
-    # Resize the picture and save it in the path
-    img = pltimg.imread(form_picture)
-    img = cv2.resize(img, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
-    cv2.imwrite(picture_path, cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
-
-    return picture_fn
 
 
 
