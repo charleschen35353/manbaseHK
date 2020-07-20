@@ -81,7 +81,7 @@ def about():
     return render_template('about.html', title = "about us")
     
 
-@app.route('/register/confirm/<token>')
+@app.route('/register/confirm/<string:token>')
 def confirm_email(token):
     try:
         email = confirm_token_for(token, "email")
@@ -270,27 +270,6 @@ def account():
     else:
         return render_template('index.html')
 
-@app.route('/register/confirm/<token>')
-def confirm_email(token):
-    email = '' 
-
-    try:
-        email = confirm_token_for(token, "email")
-    except:
-        # DEBUG
-        raise
-        flash('The confirmation link is invalid or has expired.', 'danger')
-
-    # DEBUG
-    print(email)
-    user = Users.query.filter_by(ur_email=email).first_or_404()
-    if user.ur_isEmailVerified:
-        flash('Account already confirmed. Please login.', 'success')
-    else:
-        user.ur_isEmailVerified = True
-        db.session.commit()
-        flash('You have confirmed your account. Thanks!', 'success')
-    return redirect(url_for('home'))
 
 
 # @ROUTE DEFINTION
@@ -759,7 +738,6 @@ def business_view_jobs_posted():
 @app.route('/jobs/<string:job_id>')
 #@login_required
 def job(job_id):
-s
     job = Jobs.query.get_or_404(job_id)
     listings = JobListings.query.filter_by(li_jb_id=job.jb_id).all()
 
