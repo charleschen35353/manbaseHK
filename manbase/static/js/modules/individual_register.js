@@ -409,8 +409,6 @@ const individual_register_on_load = () => {
   }
 
 
-
-
   // Auto-Formatting
 
   /* Suspending

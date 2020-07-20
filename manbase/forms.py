@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.recaptcha import RecaptchaField, Recaptcha
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateTimeField, RadioField, DateField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
@@ -94,9 +95,11 @@ class IndividualRegistrationForm(BaseForm):
     individual_language_Putonghua = BooleanField('普通話', validators=[])
     individual_language_Other = StringField('其他', validators=[])
     individual_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
-
+    recaptcha = RecaptchaField(validators=[Recaptcha(message='您必須證明您不是機器人。請刷新頁面重新輸入。')])
     submit = SubmitField('註冊個人帳戶')
 
+
+        
     def validate_user_login(form, user_login):
         user = Users.query.filter_by(ur_login=user_login.data).first()
         if user:
@@ -126,6 +129,7 @@ class IndividualUpdateProfileForm(BaseForm):
     individual_language_Putonghua = BooleanField('普通話')
     individual_language_Other = StringField('其他')
     individual_intro = TextAreaField('自我介紹')
+    
     submit = SubmitField('更新個人帳戶')
 
 
@@ -172,6 +176,7 @@ class BusinessRegistrationForm(BaseForm):
     company_email = StringField('公司電子郵箱',
                                 validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
     business_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
+    recaptcha = RecaptchaField(validators=[Recaptcha(message='您必須證明您不是機器人。請刷新頁面重新輸入。')])
     submit = SubmitField('註冊商業帳戶')
 
     def validate_user_login(self, user_login):
