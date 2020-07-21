@@ -385,32 +385,40 @@ def individual_profile_update(iuid):
     form = IndividualUpdateProfileForm()
 
     if form.validate_on_submit():
-        #server side validation
+        
         check_user = Users.query.filter_by(ur_phone = form.individual_contact_number.data).first()    
-        if check_user and check_user.ur_id != iuid:
-            flash('Contact number {} taken. Update fails.'.format(form.individual_contact_number.data), 'fail')
-            return redirect(url_for('individual_profile_update', iuid = iuid))
-
-        check_user = Users.query.filter_by(ur_email = form.individual_email.data).first()    
-        if check_user and check_user.ur_id != iuid:
-            flash('Email {} taken. Update fails.'.format(form.individual_email.data), 'fail')
-            return redirect(url_for('individual_profile_update', iuid = iuid))
+        if check_user:
+            if check_user.ur_id != iuid:
+                flash('Contact number {} taken. Update fails.'.format(form.individual_contact_number.data), 'fail')
+                return redirect(url_for('individual_profile_update', iuid = iuid))
         else:
             user.ur_phone = form.individual_contact_number.data
+            user.ur_isSMSVerified = False
+            
+            
+        check_user = Users.query.filter_by(ur_email = form.individual_email.data).first()    
+        if check_user: 
+            if check_user.ur_id != iuid:
+                flash('Email {} taken. Update fails.'.format(form.individual_email.data), 'fail')
+                return redirect(url_for('individual_profile_update', iuid = iuid))
+        else:
             user.ur_email = form.individual_email.data
-            profile.iu_CName = form.individual_CName.data
-            profile.iu_EName = form.individual_EName.data
-            profile.iu_alias = form.individual_alias.data
-            profile.iu_HKID = form.individual_HKID.data
-            profile.iu_selfIntroduction = form.individual_intro.data
-            profile.iu_educationLevel = form.individual_educationLevel.data
-            profile.iu_language_Cantonese = form.individual_language_Cantonese.data
-            profile.iu_language_English = form.individual_language_English.data
-            profile.iu_language_Putonghua = form.individual_language_Putonghua.data
-            profile.iu_language_Other = form.individual_language_Other.data
-            db.session.commit()
-            flash('您的個人資料已成功更新!', 'success')
-            return redirect(url_for('individual_profile_update', iuid = iuid))
+            user.ur_isEmailVerified = False
+            
+        profile.iu_CName = form.individual_CName.data
+        profile.iu_EName = form.individual_EName.data
+        profile.iu_alias = form.individual_alias.data
+        profile.iu_HKID = form.individual_HKID.data
+        profile.iu_selfIntroduction = form.individual_intro.data
+        profile.iu_educationLevel = form.individual_educationLevel.data
+        profile.iu_language_Cantonese = form.individual_language_Cantonese.data
+        profile.iu_language_English = form.individual_language_English.data
+        profile.iu_language_Putonghua = form.individual_language_Putonghua.data
+        profile.iu_language_Other = form.individual_language_Other.data
+        
+        db.session.commit()
+        flash('您的個人資料已成功更新!', 'success')
+        return redirect(url_for('individual_profile_update', iuid = iuid))
 
     elif request.method == 'GET':	
         form.individual_contact_number.data = user.ur_phone
@@ -647,6 +655,7 @@ def business_register():
 
 @app.route('/business/profile/<string:bid>')
 def business_profile(bid):
+    user = Users.query.get_or_404(bid)
     profile = BusinessUsers.query.get_or_404(bid)
     reviews = Review.query.filter_by(re_receiver_id=bid).all()
 
@@ -656,7 +665,7 @@ def business_profile(bid):
         for rating in ratings:
             review[rating.rate_rc_id] = rating
     
-    return render_template('business_profile.html',title ='我的公司檔案',profile = profile, reviews = reviews)
+    return render_template('business_profile.html',title ='我的公司檔案', user = user, profile = profile, reviews = reviews)
 
 @app.route('/business/profile/<string:bid>/update', methods =['POST','GET'])
 def business_profile_update(bid):
@@ -1078,8 +1087,6 @@ def view_an_applicant(job_id, list_id, app_id):
 # =======================================
 #    INCOMPLETED / SUSPENDED ROUTES
 # =======================================
-
-
 
 
 # @ROUTE DEFINTION
