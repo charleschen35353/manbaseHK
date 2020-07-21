@@ -53,8 +53,10 @@ def home():
 @app.route('/home/business')
 @login_required
 def business_home():
-    if BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
-        return render_template('business_home.html')
+    business_user = BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first()
+
+    if business_user:
+        return render_template('business_home.html', user=current_user, bus_user = business_user)
     else:
         return render_template('404.html'), 404
 
@@ -135,7 +137,7 @@ def login():
             return redirect(url_for('home'))
             
         else:
-            flash('登入失敗. 請重新檢查帳號或密碼.', 'fail')
+            flash('登入失敗. 請重新檢查帳號或密碼.', 'danger')
     return render_template('login.html', title='Login', form=form)
 
 # @ROUTE DEFINTION
@@ -1079,6 +1081,12 @@ def business_register_confirm():
 # =======================================
 #             ERROR HANDLERS
 # =======================================
+
+@app.errorhandler(401)
+def unauthorized(e):
+    # TODO: Update the message to Chinese
+    flash("Please login first.", "danger")
+    return redirect(url_for('login'))
 
 @app.errorhandler(404)
 def page_not_found(e):

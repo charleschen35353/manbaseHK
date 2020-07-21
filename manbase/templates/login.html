@@ -1,67 +1,115 @@
-{% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
+<!-- TODO: Update the `gif` to `mp4` -->
+{% extends "layout.html" %}
+{% from "_formhelpers.html" import render_field %}
+
 {% block content %}
-<div class="center-grid transition-fade-up" style="min-height: 88vh;">
+<div class='content-switch center-grid d-flex justify-content-center align-items-center mb-3 transition-fade-up'>
   <div class="transparent-watermark-background d-flex justify-content-center align-items-center"
     style="min-height: 88vh;">
     <img src="{{url_for('static', filename='img/stories/login.gif')}}" alt="Login Animation" />
   </div>
-  <div class="center-grid" style="flex-grow: 1; align-items: center; justify-content: center;">
-    <form method="POST" action="" class="p-5 m-3 shadow"
-      style="min-width: 40vw; background-color: rgba(255, 255, 255, 0.3);" data-swup-form="login">
-      <! {% if form.errors %} {{ form.errors }} {% endif %} !>
-        {{form.hidden_tag()}}
-        <fieldset>
-          <legend class="h3 mb-3 w-100 text-center">登入</legend>
 
-          <div class="form-group">
-            {{ form.login.label }}
-            {% if form.login.errors %}
-            {{render_field(form.login, class="form-control is-invalid", placeholder="帳號") }}
-            <!error style>
-              <div>
-                {% for error in form.login.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-                {% endfor %}
-              </div>
-              {% else %} {{ render_field(form.login, class="form-control",
-        placeholder="帳號") }}
-              <!original style>
-                {% endif %}
-          </div>
-          <div class="form-group">
-            {{ form.password.label }} {% if form.password.errors %} {{
-        render_field(form.password, class="form-control is-invalid",
-        placeholder="密碼", style="font-family: sans-serif, 'Noto Sans TC';") }}
-            <!error style>
-              <div>
-                {% for error in form.password.errors %}
-                <div class="invalid-feedback d-block">{{error}}</div>
-                {% endfor %}
-              </div>
-              {% else %} {{ render_field(form.password, class="form-control",
-        placeholder="密碼", style="font-family: sans-serif, 'Noto Sans TC';") }}
-              <!original style>
-                {% endif %}
-          </div>
-          <div class="form-group form-check">
-            {{ render_field(form.remember, class="form-check-input") }} {{
-        form.remember.label }}
-          </div>
-        </fieldset>
-        <div class="form-group">
-          {{ render_field(form.submit, class="btn btn-primary btn-large btn-block")
-      }}
-        </div>
-        <!-- TODO: Forget password -->
-        <div class="form-group text-center">
-          <small> <a href="{{url_for('forget_password_selection')}}">忘記密碼？</a> </small>
-        </div>
-        <div class="form-group text-center">
-          <small>
-            <a href="{{url_for('register')}}">需要賬號？</a>
-          </small>
-        </div>
+  <form action="" method="POST"
+    class="d-flex flex-column col-11 col-md-7 shadow rounded p-4 p-md-5 bus-reg justify-content-between mt-3" novalidate
+    style="min-height: 75vh; background: rgba(255, 255, 255, 0.3);" id="form_login" data-swup-form="form_login">
+    {{ form.hidden_tag() }}
 
-  </div>
+    <div class="text-center">
+      <h2 class="text-dark mb-2">
+        登入 <span class="text-primary">man</span><span class="text-secondary">base</span>
+      </h2>
+
+      {% if form.errors %}
+      <div class="container border-left border-danger bg-white p-2 rounded shadow-sm mb-3"
+        style="border-width: 5px !important;">
+        <div class="d-flex flex-row align-items-center">
+          <div class="mx-2 mx-md-3 my-2">
+            <i class="las la-exclamation-triangle text-danger h1 m-0"></i>
+          </div>
+          <div class="w-100">
+            {% for field, errors in form.errors.items() %}
+            <p class="text-danger p-0 m-0 my-2" style="line-height: 0.8em;">
+              <strong>{{form[field].label}}</strong>: {{', '.join(errors)}}
+            </p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <div class="">
+      <div class="form-group">
+        {{ render_field(form.login.label, class="form-control-label") }}
+        {% if form.login.errors %}
+        {{ render_field(form.login, 
+                        class="form-control form-control-lg is-invalid", 
+                        placeholder="帳號",
+                        id="login_account",
+                        autocomplete="username") }}
+        {% else %}
+        {{ render_field(form.login, 
+                        class="form-control form-control-lg", 
+                        placeholder="帳號",
+                        id="login_account",
+                        autocomplete="username") }}
+        {% endif %}
+        <div class="invalid-feedback d-block" id="login_account_error">
+          {% if form.login.errors %}
+          {% for error in form.login.errors %}
+          <p class="error">{{ error }}</p>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{ render_field(form.password.label, class="form-control-label") }}
+        {% if form.password.errors %}
+        {{ render_field(form.password, 
+                        class="form-control form-control-lg is-invalid", 
+                        placeholder="密碼",
+                        id="login_password",
+                        autocomplete="current-password") }}
+        {% else %}
+        {{ render_field(form.password, 
+                        class="form-control form-control-lg", 
+                        placeholder="密碼",
+                        id="login_password",
+                        autocomplete="current-password") }}
+        {% endif %}
+        <div class="invalid-feedback d-block" id="login_password_error">
+          {% if form.password.errors %}
+          {% for error in form.password.errors %}
+          <p class="error">{{ error }}</p>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group form-check">
+        {{ render_field(form.remember, class="form-check-input") }}
+        {{ form.remember.label }}
+      </div>
+
+      <div class="form-group">
+        {{ render_field(form.submit, 
+                        class="btn btn-primary btn-large btn-block",
+                        id="login_submit_btn") }}
+      </div>
+    </div>
+
+    <div class="">
+      <div class="form-group text-center">
+        <p>
+          <a href="{{ url_for('forget_password_selection') }}">忘記密碼？</a>
+        </p>
+      </div>
+      <div class="form-group text-center">
+        <p>
+          <a href="{{ url_for('register') }}">需要賬號？</a>
+        </p>
+      </div>
+    </div>
+  </form>
 </div>
 {% endblock content %}

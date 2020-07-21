@@ -104,6 +104,8 @@ const business_register_on_load = () => {
             $(repeat_password).addClass('is-valid');
         }
 
+        scrollTop();
+
         // Exit if the data is invalid
         if (error) return;
 
@@ -112,18 +114,18 @@ const business_register_on_load = () => {
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_2').fadeToggle();
-                scrollTop();
                 $('#bus_reg_company_name_chinese').focus();
             }
         });
     });
 
     $('#bus_reg_sec_2_prev').click(() => {
+        scrollTop();
+
         $('#bus_reg_sec_2').fadeToggle({
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_1').fadeToggle();
-                scrollTop();
             }
         });
     });
@@ -157,6 +159,8 @@ const business_register_on_load = () => {
 
         $(e_name).addClass('is-valid');
 
+        scrollTop();
+
         // Exit if data is invalid
         if (error) return;
 
@@ -165,18 +169,18 @@ const business_register_on_load = () => {
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_3').fadeToggle();
-                scrollTop();
                 $('#bus_reg_person_in_charge').focus();
             }
         });
     });
 
     $('#bus_reg_sec_3_prev').click(() => {
+        scrollTop();
+
         $('#bus_reg_sec_3').fadeToggle({
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_2').fadeToggle();
-                scrollTop();
             }
         });
     });
@@ -193,7 +197,6 @@ const business_register_on_load = () => {
         let error = false;
 
         const email_regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
 
         for (const el of [pic, phone, email]) {
             $(el).removeClass('is-valid is-invalid');
@@ -233,6 +236,8 @@ const business_register_on_load = () => {
             $(email).addClass('is-valid');
         }
 
+        scrollTop();
+
         if (error) return;
 
         // Fill in Empty Confirm Values
@@ -246,17 +251,17 @@ const business_register_on_load = () => {
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_4').fadeToggle();
-                scrollTop();
             }
         });
     });
 
     $('#bus_reg_sec_4_prev').click(() => {
+        scrollTop();
+
         $('#bus_reg_sec_4').fadeToggle({
             duration: ANIMATION_DURATION,
             done: () => {
                 $('#bus_reg_sec_3').fadeToggle();
-                scrollTop();
             }
         });
     });

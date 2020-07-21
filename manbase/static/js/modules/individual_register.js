@@ -3,6 +3,7 @@ import moment from '../../node_modules/moment/dist/moment.js';
 moment.locale('zh-hk');
 
 const individual_register_on_load = () => {
+  // Defining the string fields
   const section_1_fields = [
     'ind_register_account',
     'ind_register_password',
@@ -33,8 +34,12 @@ const individual_register_on_load = () => {
   ];
 
   const ANIMATION_DURATION = 100;
+
+  // Define a utility scroll-to-top function
+  // with the correct duration for UX
   const scrollTop = () => $("html, body").animate({ scrollTop: 0 }, ANIMATION_DURATION);
 
+  // Define a function which checks if a gender is selected
   const checkGenderSelection = () => {
     let selected = false;
 
@@ -54,17 +59,19 @@ const individual_register_on_load = () => {
 
     return selected;
   }
+
   // Copying input fields values into respective confirm fields
   // in the last section
   for (const field of fields) {
-    $('#confirm_' + field).html($('#' + field).val());
+    $(`#confirm_${field}`).html($('#' + field).val());
 
-    $('#' + field).on('change paste keyup', (el) => {
+    $(`#${field}`).on('change paste keyup', (el) => {
       const current_value = $(el.target).val();
-      $('#confirm_' + field).html(current_value);
+      $(`#confirm_${field}`).html(current_value);
     });
   }
 
+  // Auto convert the HKID letter to upper case
   $('#ind_register_hkid').on('change paste keyup', el => {
     $(el.target).val($(el.target).val().toUpperCase());
   })
@@ -72,13 +79,13 @@ const individual_register_on_load = () => {
 
   // Block Radio Buttons
   for (const field_name of ["ind_register_gender", "ind_register_edu_level"]) {
-    $("." + field_name + "s").each((_, el) => {
+    $(`.${field_name}s`).each((_, el) => {
       const radio = $(el).children('input:first');
       const label = $(el).children("label:first");
 
       // Initial Copy
       if (radio.is(":checked")) {
-        $('#confirm_' + field_name).html(label.html());
+        $(`#confirm_${field_name}`).html(label.html());
         radio.parent().addClass('bg-primary text-white').removeClass('bg-white text-dark');
       }
 
@@ -87,8 +94,8 @@ const individual_register_on_load = () => {
       });
 
       $(radio).change((el) => {
-        $('#confirm_' + field_name).html(label.html());
-        $("." + field_name + "s").each((_, el) => {
+        $(`#confirm_${field_name}`).html(label.html());
+        $(`.${field_name}s`).each((_, el) => {
           $(el)
             .removeClass('bg-primary text-white')
             .addClass('bg-white text-dark');
@@ -141,8 +148,8 @@ const individual_register_on_load = () => {
     let error = false;
 
     for (const el of section_1_fields) {
-      $('#' + el).removeClass('is-valid is-invalid');
-      $('#' + el + '_error').empty();
+      $(`#${el}`).removeClass('is-valid is-invalid');
+      $(`#${el}_error`).empty();
     }
 
     // account must be filled
@@ -185,13 +192,14 @@ const individual_register_on_load = () => {
       $('#ind_register_confirm_password').addClass('is-valid');
     }
 
+    scrollTop();
+
     if (error) return;
 
     $('#ind_reg_sec_1').fadeToggle({
       duration: ANIMATION_DURATION,
       done: () => {
         $('#ind_reg_sec_2').fadeToggle();
-        scrollTop();
         $('#ind_register_c_name').focus();
       },
     });
@@ -199,11 +207,12 @@ const individual_register_on_load = () => {
 
   // Section 2 Buttons
   $('#ind_reg_sec_2_prev').click(() => {
+    scrollTop();
+
     $('#ind_reg_sec_2').fadeToggle({
       duration: ANIMATION_DURATION,
       done: () => {
         $('#ind_reg_sec_1').fadeToggle();
-        scrollTop();
         $('#ind_register_account').focus();
       },
     });
@@ -215,8 +224,8 @@ const individual_register_on_load = () => {
     const hkid_regex = /([A-Z]){1,2}\d{4}/;
 
     for (const field of section_2_fields) {
-      $('#' + field).removeClass('is-valid is-invalid');
-      $('#' + field + '_error').empty();
+      $(`#${field}`).removeClass('is-valid is-invalid');
+      $(`#${field}_error`).empty();
     }
 
     if ($('#ind_register_c_name').val().length == 0) {
@@ -246,13 +255,14 @@ const individual_register_on_load = () => {
       $('#ind_register_hkid_error').empty();
     }
 
+    scrollTop();
+
     if (error) return;
 
     $('#ind_reg_sec_2').fadeToggle({
       duration: ANIMATION_DURATION,
       done: () => {
         $('#ind_reg_sec_3').fadeToggle();
-        scrollTop();
         $('#ind_register_tel').focus();
       },
     });
@@ -260,11 +270,11 @@ const individual_register_on_load = () => {
 
   // Section 3 Buttons
   $('#ind_reg_sec_3_prev').click(() => {
+    scrollTop();
     $('#ind_reg_sec_3').fadeToggle({
       duration: ANIMATION_DURATION,
       done: () => {
         $('#ind_reg_sec_2').fadeToggle();
-        scrollTop();
         $('#ind_register_c_name').focus();
       },
     });
@@ -275,8 +285,8 @@ const individual_register_on_load = () => {
     const email_regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
     for (const field of section_3_fields) {
-      $('#' + field).removeClass('is-valid is-invalid');
-      $('#' + field + '_error').empty();
+      $(`#${field}`).removeClass('is-valid is-invalid');
+      $(`#${field}_error`).empty();
     }
 
     // Must provide a valid phone number
@@ -287,7 +297,7 @@ const individual_register_on_load = () => {
       const error_msg = $('#ind_register_tel').val().length != 8 ? '聯絡電話必須是 8 個數字。' : '您的電話必須是有效的香港電話號碼。';
 
       $('#ind_register_tel_error').append(
-        "<p class='error'>" + error_msg + "</p>"
+        `<p class='error'>${error_msg}</p>`
       );
     } else {
       $('#ind_register_tel').addClass('is-valid');
@@ -328,11 +338,13 @@ const individual_register_on_load = () => {
       const error_msg = input_dob.isValid() ? '對不起，您必須年滿 15 歲，方能申請 Man<span class="text-primary">base</span> 賬號。' : '您輸入的出生日期無效。請重新輸入。';
 
       $('#ind_register_dob_error').append(
-        "<p class='error'>" + error_msg + "</p>"
+        `<p class='error'>${error_msg}</p>`
       );
     } else {
       $('#ind_register_dob').addClass('is-valid');
     }
+
+    scrollTop();
 
     if (error) return;
 
@@ -340,7 +352,6 @@ const individual_register_on_load = () => {
       duration: ANIMATION_DURATION,
       done: () => {
         $('#ind_reg_sec_4').fadeToggle();
-        scrollTop();
         $('.ind_register_edu_levels')[0].focus();
       },
     });
@@ -348,11 +359,12 @@ const individual_register_on_load = () => {
 
   // Section 4 Buttons
   $('#ind_reg_sec_4_prev').click(() => {
+    scrollTop();
+
     $('#ind_reg_sec_4').fadeToggle({
       duration: ANIMATION_DURATION,
       done: () => {
         $('#ind_reg_sec_3').fadeToggle();
-        scrollTop();
         $('#ind_register_tel').focus();
       },
     });
@@ -360,6 +372,8 @@ const individual_register_on_load = () => {
 
   $('#ind_reg_sec_4_next').click(() => {
     // TODO: Client-side Validation
+
+    $('#ind_register_other_lang').addClass('is-valid');
 
     // Update Language Label
     updateLangLabel();
@@ -371,22 +385,24 @@ const individual_register_on_load = () => {
       }
     });
 
+    scrollTop();
+
     $('#ind_reg_sec_4').fadeToggle({
       duration: ANIMATION_DURATION,
       done: () => {
         $('#ind_reg_sec_5').fadeToggle();
-        scrollTop();
       },
     });
   });
 
   // Section 5 Button
   $('#ind_reg_sec_5_prev').click(() => {
+    scrollTop();
+
     $('#ind_reg_sec_5').fadeToggle({
       duration: ANIMATION_DURATION,
       done: () => {
         $('#ind_reg_sec_4').fadeToggle();
-        scrollTop();
         $('.ind_register_edu_levels')[0].focus();
       },
     });
@@ -407,34 +423,6 @@ const individual_register_on_load = () => {
 
     $('#confirm_ind_register_lang').html(selected.join(", "));
   }
-
-
-
-
-  // Auto-Formatting
-
-  /* Suspending
-    $('#ind_reg_tel_num').on("change paste keyup", (el) => {
-        let current_value = $(el.target).val();
-        const regex = /[0-9]{5,}/g;
-
-        // When backspace is pressed
-        if (el.keyCode && el.keyCode == 8) {
-            // If there are only 5 characters, remove the last dash
-            if ($(el.target).val().length == 5) {
-                $(el.target).val(current_value.substr(0, 4));
-            }
-            // Else if there are 4 digits
-        } else if ($(el.target).val().length == 4) {
-            // Append a dash
-            $(el.target).val(current_value + "-");
-            // Else if there are 5+ digits
-        } else if ($(el.target).val().match(regex)) {
-            // Add back the dash
-            $(el.target).val(current_value.substr(0, 4) + "-" + current_value.slice(4));
-        }
-    });
-    */
 
   // Blocking the <ENTER> key from submiting
   $('#individual_register').on('keydown', (e) => {

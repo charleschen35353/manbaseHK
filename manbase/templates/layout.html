@@ -48,7 +48,7 @@
           <ul class="navbar-nav ml-auto text-center">
             <li class="nav-item">
               <a href="{{ url_for('home') }}"
-                class="nav-link {% if request.path == url_for('home') %} active {% endif %}">首頁</a>
+                class="nav-link {% if request.path in [url_for('home'), url_for('business_home'), url_for('individual_home')] %} active {% endif %}">首頁</a>
             </li>
             <li class="nav-item">
               <a href="{{ url_for('about') }}"
@@ -81,7 +81,7 @@
       </nav>
     </header>
 
-    {% if request.path in [url_for('login'), url_for('register')] %}
+    {% if request.path in [url_for('register')] %}
     <div class="content-switch center-grid" id="main_content">
       {% else %}
       <div class="content-switch" id="main_content">
@@ -90,9 +90,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
-        <div
-          class="alert {{'alert-success' if category == 'success' else 'alert-warning'}} mb-0 alert-dismissible fade show transition-fade"
-          role="alert">
+        <div class="alert alert-{{ category }} mb-0 alert-dismissible fade show transition-fade" role="alert">
           {{message}}
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>

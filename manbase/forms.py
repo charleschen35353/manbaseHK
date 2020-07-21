@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from manbase.models import Users, BusinessUsers, IndividualUsers
 from uuid import uuid4
 from flask_login import current_user
+from markupsafe import Markup
 
 
 # setting base error language as chinese
@@ -94,8 +95,8 @@ class IndividualRegistrationForm(BaseForm):
     individual_language_Putonghua = BooleanField('普通話', validators=[])
     individual_language_Other = StringField('其他', validators=[])
     individual_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
-
-    submit = SubmitField('註冊個人帳戶')
+    submit_value = Markup('註冊個人帳戶 <i class=\'las la-check-circle\'></i>')
+    submit = SubmitField(submit_value)
 
     def validate_user_login(form, user_login):
         user = Users.query.filter_by(ur_login=user_login.data).first()

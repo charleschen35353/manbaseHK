@@ -3,8 +3,95 @@
 
 {% block content %}
 <div class="transition-fade">
-    <h1> You Are Business User </h1>
-    <h2>{{current_user.username}}</h2>
+    <!-- Profile Overview -->
+    <div class="container-fluid py-3 bg-secondary text-white">
+        <div class="col col-md-10 offset-md-1 col-lg-6 offset-lg-3">
+            <div class="row align-items-center" style="max-height: 20vh;">
+                <div class="col-8">
+                    <h2 class="">
+                        {{ bus_user.bu_CName }}
+                        {% if bus_user.bu_EName %}
+                        <span class="h5 m-0">({{ bus_user.bu_EName }})</span>
+                        {% endif %}
+                    </h2>
+
+                    <p class="m-0">聯絡人: {{ bus_user.bu_picName }} <span
+                            class="badge badge-pill badge-primary">{{ user.ur_login }}</span></p>
+                </div>
+                <div class="col-4 d-flex justify-content-center">
+                    <div>
+                        <img src="{{ url_for('static', filename='profile_pics/default.jpg') }}" alt=""
+                            class="img-thumbnail rounded-circle" style="max-height: 15vh;">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-3" style="background-color: #fafafa;">
+        <div class="container">
+            <h3>通知中心</h3>
+            <ul class="list-group rounded shadow">
+                <a href="" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <h5 class="m-0"><i class="h5 text-danger m-0 las la-info-circle"></i> <span
+                                class="m-0">確認電郵地址</span></h5>
+                        <h5 class="m-0"><span class="badge badge-danger m-0">重要</span></h5>
+                    </div>
+                    <p class="my-1">
+                        請按此確認您的電郵地址，以提供找回賬户的方法。
+                    </p>
+                </a>
+                <a href="" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <h5 class="m-0"><i class="h5 text-secondary m-0 las la-info-circle"></i> <span
+                                class="m-0">評分及評論</span></h5>
+                        <h5 class="m-0"><span class="badge badge-secondary m-0">重要</span></h5>
+                    </div>
+                    <p class="my-1">
+                        以下的工作需要您提供評分及評論，以便 man<span class="text-primary">base</span> 提升僱員質素—
+                    </p>
+                    <ul class="my-0">
+                        <li>Job #0000000</li>
+                        <li>Job #0000222</li>
+                    </ul>
+                </a>
+                <a href="" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <h5 class="m-0"><i class="h5 text-primary m-0 las la-info-circle"></i> <span
+                                class="m-0">訊息回覆</span></h5>
+                        <h5 class="m-0"></h5>
+                    </div>
+                    <p class="my-1">
+                        你收到來自這個工作的僱員回覆—
+                    </p>
+                    <ul class="my-0">
+                        <li>Job #0000000</li>
+                        <li>Job #0000222</li>
+                    </ul>
+                </a>
+                <a href="" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <h5 class="m-0"><i class="h5 text-info m-0 las la-info-circle"></i> <span
+                                class="m-0">工作申請</span></h5>
+                        <h5 class="m-0"><span class="badge badge-info m-0">重要</span></h5>
+                    </div>
+                    <p class="my-1">
+                        有用户對這項工作有興趣並申請成為僱員，請從速批核—
+                    </p>
+                    <ul class="my-0">
+                        <li>Job #0000000</li>
+                        <li>Job #0000222</li>
+                    </ul>
+                </a>
+
+            </ul>
+        </div>
+
+    </div>
+
+
 
     <a href="{{url_for('business_post_job')}}" class="btn btn-primary btn-large p-2">
         <h4 class="m-0">發布新工作</h4>

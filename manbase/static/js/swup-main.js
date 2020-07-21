@@ -1,5 +1,6 @@
 import individual_register_on_load from './modules/individual_register.js';
 import business_register_on_load from './modules/business_register.js';
+import login_on_load from './modules/login.js';
 
 const init = () => {
     $('#spinner').css('visibility', 'visible');
@@ -10,6 +11,10 @@ const init = () => {
     }
     if (document.querySelector('#individual_register')) {
         individual_register_on_load();
+    }
+
+    if (document.querySelector('#form_login')) {
+        login_on_load();
     }
 
     $('#spinner').css('visibility', 'hidden');

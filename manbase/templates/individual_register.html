@@ -1,5 +1,4 @@
-<!-- TODO: Fix the Layout -->
-<!-- TODO: Should scroll to the top when in view -->
+<!-- TODO: Validate confirmed TOS on the client side -->
 <!-- TODO: Add autocomplete to all input fields -->
 {% extends "layout.html" %}
 {% from "_formhelpers.html" import render_field %}
@@ -27,12 +26,14 @@
             <div class="container border-left border-danger bg-white p-2 rounded shadow-sm mb-3"
                 style="border-width: 5px !important;">
                 <div class="d-flex flex-row align-items-center">
-                    <div class="mx-2 mx-md-3">
+                    <div class="mx-2 mx-md-3 my-2">
                         <i class="las la-exclamation-triangle text-danger h1 m-0"></i>
                     </div>
                     <div class="w-100">
                         {% for field, errors in form.errors.items() %}
-                        <p class="text-danger p-0 m-0"><strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
+                        <p class="text-danger p-0 m-0 my-2" style="line-height: 0.8em;">
+                            <strong>{{form[field].label}}</strong>: {{', '.join(errors)}}
+                        </p>
                         {% endfor %}
                     </div>
                 </div>
@@ -54,13 +55,15 @@
                 {{ render_field(form.user_login, 
                                 class="form-control form-control-lg is-invalid", 
                                 placeholder="帳號",
-                                id="ind_register_account")
+                                id="ind_register_account",
+                                autocomplete="username")
                 }}
                 {% else %}
                 {{ render_field(form.user_login,
                                 class="form-control form-control-lg", 
                                 placeholder="帳號",
-                                id="ind_register_account")
+                                id="ind_register_account",
+                                autocomplete="username")
                 }}
                 {% endif %}
                 <div class="invalid-feedback d-block" id="ind_register_account_error">
@@ -80,14 +83,16 @@
                                 class="form-control form-control-lg is-invalid", 
                                 style="font-family: sans-serif, 'Noto Sans HK';", 
                                 placeholder="密碼",
-                                id="ind_register_password")
+                                id="ind_register_password",
+                                autocomplete="new-password")
                 }}
                 {% else %}
                 {{ render_field(form.password, 
                                 class="form-control form-control-lg", 
                                 style="font-family: sans-serif, 'Noto Sans HK';", 
                                 placeholder="密碼",
-                                id="ind_register_password")
+                                id="ind_register_password",
+                                autocomplete="new-password")
                 }}
                 {% endif %}
                 <div class="invalid-feedback d-block" id="ind_register_password_error">
@@ -107,14 +112,16 @@
                                 class="form-control form-control-lg is-invalid", 
                                 style="font-family: sans-serif, 'Noto Sans HK';", 
                                 placeholder="重新輸入密碼",
-                                id="ind_register_confirm_password")
+                                id="ind_register_confirm_password",
+                                autocomplete="new-password")
                 }}
                 {% else %}
                 {{ render_field(form.confirm_password,
                                 class="form-control form-control-lg",
                                 style="font-family: sans-serif, 'Noto Sans HK';",
                                 placeholder="重新輸入密碼",
-                                id="ind_register_confirm_password")
+                                id="ind_register_confirm_password",
+                                autocomplete="new-password")
                 }}
                 {% endif %}
                 <div class="invalid-feedback d-block" id="ind_register_confirm_password_error">
@@ -202,13 +209,15 @@
                 {{ render_field(form.individual_alias,
                                 class="form-control form-control-lg is-invalid",
                                 placeholder="暱稱",
-                                id="ind_register_nickname") 
+                                id="ind_register_nickname",
+                                autocomplete="nickname") 
                 }}
                 {% else %}
                 {{ render_field(form.individual_alias,
                                 class="form-control form-control-lg", 
                                 placeholder="暱稱",
-                                id="ind_register_nickname")
+                                id="ind_register_nickname",
+                                autocomplete="nickname")
                 }}
                 {% endif %}
 
@@ -282,7 +291,8 @@
                                         id="ind_register_tel", 
                                         maxlength="8", 
                                         pattern="[0-9]{8}", 
-                                        placeholder="00000000") 
+                                        placeholder="00000000",
+                                        type="tel") 
                         }}
                         {% else %}
                         {{ render_field(form.individual_contact_number,
@@ -290,7 +300,8 @@
                                         id="ind_register_tel", 
                                         maxlength="8", 
                                         pattern="[0-9]{8}", 
-                                        placeholder="00000000") 
+                                        placeholder="00000000",
+                                        type="tel") 
                         }}
                         {% endif %}
                     </div>
@@ -447,7 +458,7 @@
                                     id="ind_register_cantonese")
                             }}
                             {% endif %}
-                            {{ form.individual_language_Cantonese.label(class="form-check-label") }}
+                            {{ render_field(form.individual_language_Cantonese.label, class="form-check-label") }}
                         </div>
                     </div>
 
@@ -464,7 +475,7 @@
                             }}
                             {% endif %}
 
-                            {{ form.individual_language_English.label(class="form-check-label") }}
+                            {{ render_field(form.individual_language_English.label, class="form-check-label") }}
                         </div>
                     </div>
                     <div class="col-12 col-md-4 px-md-1 my-2">
@@ -479,7 +490,7 @@
                                     id="ind_register_putonghua")
                             }}
                             {% endif %}
-                            {{ form.individual_language_Putonghua.label(class="form-check-label") }}
+                            {{ render_field(form.individual_language_Putonghua.label, class="form-check-label") }}
                         </div>
                     </div>
                 </div>
@@ -546,7 +557,7 @@
             <h5 class="text-center m-0" aria-hidden='true' style="letter-spacing: 0.3em;">
                 &#9675;&#9675;&#9675;&#9675;&#9679;</h5>
             <hr>
-            <!-- TODO: Put Confirm Info -->
+
             <h5 class="mt-2">賬戶資料</h5>
             <div class="row my-3 align-items-center">
                 <div class="col-6 col-md-4 text-right">帳號:</div>
@@ -621,8 +632,10 @@
                 <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
                     id="ind_reg_sec_5_prev" type="button"><i class="las la-arrow-circle-left"></i>
                     上一步：<wbr>工作資料</button>
-                <!-- TODO: Find a way to put a check mark after the label -->
-                {{ render_field(form.submit, class="btn btn-primary col-5 col-md-3 offset-1") }}
+
+                <button class="btn btn-primary col-5 col-md-3 offset-1" type="submit" name="submit" id="ind_reg_submit">
+                    註冊個人帳戶 <i class='las la-check-circle'></i>
+                </button>
             </div>
         </div>
         <p class="text-muted text-center mt-3">
