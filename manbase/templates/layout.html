@@ -1,3 +1,4 @@
+<!-- TODO: Update NavBar -->
 <!DOCTYPE html>
 <html lang="zh-HK">
 
@@ -34,11 +35,10 @@
 </head>
 
 <body>
-  <div class="main m-0" id="swup" style="overflow-x: hidden;">
+  <div class="main m-0 bg-light" id="swup" style="overflow-x: hidden;">
     {% include 'spinner.html' %}
-    <header class="m-0">
-      <div class="navbar-height"></div>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-height">
+    <header class="m-0 fixed-top clip-bottom">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light text-dark navbar-height">
         <a href="{{ url_for('home') }}" class="navbar-brand">man<span class="text-primary">base</span> | 大社群</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav">
           <span class="navbar-toggler-icon"></span>
@@ -79,14 +79,52 @@
           </ul>
         </div>
       </nav>
+      <div
+        class="navbar-height bg-light clip-bottom d-flex justify-content-around justify-content-md-center align-items-center p-2"
+        style="transform: translateY(-1px);">
+        <!-- Item 1 -->
+        <div class="d-flex flex-column justify-content-center p-2 rounded shadow-sm navbar-bottom-item mx-md-4">
+          <div class="w-100 d-flex justify-content-center">
+            <i class="las la-sign-in-alt h4 m-0"></i>
+          </div>
+          <p class="m-0 w-100 text-center">登入</p>
+        </div>
+
+        <!-- Item 1 -->
+        <div class="d-flex flex-column justify-content-center p-2 rounded shadow-sm navbar-bottom-item mx-md-4">
+          <div class="w-100 d-flex justify-content-center">
+            <i class="las la-sign-in-alt h4 m-0"></i>
+          </div>
+          <p class="m-0 w-100 text-center">登入</p>
+        </div>
+
+        <!-- Item 1 -->
+        <div class="d-flex flex-column justify-content-center p-2 rounded shadow-sm navbar-bottom-item mx-md-4">
+          <div class="w-100 d-flex justify-content-center">
+            <i class="las la-sign-in-alt h4 m-0"></i>
+          </div>
+          <p class="m-0 w-100 text-center">登入</p>
+        </div>
+
+        <!-- Item 1 -->
+        <div class="d-flex flex-column justify-content-center p-2 rounded shadow-sm navbar-bottom-item mx-md-4">
+          <div class="w-100 d-flex justify-content-center">
+            <i class="las la-sign-in-alt h4 m-0"></i>
+          </div>
+          <p class="m-0 w-100 text-center">登入</p>
+        </div>
+
+
+      </div>
     </header>
+
 
     {% if request.path in [url_for('register')] %}
     <div class="content-switch center-grid" id="main_content">
       {% else %}
       <div class="content-switch" id="main_content">
         {% endif %}
-
+        <div class="navbar-height"></div>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
@@ -107,8 +145,10 @@
       {% endif %}
     </div>
 
-    <footer class="d-flex justify-content-center align-self-end text-center">
-      Copyright &copy; 2020 All rights reserved
+    <footer class="d-flex justify-content-center align-self-end text-center bg-light">
+      <p class="m-0">
+        Copyright &copy; 2020 All rights reserved
+      </p>
     </footer>
 
 

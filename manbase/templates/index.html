@@ -1,7 +1,8 @@
 <!-- TODO: Add contents-->
 {% extends "layout.html" %} {% block content %}
 <div class="transition-fade">
-  <div class="jumbotron p-sm-1 p-md-5">
+  <div class="navbar-height bg-primary"></div>
+  <div class="jumbotron p-sm-1 p-md-5 bg-primary text-white rounded-0">
     <div class="row">
       <div class="col col-12 col-md-7 p-xs-1 p-3">
         <h1 class="text-center text-md-left mt-3" id="header_1">
@@ -10,12 +11,12 @@
         <h1 class="text-center text-md-left" id="header_2">
           在線工作配對平台
         </h1>
-        <hr />
+        <hr class="bg-secondary" />
         <p class="text-center lead p-3">
           我們為大眾及商家建立聯繫，並向勞工市場提供工作管理工具及資源，保障勞資雙方權益，為社會未來發展打下堅定基礎。
         </p>
         <a href="{{ url_for('register') }}">
-          <button class="btn btn-primary btn-lg btn-block">
+          <button class="btn btn-secondary btn-lg btn-block">
             立即加入我們
           </button>
         </a>
