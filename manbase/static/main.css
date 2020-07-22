@@ -1,3 +1,7 @@
+:root {
+  --nav-height: 8vh;
+  --footer-height: 5vh;
+}
 html {
   margin: 0;
   padding: 0;
@@ -11,18 +15,23 @@ body {
   font-family: 'Noto Sans HK', sans-serif;
 }
 
-nav {
-  min-height: 7vh;
+nav, .navbar-height {
+  min-height: var(--nav-height);
+  z-index: 3;
 }
 
 .main {
-  min-height: 93vh;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .content-switch {
-  min-height: 95vh;
+  min-height: calc(100vh - var(--footer-height));
+  padding-top: calc(2 * var(--nav-height) + 4vh);
 }
 
 #header_1 {
@@ -38,10 +47,11 @@ nav {
 }
 
 footer {
-  height: 5vh;
+  height: var(--footer-height);
 }
 
 .center-grid {
+  min-height: calc(100vh - var(--footer-height) - 2 * var(--nav-height));
   display: flex;
   flex-direction: column;
   align-self: center;
@@ -62,14 +72,6 @@ footer {
 
 input[type="password"] {
   font-family: sans-serif, 'Noto Sans HK' !important;
-}
-
-nav {
-  z-index: 3;
-}
-
-.navbar-height {
-  min-height: 8vh;
 }
 
 .spinner-background {
@@ -100,6 +102,38 @@ nav {
 }
 
 .navbar-bottom-item {
+  background: white;
   min-width: 10vh;
   min-height: 7vh;
+}
+
+.banner-offset {
+  transform: translateY(calc(-0.7 * var(--nav-height)));
+}
+
+.navbar-bottom {
+  transform: translateY(-1px);
+}
+
+@media (min-width: 768px) {
+  .navbar-bottom {
+    display: none !important;
+  }
+
+  nav {
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+  }
+
+  .content-switch {
+    padding-top: calc(1 * var(--nav-height));
+  }
+
+  .center-grid {
+    min-height: calc(100vh - var(--footer-height) - var(--nav-height));
+  }
+
+  .banner-offset {
+    transform: translateY(calc(-.5 * var(--nav-height)));
+  }
 }

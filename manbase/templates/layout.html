@@ -35,10 +35,10 @@
 </head>
 
 <body>
-  <div class="main m-0 bg-light" id="swup" style="overflow-x: hidden;">
+  <div class="main m-0" id="swup" style="overflow-x: hidden;" style="background: #FAFAFA;">
     {% include 'spinner.html' %}
     <header class="m-0 fixed-top clip-bottom">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light text-dark navbar-height">
+      <nav class="navbar navbar-expand-md navbar-light bg-light text-dark navbar-height">
         <a href="{{ url_for('home') }}" class="navbar-brand">man<span class="text-primary">base</span> | 大社群</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav">
           <span class="navbar-toggler-icon"></span>
@@ -80,8 +80,8 @@
         </div>
       </nav>
       <div
-        class="navbar-height bg-light clip-bottom d-flex justify-content-around justify-content-md-center align-items-center p-2"
-        style="transform: translateY(-1px);">
+        class="navbar-height bg-light navbar-bottom clip-bottom d-flex justify-content-around justify-content-md-center align-items-center p-2"
+        style="">
         <!-- Item 1 -->
         <div class="d-flex flex-column justify-content-center p-2 rounded shadow-sm navbar-bottom-item mx-md-4">
           <div class="w-100 d-flex justify-content-center">
@@ -118,13 +118,11 @@
       </div>
     </header>
 
-
     {% if request.path in [url_for('register')] %}
-    <div class="content-switch center-grid" id="main_content">
+    <div class="content-switch center-grid justify-content-center" id="main_content">
       {% else %}
       <div class="content-switch" id="main_content">
         {% endif %}
-        <div class="navbar-height"></div>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
@@ -143,44 +141,44 @@
       {% if request.path in [url_for('business_register'), url_for('individual_register')] %}
       {% include 'tos.html' %}
       {% endif %}
-    </div>
-
-    <footer class="d-flex justify-content-center align-self-end text-center bg-light">
-      <p class="m-0">
-        Copyright &copy; 2020 All rights reserved
-      </p>
-    </footer>
 
 
+      <footer class="d-flex align-items-center justify-content-center text-center bg-primary text-white">
+        <p class="m-0">
+          Copyright &copy; 2020 All rights reserved
+        </p>
+      </footer>
 
 
-    <!-- Google Analytics -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-41948260-3"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
 
-      gtag('config', 'UA-41948260-3');
-    </script>
 
-    <!-- jQuery, Popper.js, and Bootstrap JS -->
-    <script defer src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+      <!-- Google Analytics -->
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-41948260-3"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-    <!-- Swup -->
-    <script defer src="{{ url_for('static', filename='node_modules/swup/dist/swup.min.js') }}"></script>
+        gtag('config', 'UA-41948260-3');
+      </script>
 
-    <!-- Swup Form Plugin -->
-    <script defer
-      src="{{ url_for('static', filename='node_modules/@swup/forms-plugin/dist/SwupFormsPlugin.min.js') | replace('%40', '@') }}"></script>
-    <script defer
-      src="{{ url_for('static', filename='node_modules/@swup/ga-plugin/dist/SwupGaPlugin.min.js') | replace('%40', '@') }}"></script>
+      <!-- jQuery, Popper.js, and Bootstrap JS -->
+      <script defer src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
+      <script defer src="{{ url_for('static', filename='node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
+      <script defer src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
-    <!-- Custom JS - Swup Init -->
-    <script type="module" src="{{ url_for('static', filename='js/swup-main.js') }}"></script>
+      <!-- Swup -->
+      <script defer src="{{ url_for('static', filename='node_modules/swup/dist/swup.min.js') }}"></script>
+
+      <!-- Swup Form Plugin -->
+      <script defer
+        src="{{ url_for('static', filename='node_modules/@swup/forms-plugin/dist/SwupFormsPlugin.min.js') | replace('%40', '@') }}"></script>
+      <script defer
+        src="{{ url_for('static', filename='node_modules/@swup/ga-plugin/dist/SwupGaPlugin.min.js') | replace('%40', '@') }}"></script>
+
+      <!-- Custom JS - Swup Init -->
+      <script type="module" src="{{ url_for('static', filename='js/swup-main.js') }}"></script>
 </body>
 
 </html>

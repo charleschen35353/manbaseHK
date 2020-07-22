@@ -1,80 +1,81 @@
 <!-- TODO: Add contents-->
 {% extends "layout.html" %} {% block content %}
 <div class="transition-fade">
-  <div class="navbar-height bg-primary"></div>
-  <div class="jumbotron p-sm-1 p-md-5 bg-primary text-white rounded-0">
-    <div class="row">
-      <div class="col col-12 col-md-7 p-xs-1 p-3">
-        <h1 class="text-center text-md-left mt-3" id="header_1">
-          一個屬於所有人的
-        </h1>
-        <h1 class="text-center text-md-left" id="header_2">
-          在線工作配對平台
-        </h1>
-        <hr class="bg-secondary" />
-        <p class="text-center lead p-3">
-          我們為大眾及商家建立聯繫，並向勞工市場提供工作管理工具及資源，保障勞資雙方權益，為社會未來發展打下堅定基礎。
-        </p>
-        <a href="{{ url_for('register') }}">
-          <button class="btn btn-secondary btn-lg btn-block">
-            立即加入我們
-          </button>
-        </a>
-      </div>
-      <div class="col col-md-5 p-3 d-none d-md-flex justify-content-center align-items-center">
-        <img src="{{ url_for('static', filename='img/stories/business_deal.gif') }}" alt="Business Deal"
-          class="img-fluid rounded" style="width: 100%; max-width: 400px;" loading='lazy' />
-      </div>
-    </div>
-  </div>
-
-  <blockquote class="text-center col-12 col-md-6 offset-md-3 h5 my-3" style="line-height: 1.5em;">
-    <em>manbase</em>
-    平台為社會進步而生，高效在線工作配對，優化勞工市場供求環境。全心全意為大眾服務，承諾過程透明，永不收費。
-  </blockquote>
-
-  <div class="container col-10 offset-1 my-4 p-1">
-    <div class="row justify-content-around mb-md-4 card-deck">
-      <div class="card col-md-5 p-2">
-        <div class="card-body">
-          <h5 class="card-title dimension">企業評分及評價</h5>
-          <p class="card-text">
-            僱員完成工作後對僱主作出評分及評價，並且於伸請工作前查看其它人對意向企業的評價，以作為重要的工作決定準則。
+  <div class="banner-offset">
+    <div class="jumbotron p-sm-1 p-md-5 bg-primary text-white rounded-0">
+      <div class="row">
+        <div class="col col-12 col-md-7 p-xs-1 p-3">
+          <h1 class="text-center text-md-left mt-3" id="header_1">
+            一個屬於所有人的
+          </h1>
+          <h1 class="text-center text-md-left" id="header_2">
+            在線工作配對平台
+          </h1>
+          <hr class="bg-secondary" />
+          <p class="text-center lead p-3">
+            我們為大眾及商家建立聯繫，並向勞工市場提供工作管理工具及資源，保障勞資雙方權益，為社會未來發展打下堅定基礎。
           </p>
+          <a href="{{ url_for('register') }}">
+            <button class="btn btn-secondary btn-lg btn-block">
+              立即加入我們
+            </button>
+          </a>
         </div>
-      </div>
-      <div class="card col-md-5 p-2">
-        <div class="card-body">
-          <h5 class="card-title dimension">僱員評分及評價</h5>
-          <p class="card-text">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima
-            voluptate iste ipsum voluptates ad nobis quae deleniti! Beatae non
-            possimus odit exercitationem. Et sit autem reprehenderit, totam quasi
-            molestiae iste eius nobis maiores impedit consequuntur quidem odio
-            rerum, ad saepe.
-          </p>
+        <div class="col col-md-5 p-3 d-none d-md-flex justify-content-center align-items-center">
+          <img src="{{ url_for('static', filename='img/stories/business_deal.gif') }}" alt="Business Deal"
+            class="img-fluid rounded" style="width: 100%; max-width: 400px;" loading='lazy' />
         </div>
       </div>
     </div>
-    <div class="row justify-content-around mb-md-4 card-deck">
-      <div class="card col-md-5 p-2">
-        <div class="card-body">
-          <h5 class="card-title dimension">企業評分及評價</h5>
-          <p class="card-text">
-            僱員完成工作後對僱主作出評分及評價，並且於伸請工作前查看其它人對意向企業的評價，以作為重要的工作決定準則。
-          </p>
+
+    <blockquote class="text-center col-12 col-md-6 offset-md-3 h5 my-3" style="line-height: 1.5em;">
+      <em>manbase</em>
+      平台為社會進步而生，高效在線工作配對，優化勞工市場供求環境。全心全意為大眾服務，承諾過程透明，永不收費。
+    </blockquote>
+
+    <div class="container col-10 offset-1 my-4 p-1">
+      <div class="row justify-content-around mb-md-4 card-deck">
+        <div class="card col-md-5 p-2">
+          <div class="card-body">
+            <h5 class="card-title dimension">企業評分及評價</h5>
+            <p class="card-text">
+              僱員完成工作後對僱主作出評分及評價，並且於伸請工作前查看其它人對意向企業的評價，以作為重要的工作決定準則。
+            </p>
+          </div>
+        </div>
+        <div class="card col-md-5 p-2">
+          <div class="card-body">
+            <h5 class="card-title dimension">僱員評分及評價</h5>
+            <p class="card-text">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima
+              voluptate iste ipsum voluptates ad nobis quae deleniti! Beatae non
+              possimus odit exercitationem. Et sit autem reprehenderit, totam quasi
+              molestiae iste eius nobis maiores impedit consequuntur quidem odio
+              rerum, ad saepe.
+            </p>
+          </div>
         </div>
       </div>
-      <div class="card col-md-5 p-2">
-        <div class="card-body">
-          <h5 class="card-title dimension">僱員評分及評價</h5>
-          <p class="card-text">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima
-            voluptate iste ipsum voluptates ad nobis quae deleniti! Beatae non
-            possimus odit exercitationem. Et sit autem reprehenderit, totam quasi
-            molestiae iste eius nobis maiores impedit consequuntur quidem odio
-            rerum, ad saepe.
-          </p>
+      <div class="row justify-content-around mb-md-4 card-deck">
+        <div class="card col-md-5 p-2">
+          <div class="card-body">
+            <h5 class="card-title dimension">企業評分及評價</h5>
+            <p class="card-text">
+              僱員完成工作後對僱主作出評分及評價，並且於伸請工作前查看其它人對意向企業的評價，以作為重要的工作決定準則。
+            </p>
+          </div>
+        </div>
+        <div class="card col-md-5 p-2">
+          <div class="card-body">
+            <h5 class="card-title dimension">僱員評分及評價</h5>
+            <p class="card-text">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima
+              voluptate iste ipsum voluptates ad nobis quae deleniti! Beatae non
+              possimus odit exercitationem. Et sit autem reprehenderit, totam quasi
+              molestiae iste eius nobis maiores impedit consequuntur quidem odio
+              rerum, ad saepe.
+            </p>
+          </div>
         </div>
       </div>
     </div>

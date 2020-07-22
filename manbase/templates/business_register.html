@@ -5,9 +5,9 @@
 
 {% block content %}
 
-<div class="content-switch center-grid d-flex justify-content-center align-items-center mb-3 transition-fade-up">
+<div class="center-grid d-flex justify-content-center align-items-center transition-fade-up">
     <div class="transparent-watermark-background d-flex justify-content-center align-items-center"
-        style="min-height: 88vh; width: 100vw;">
+        style="width: 100vw;">
         <video autoplay loop muted playsinline>
             <source src="{{ url_for('static', filename='img/stories_secondary/business_register.webm') }}"
                 type="video/webm">
@@ -16,8 +16,8 @@
         </video>
     </div>
     <form method='POST'
-        class="d-flex flex-column col-11 col-md-7 shadow rounded p-4 p-md-5 bus-reg justify-content-between mt-3"
-        novalidate style="min-height: 75vh; background: rgba(255, 255, 255, 0.3);" id="business_register"
+        class="d-flex flex-column col-11 col-md-7 shadow rounded p-4 p-md-5 bus-reg justify-content-between my-2"
+        novalidate style="min-height: 75vh; background: rgba(255, 255, 255, 0.5);" id="business_register"
         data-swup-form="business_register">
         {{ form.hidden_tag() }}
         <div class="text-center">
@@ -347,7 +347,5 @@
             已經擁有帳號？ <a class="ml-2 text-secondary" href="{{ url_for('login') }}">登入</a>
         </p>
     </form>
-
-    <hr>
 </div>
 {% endblock content %}
