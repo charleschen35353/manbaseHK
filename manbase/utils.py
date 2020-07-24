@@ -31,7 +31,7 @@ def send_SMS(to, message):
     app.config['SMS_PROVIDER'].send_message({
         'from': 'ManbaseHK',
         'to': to,
-        'text': message,
+        'text': message + '\n',
     })
     app.logger.info('SMS sent to {}'.format(to))
 

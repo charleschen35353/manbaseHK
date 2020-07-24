@@ -201,6 +201,9 @@ def register():
 
 @app.route('/reset_password/<token>',  methods=['GET', 'POST'])
 def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+        
     form = ResetPasswordForm()
     email = False
     try:
@@ -228,13 +231,41 @@ def reset_password(token):
 
     return render_template("reset_password.html", form = form)
 
+@app.route('/contact_us_selection', methods = ['GET', 'Post'])
+def contact_us_selection():
+    form = ContactUsSelectionForm()
+    if form.validate_on_submit():
+        selection = None
+        if form.selection.data == 1:
+            selection = 'forget_password'
+        elif form.selection.data == 2:
+            selection = 'provide_advice' 
+        elif form.selection.data == 3:
+            selection = 'report_illegal_activity'
+        elif form.selection.data == 4:
+            selection = 'other'
+        return redirect(url_for('contact_us', selection = selection))
+    return render_template('contact_us_selection.html', title='聯絡我們', form = form)
 
+@app.route('/contact_us/<string:selection>', methods = ['GET', 'POST'])
+def contact_us():
+    form = None
+    if selection == "forget_password":
+        form = ContactUsForgetPasswordForm()
+        if form.validate_on_submit():
+            #TODO: define and push relative info for this
+            pass
+        return render_template('contact_us_forget_password.html', title = '聯絡我們-找回密碼', form = form)
+     #TODO three other methods
 
 @app.route('/forget_password/<string:selection>', methods=['GET', 'POST'])
 def forget_password(selection):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+        
     form = None
     if selection == "Contact":
-        return redirect(url_for("contact us"))    
+        return redirect(url_for("contact_us_selection"))    
     elif selection == "Account":
         form = ForgetPasswordFormAccount()
     elif selection == 'Phone':
@@ -248,10 +279,20 @@ def forget_password(selection):
         if selection == "Account":
             #retrieve email via login
             user = Users.query.filter_by(ur_login = data).first()
-
+            if not user:
+                flash("您的登入id並不存在。請重新輸入。")
+                return redirect(url_for('forget_password', selection = selection))
+                
         elif selection == 'Phone':
             user = Users.query.filter_by(ur_phone = data).first()
-              
+            if not user:
+                flash("您的電話號碼並不存在。請重新輸入。")
+                return redirect(url_for('forget_password', selection = selection)) 
+            if not user.ur_isSMSVerified:
+                flash(Markup("您的電話號碼並沒有經過驗證。請嘗試其他方法，或<a href='{}' class='alert-link'>聯絡我們</a>".format(url_for('contact_us_selection'))))
+                return redirect(url_for('forget_password', selection = selection)) 
+                   
+            
         otp = generate_otp_for(user)
 
         try:
@@ -270,6 +311,9 @@ def forget_password(selection):
 
 @app.route('/forget_password_selection', methods=['GET', 'POST'])
 def forget_password_selection():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+        
     form = ForgetPasswordSelectionForm()
 
     if form.validate_on_submit():
@@ -639,17 +683,14 @@ def business_register():
                                     bu_EName = form.company_EName.data,
                                     bu_picName = form.company_contact_person.data
                                     )
+
+        url = url_for('request_confirmation_email', uid = user.ur_id )
+        flash(Markup('{} 的商業帳號已成功註冊! 請確認電子郵件來以啟用更多功能！點擊 <a href="{}" class="alert-link">這裡</a>'.format(user.ur_login, url)), 'success')
         db.session.add(user)
         db.session.add(business_user)
         db.session.commit()
+        login_user(user)
 
-        token = generate_confirmation_token_for(user, 'email')
-        confirm_url = url_for('confirm_email', token=token, _external=True)
-        html = render_template('confirm_email.html', confirm_url=confirm_url)
-        subject = "Please confirm your email"
-        send_email(user.ur_email, subject, html)
-
-        flash(f'{form.company_CName.data} 的商業帳號已成功註冊! 請確認電子郵件來以啟用帳戶！', 'success')
         return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
 
@@ -697,64 +738,83 @@ def business_profile_update(bid):
 # METHOD:   GET / POST
 # DESC.:    [GET]   The page where the business user creates their account
 #           [POST]  The method which validates the job info and post a job
+
 #TODO:need to validate user type: business user
-@app.route("/business/jobs/new",methods=['GET', 'POST'])
+@app.route("/business/jobs/new", methods=['GET', 'POST'])
 @login_required
 def business_post_job():
-
-    if not BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
-        return render_template('404.html'), 404
+    
+    #check if is current user
+    if not BusinessUsers.query.filter_by(bu_id = current_user.ur_id).first():
+        return render_template('404.html') #UNAUTHORIZED
 
     form = PostJobForm()
 
     if not current_user.is_authenticated:
-            return redirect(url_for('home'))
+        return redirect(url_for('home'))
 
+    
     if form.validate_on_submit():
+        app.logger.info('[INFO] User {} posted a job. '.format(current_user.ur_id))
+        jtid = ''
+        
+        validate_jtid = True
+        while validate_jtid:
+            jtid = str(uuid4())
+            validate_jtid = JobType.query.filter_by(jt_id=jtid).first()
+            
+        job_type = JobType(
+                   jt_id = jtid,
+                   jt_name = form.job_type.data,
+                   jt_description = "No description here"
+                   )
 
-        jid = str(uuid4())
 
-        # Ensure the generated job ID is unique
-        validate_jid = Jobs.query.filter_by(jb_id=jid).first()
+        jid = ""
+        validate_jid = True
         while validate_jid:
             jid = str(uuid4())
             validate_jid = Jobs.query.filter_by(jb_id=jid).first()
-
+        
         job = Jobs(
                 jb_creationTime = datetime.utcnow(),
                 jb_id = jid,
                 jb_title = form.job_title.data,
                 jb_description = form.job_description.data,
                 jb_expected_payment_days = form.job_expected_payment_days.data,
-                jb_bu_id = current_user.get_id(),
-                jb_jt_id = form.job_type.data,
+                jb_bu_id = current_user.ur_id,
+                jb_jt_id = jtid
                 )
-
-        liid = str(uuid4())
-
-        # Ensure the generated job listing ID is unique
-        validate_liid = Jobs.query.filter_by(li_id = llid).first()
-        while validate_liid:
-            liid = str(uuid4())
-            validate_liid = Jobs.query.filter_by(li_id = llid).first()
-
-        job_list = JobListings(
-                li_id = liid,
-                li_jb_id = jid,
-                li_starttime = form.list_start_time.data,
-                li_endtime = form.list_end_time.data,
-                li_salary_amt = form.list_salary.data,
-                li_salary_type = form.list_salary_type.data,
-                li_quota = form.list_quota.data
-        )
-
+        db.session.add(job_type)
         db.session.add(job)
-        db.session.add(job_list)
         db.session.commit()
+        
+        for subform in form.lists.data:
+            # Ensure the generated job listing ID is unique
+            liid = ''
+            validate_liid = True
+            while validate_liid:
+                liid = str(uuid4())
+                validate_liid = JobListings.query.filter_by(li_id = liid).first()
 
-        flash(f'您的工作已成功發布!', 'success')
+            job_list = JobListings(
+                    li_id = liid,
+                    li_jb_id = jid,
+                    li_starttime = subform['start_time'],
+                    li_endtime = subform['end_time'],
+                    li_salary_amt = subform['salary'],
+                    li_salary_type = subform['salary_type'],
+                    li_quota = subform['quota']
+            )
+
+            db.session.add(job_list)
+            db.session.commit()
+
+        flash('您的工作已成功發布!', 'success')
         return redirect(url_for('home'))
-
+    else:
+        app.logger.debug(form.errors)
+        flash('Failed validation')
     return render_template('business_post_job.html', title = '發布工作', form = form)
 
 # @ROUTE DEFINTION
