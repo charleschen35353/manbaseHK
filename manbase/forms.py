@@ -100,13 +100,8 @@ class IndividualRegistrationForm(BaseForm):
     individual_language_Putonghua = BooleanField('普通話', validators=[])
     individual_language_Other = StringField('其他', validators=[])
     individual_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
-<<<<<<< .merge_file_JZiKfS
-    submit_value = Markup('註冊個人帳戶 <i class=\'las la-check-circle\'></i>')
-    submit = SubmitField(submit_value)
-=======
     recaptcha = RecaptchaField(validators=[Recaptcha(message='您必須證明您不是機器人。請刷新頁面重新輸入。')])
     submit = SubmitField('註冊個人帳戶')
->>>>>>> .merge_file_aKbcZV
 
 
         
