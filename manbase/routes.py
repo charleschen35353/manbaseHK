@@ -739,7 +739,6 @@ def business_profile_update(bid):
 # DESC.:    [GET]   The page where the business user creates their account
 #           [POST]  The method which validates the job info and post a job
 
-#TODO:need to validate user type: business user
 @app.route("/business/jobs/new", methods=['GET', 'POST'])
 @login_required
 def business_post_job():
@@ -787,7 +786,6 @@ def business_post_job():
                 )
         db.session.add(job_type)
         db.session.add(job)
-        db.session.commit()
         
         for subform in form.lists.data:
             # Ensure the generated job listing ID is unique
@@ -808,8 +806,8 @@ def business_post_job():
             )
 
             db.session.add(job_list)
-            db.session.commit()
-
+        
+        db.session.commit()
         flash('您的工作已成功發布!', 'success')
         return redirect(url_for('home'))
     else:
@@ -827,8 +825,10 @@ def business_post_job():
 @login_required
 def business_view_jobs_posted():
     if not BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
-        return render_template('404.html'), 404
+        return render_template('404.html')
+        
     jobs = Jobs.query.filter_by(jb_bu_id = current_user.get_id()).all()
+    
     return render_template('business_jobs_posted.html', title="已發布的工作", jobs = jobs)
 
 # @ROUTE DEFINTION
@@ -842,16 +842,19 @@ def business_view_jobs_posted():
 def job(job_id):
     job = Jobs.query.get_or_404(job_id)
     listings = JobListings.query.filter_by(li_jb_id=job.jb_id).all()
-
+    job_type = JobType.query.filter_by(jt_id = job.jb_jt_id).first()
+    
+    '''
     announcement_listings = []
     announcements = []
-    
+    enrolled_individuals_id = []
     for listing in listings:
         announcement_listings.append(AnnouncementListings.query.filter_by(anli_li_id = listing.li_id).all())
+        
     for announcement_listing in announcement_listings:
         announcements.append(Announcement.query.filter_by(an_id = announcement_listing.anli_an_id).all())
 
-    enrolled_individuals_id = []
+   
     for listing in listings:
         enrollments = Enrollments.query.filter_by(en_li_id=listing.li_id).all()
         for enrollment in enrollments:
@@ -859,7 +862,7 @@ def job(job_id):
             enrolled_individuals_id.append(IndividualUsers.query.filter_by(iu_id=application.ap_iu_id).first().iu_id)
         
     #if its employer / enrolled employees, display discussion board
-    if current_user.get_id() == job.jb_bu_id or (current_user.get_id() in enrolled_individuals_id):
+    if current_user.get_id() == job.jb_bu_id or (current_user.ur_id in enrolled_individuals_id):
         commentForm = CommentForm()
         if commentForm.validate_on_submit():
             
@@ -885,13 +888,13 @@ def job(job_id):
                     )
 
             for listing in listings:
-                liid = str(uuid4())
-
                 # Ensure the generated job listing ID is unique
-                validate_liid = Jobs.query.filter_by(li_id = llid).first()
+                liid = ""
+                validate_liid = False
                 while validate_liid:
                     liid = str(uuid4())
                     validate_liid = Jobs.query.filter_by(li_id = llid).first()
+                
                 announcement_listing = AnnouncementListings(
                                         anli_an_id = anid,
                                         anli_li_id = listing.li_id,
@@ -907,9 +910,10 @@ def job(job_id):
 
         #TODO: specific job individual user and business user validation without importing the db to html
         #TODO: listing reply under each comment using an_replyTo
-        return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings, commentForm = commentForm, annoucements = annoucements)
+        '''
+        return render_template('specific_job.html', title=job.jb_title, job = job, listings = listings)
 
-    return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings, commentForm = None, annoucements = None)
+    return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings)
 
 @app.route('/jobs/<string:replyTo>/reply')
 def reply_annoucement(an_id):
