@@ -1,19 +1,12 @@
-import secrets
-import os
-import cv2
-import matplotlib.image as pltimg
-import secrets
-import math
-import random
 from flask import render_template, url_for, flash, redirect, request, abort, Markup
 from flask_login import login_user, logout_user , current_user, login_required
 from flask_mail import Message
-from manbase import app, db, bcrypt, login_manager, mail
-from manbase.forms import *
-from manbase.models import *
 from datetime import datetime
 from uuid import uuid4
 from collections import defaultdict 
+from manbase import *
+from manbase.forms import *
+from manbase.models import *
 from manbase.utils import *
 
 @login_manager.user_loader
@@ -101,13 +94,20 @@ def confirm_email(token):
 
 
 @app.route('/request_confirmation_email/<string:uid>', methods = ['GET'])
+@login_required
 def request_confirmation_email(uid):
+    #login user shall be who is verifying
+    if uid != current_user.ur_id:
+        return redirect(url_for('500'))
+
     #uid always exists
     user = Users.query.filter_by(ur_id = uid).first()
+
     try:
         token = generate_confirmation_token_for(user, "email")
     except:
         return redirect(url_for('500'))
+        
     confirm_url = url_for('confirm_email', token=token, _external=True)
     html = render_template('confirm_email.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
@@ -115,6 +115,44 @@ def request_confirmation_email(uid):
     flash("Confirmation Email Sent.","success")
     return redirect(url_for('home'))
 
+@app.route('/request_confirmation_SMS/<string:uid>', methods = ['GET'])
+@login_required
+def request_confirmation_SMS(uid):
+    #login user shall be who is verifying
+    if uid != current_user.ur_id:
+        return redirect(url_for('500'))
+        
+    #uid always exists
+    user = Users.query.filter_by(ur_id = uid).first()
+    
+    #generate otp
+    otp = generate_otp_for(user)
+    #msg = "歡迎加入大社群Manbase。您的一次性密碼為: {} 。請妥善保管。".format(otp)    
+    msg = 'Welcome to ManbaseHK. Your OTP is {}'.format(otp)
+    send_SMS("852"+str(user.ur_phone), msg)
+    flash("OTP Sent. Please check your phone.","success")
+    return redirect(url_for('confirm_SMS', uid = uid))
+
+
+@app.route('/confirm_SMS/<string:uid>',  methods=['GET', 'POST'])
+@login_required
+def confirm_SMS(uid):
+    form = SMSForm()
+    #login user shall be who is verifying
+    if uid != current_user.ur_id:
+        return redirect(url_for('500'))
+    user = Users.query.filter_by(ur_id = uid).first()
+    if form.validate_on_submit():
+        if bcrypt.check_password_hash(user.ur_otp_hash,form.otp.data):
+            user.ur_isSMSVerified = True
+            user.ur_otp_hash = None
+            db.session.commit()
+            flash('You have successfully confirm your phone number!', 'success')
+            return redirect(url_for('home'))
+        else:
+             flash('Incorrect OTP!', 'fail')
+
+    return render_template("confirm_SMS.html", form = form)
 
 # @ROUTE DEFINTION
 # NAME:     Login Page
@@ -163,6 +201,9 @@ def register():
 
 @app.route('/reset_password/<token>',  methods=['GET', 'POST'])
 def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+        
     form = ResetPasswordForm()
     email = False
     try:
@@ -190,13 +231,41 @@ def reset_password(token):
 
     return render_template("reset_password.html", form = form)
 
+@app.route('/contact_us_selection', methods = ['GET', 'Post'])
+def contact_us_selection():
+    form = ContactUsSelectionForm()
+    if form.validate_on_submit():
+        selection = None
+        if form.selection.data == 1:
+            selection = 'forget_password'
+        elif form.selection.data == 2:
+            selection = 'provide_advice' 
+        elif form.selection.data == 3:
+            selection = 'report_illegal_activity'
+        elif form.selection.data == 4:
+            selection = 'other'
+        return redirect(url_for('contact_us', selection = selection))
+    return render_template('contact_us_selection.html', title='聯絡我們', form = form)
 
+@app.route('/contact_us/<string:selection>', methods = ['GET', 'POST'])
+def contact_us():
+    form = None
+    if selection == "forget_password":
+        form = ContactUsForgetPasswordForm()
+        if form.validate_on_submit():
+            #TODO: define and push relative info for this
+            pass
+        return render_template('contact_us_forget_password.html', title = '聯絡我們-找回密碼', form = form)
+     #TODO three other methods
 
 @app.route('/forget_password/<string:selection>', methods=['GET', 'POST'])
 def forget_password(selection):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+        
     form = None
     if selection == "Contact":
-        return redirect(url_for("contact us"))    
+        return redirect(url_for("contact_us_selection"))    
     elif selection == "Account":
         form = ForgetPasswordFormAccount()
     elif selection == 'Phone':
@@ -210,14 +279,21 @@ def forget_password(selection):
         if selection == "Account":
             #retrieve email via login
             user = Users.query.filter_by(ur_login = data).first()
-
+            if not user:
+                flash("您的登入id並不存在。請重新輸入。")
+                return redirect(url_for('forget_password', selection = selection))
+                
         elif selection == 'Phone':
             user = Users.query.filter_by(ur_phone = data).first()
-              
-        length = len(app.config['DEFAULT_STRING']) 
-        otp = ""
-        for i in range(6) : 
-            otp += app.config['DEFAULT_STRING'] [math.floor(random.random() * length)] 
+            if not user:
+                flash("您的電話號碼並不存在。請重新輸入。")
+                return redirect(url_for('forget_password', selection = selection)) 
+            if not user.ur_isSMSVerified:
+                flash(Markup("您的電話號碼並沒有經過驗證。請嘗試其他方法，或<a href='{}' class='alert-link'>聯絡我們</a>".format(url_for('contact_us_selection'))))
+                return redirect(url_for('forget_password', selection = selection)) 
+                   
+            
+        otp = generate_otp_for(user)
 
         try:
             token = generate_confirmation_token_for(user, "reset")
@@ -229,14 +305,15 @@ def forget_password(selection):
         subject = "Your email for password reset"
         send_email(user.ur_email, subject, html)
        
-        user.ur_otp_hash = bcrypt.generate_password_hash(otp).decode('utf-8')
-        db.session.commit()
         flash("您的密碼重置郵件已發送至您的電子信箱內.","success")
         return redirect(url_for('home'))
     return render_template('forget_password.html', title='忘記密碼', form = form, method = selection)
 
 @app.route('/forget_password_selection', methods=['GET', 'POST'])
 def forget_password_selection():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+        
     form = ForgetPasswordSelectionForm()
 
     if form.validate_on_submit():
@@ -352,32 +429,40 @@ def individual_profile_update(iuid):
     form = IndividualUpdateProfileForm()
 
     if form.validate_on_submit():
-        #server side validation
+        
         check_user = Users.query.filter_by(ur_phone = form.individual_contact_number.data).first()    
-        if check_user and check_user.ur_id != iuid:
-            flash('Contact number {} taken. Update fails.'.format(form.individual_contact_number.data), 'fail')
-            return redirect(url_for('individual_profile_update', iuid = iuid))
-
-        check_user = Users.query.filter_by(ur_email = form.individual_email.data).first()    
-        if check_user and check_user.ur_id != iuid:
-            flash('Email {} taken. Update fails.'.format(form.individual_email.data), 'fail')
-            return redirect(url_for('individual_profile_update', iuid = iuid))
+        if check_user:
+            if check_user.ur_id != iuid:
+                flash('Contact number {} taken. Update fails.'.format(form.individual_contact_number.data), 'fail')
+                return redirect(url_for('individual_profile_update', iuid = iuid))
         else:
             user.ur_phone = form.individual_contact_number.data
+            user.ur_isSMSVerified = False
+            
+            
+        check_user = Users.query.filter_by(ur_email = form.individual_email.data).first()    
+        if check_user: 
+            if check_user.ur_id != iuid:
+                flash('Email {} taken. Update fails.'.format(form.individual_email.data), 'fail')
+                return redirect(url_for('individual_profile_update', iuid = iuid))
+        else:
             user.ur_email = form.individual_email.data
-            profile.iu_CName = form.individual_CName.data
-            profile.iu_EName = form.individual_EName.data
-            profile.iu_alias = form.individual_alias.data
-            profile.iu_HKID = form.individual_HKID.data
-            profile.iu_selfIntroduction = form.individual_intro.data
-            profile.iu_educationLevel = form.individual_educationLevel.data
-            profile.iu_language_Cantonese = form.individual_language_Cantonese.data
-            profile.iu_language_English = form.individual_language_English.data
-            profile.iu_language_Putonghua = form.individual_language_Putonghua.data
-            profile.iu_language_Other = form.individual_language_Other.data
-            db.session.commit()
-            flash('您的個人資料已成功更新!', 'success')
-            return redirect(url_for('individual_profile_update', iuid = iuid))
+            user.ur_isEmailVerified = False
+            
+        profile.iu_CName = form.individual_CName.data
+        profile.iu_EName = form.individual_EName.data
+        profile.iu_alias = form.individual_alias.data
+        profile.iu_HKID = form.individual_HKID.data
+        profile.iu_selfIntroduction = form.individual_intro.data
+        profile.iu_educationLevel = form.individual_educationLevel.data
+        profile.iu_language_Cantonese = form.individual_language_Cantonese.data
+        profile.iu_language_English = form.individual_language_English.data
+        profile.iu_language_Putonghua = form.individual_language_Putonghua.data
+        profile.iu_language_Other = form.individual_language_Other.data
+        
+        db.session.commit()
+        flash('您的個人資料已成功更新!', 'success')
+        return redirect(url_for('individual_profile_update', iuid = iuid))
 
     elif request.method == 'GET':	
         form.individual_contact_number.data = user.ur_phone
@@ -598,22 +683,20 @@ def business_register():
                                     bu_EName = form.company_EName.data,
                                     bu_picName = form.company_contact_person.data
                                     )
+
+        url = url_for('request_confirmation_email', uid = user.ur_id )
+        flash(Markup('{} 的商業帳號已成功註冊! 請確認電子郵件來以啟用更多功能！點擊 <a href="{}" class="alert-link">這裡</a>'.format(user.ur_login, url)), 'success')
         db.session.add(user)
         db.session.add(business_user)
         db.session.commit()
+        login_user(user)
 
-        token = generate_confirmation_token_for(user, 'email')
-        confirm_url = url_for('confirm_email', token=token, _external=True)
-        html = render_template('confirm_email.html', confirm_url=confirm_url)
-        subject = "Please confirm your email"
-        send_email(user.ur_email, subject, html)
-
-        flash(f'{form.company_CName.data} 的商業帳號已成功註冊! 請確認電子郵件來以啟用帳戶！', 'success')
         return redirect(url_for('home'))
     return render_template('business_register.html', title='註冊 - 商業帳戶', form = form)
 
 @app.route('/business/profile/<string:bid>')
 def business_profile(bid):
+    user = Users.query.get_or_404(bid)
     profile = BusinessUsers.query.get_or_404(bid)
     reviews = Review.query.filter_by(re_receiver_id=bid).all()
 
@@ -623,7 +706,7 @@ def business_profile(bid):
         for rating in ratings:
             review[rating.rate_rc_id] = rating
     
-    return render_template('business_profile.html',title ='我的公司檔案',profile = profile, reviews = reviews)
+    return render_template('business_profile.html',title ='我的公司檔案', user = user, profile = profile, reviews = reviews)
 
 @app.route('/business/profile/<string:bid>/update', methods =['POST','GET'])
 def business_profile_update(bid):
@@ -655,62 +738,77 @@ def business_profile_update(bid):
 # METHOD:   GET / POST
 # DESC.:    [GET]   The page where the business user creates their account
 #           [POST]  The method which validates the job info and post a job
-#TODO:need to validate user type: business user
-@app.route("/business/jobs/new",methods=['GET', 'POST'])
+
+@app.route("/business/jobs/new", methods=['GET', 'POST'])
 @login_required
 def business_post_job():
-
-    if not BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
-        return render_template('404.html'), 404
+    
+    #check if is current user
+    if not BusinessUsers.query.filter_by(bu_id = current_user.ur_id).first():
+        return render_template('404.html') #UNAUTHORIZED
 
     form = PostJobForm()
 
     if not current_user.is_authenticated:
-            return redirect(url_for('home'))
+        return redirect(url_for('home'))
 
+    
     if form.validate_on_submit():
+        app.logger.info('[INFO] User {} posted a job. '.format(current_user.ur_id))
+        jtid = ''
+        
+        validate_jtid = True
+        while validate_jtid:
+            jtid = str(uuid4())
+            validate_jtid = JobType.query.filter_by(jt_id=jtid).first()
+            
+        job_type = JobType(
+                   jt_id = jtid,
+                   jt_name = form.job_type.data,
+                   jt_description = "No description here"
+                   )
 
-        jid = str(uuid4())
 
-        # Ensure the generated job ID is unique
-        validate_jid = Jobs.query.filter_by(jb_id=jid).first()
+        jid = ""
+        validate_jid = True
         while validate_jid:
             jid = str(uuid4())
             validate_jid = Jobs.query.filter_by(jb_id=jid).first()
-
+        
         job = Jobs(
                 jb_creationTime = datetime.utcnow(),
                 jb_id = jid,
                 jb_title = form.job_title.data,
                 jb_description = form.job_description.data,
                 jb_expected_payment_days = form.job_expected_payment_days.data,
-                jb_bu_id = current_user.get_id(),
-                jb_jt_id = form.job_type.data,
+                jb_bu_id = current_user.ur_id,
+                jb_jt_id = jtid
                 )
-
-        liid = str(uuid4())
-
-        # Ensure the generated job listing ID is unique
-        validate_liid = Jobs.query.filter_by(li_id = llid).first()
-        while validate_liid:
-            liid = str(uuid4())
-            validate_liid = Jobs.query.filter_by(li_id = llid).first()
-
-        job_list = JobListings(
-                li_id = liid,
-                li_jb_id = jid,
-                li_starttime = form.list_start_time.data,
-                li_endtime = form.list_end_time.data,
-                li_salary_amt = form.list_salary.data,
-                li_salary_type = form.list_salary_type.data,
-                li_quota = form.list_quota.data
-        )
-
+        db.session.add(job_type)
         db.session.add(job)
-        db.session.add(job_list)
-        db.session.commit()
+        
+        for subform in form.lists.data:
+            # Ensure the generated job listing ID is unique
+            liid = ''
+            validate_liid = True
+            while validate_liid:
+                liid = str(uuid4())
+                validate_liid = JobListings.query.filter_by(li_id = liid).first()
 
-        flash(f'您的工作已成功發布!', 'success')
+            job_list = JobListings(
+                    li_id = liid,
+                    li_jb_id = jid,
+                    li_starttime = subform['start_time'],
+                    li_endtime = subform['end_time'],
+                    li_salary_amt = subform['salary'],
+                    li_salary_type = subform['salary_type'],
+                    li_quota = subform['quota']
+            )
+
+            db.session.add(job_list)
+        
+        db.session.commit()
+        flash('您的工作已成功發布!', 'success')
         return redirect(url_for('home'))
 
     return render_template('business_post_job.html', title = '發布工作', form = form)
@@ -725,8 +823,10 @@ def business_post_job():
 @login_required
 def business_view_jobs_posted():
     if not BusinessUsers.query.filter_by(bu_id = current_user.get_id()).first():
-        return render_template('404.html'), 404
+        return render_template('404.html')
+        
     jobs = Jobs.query.filter_by(jb_bu_id = current_user.get_id()).all()
+    
     return render_template('business_jobs_posted.html', title="已發布的工作", jobs = jobs)
 
 # @ROUTE DEFINTION
@@ -735,21 +835,52 @@ def business_view_jobs_posted():
 # METHOD:   GET
 # DESC.:    The page where the business user view a specific job posted
 #TODO: separate specific job into business/individual view.
-@app.route('/jobs/<string:job_id>')
+@app.route('/jobs/<string:job_id>',methods=['GET', 'POST'])
 #@login_required
 def job(job_id):
     job = Jobs.query.get_or_404(job_id)
     listings = JobListings.query.filter_by(li_jb_id=job.jb_id).all()
+    job_type = JobType.query.filter_by(jt_id = job.jb_jt_id).first()
+    form = None
+    if current_user.is_authenticated and current_user.ur_id == job.jb_bu_id:   
+        form = AddListingForm()
+        if form.validate_on_submit():
+            app.logger.info('[INFO] User {} added job listings. '.format(current_user.ur_id))
+            
+            for subform in form.lists.data:
+                # Ensure the generated job listing ID is unique
+                liid = ''
+                validate_liid = True
+                while validate_liid:
+                    liid = str(uuid4())
+                    validate_liid = JobListings.query.filter_by(li_id = liid).first()
 
+                job_list = JobListings(
+                        li_id = liid,
+                        li_jb_id = job_id,
+                        li_starttime = subform['start_time'],
+                        li_endtime = subform['end_time'],
+                        li_salary_amt = subform['salary'],
+                        li_salary_type = subform['salary_type'],
+                        li_quota = subform['quota']
+                )
+
+                db.session.add(job_list)
+            
+            db.session.commit()
+            flash('您的工作已成功發布!', 'success')
+            return redirect(url_for('job', job_id = job_id))
+    '''
     announcement_listings = []
     announcements = []
-    
+    enrolled_individuals_id = []
     for listing in listings:
         announcement_listings.append(AnnouncementListings.query.filter_by(anli_li_id = listing.li_id).all())
+        
     for announcement_listing in announcement_listings:
         announcements.append(Announcement.query.filter_by(an_id = announcement_listing.anli_an_id).all())
 
-    enrolled_individuals_id = []
+   
     for listing in listings:
         enrollments = Enrollments.query.filter_by(en_li_id=listing.li_id).all()
         for enrollment in enrollments:
@@ -757,7 +888,7 @@ def job(job_id):
             enrolled_individuals_id.append(IndividualUsers.query.filter_by(iu_id=application.ap_iu_id).first().iu_id)
         
     #if its employer / enrolled employees, display discussion board
-    if current_user.get_id() == job.jb_bu_id or (current_user.get_id() in enrolled_individuals_id):
+    if current_user.get_id() == job.jb_bu_id or (current_user.ur_id in enrolled_individuals_id):
         commentForm = CommentForm()
         if commentForm.validate_on_submit():
             
@@ -783,13 +914,13 @@ def job(job_id):
                     )
 
             for listing in listings:
-                liid = str(uuid4())
-
                 # Ensure the generated job listing ID is unique
-                validate_liid = Jobs.query.filter_by(li_id = llid).first()
+                liid = ""
+                validate_liid = False
                 while validate_liid:
                     liid = str(uuid4())
                     validate_liid = Jobs.query.filter_by(li_id = llid).first()
+                
                 announcement_listing = AnnouncementListings(
                                         anli_an_id = anid,
                                         anli_li_id = listing.li_id,
@@ -805,9 +936,10 @@ def job(job_id):
 
         #TODO: specific job individual user and business user validation without importing the db to html
         #TODO: listing reply under each comment using an_replyTo
-        return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings, commentForm = commentForm, annoucements = annoucements)
-
-    return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings, commentForm = None, annoucements = None)
+       
+        return render_template('specific_job.html', title=job.jb_title, job = job, listings = listings)
+        ''' 
+    return render_template('specific_job.html', form = form, title=job.jb_title, job = job, listings = listings)
 
 @app.route('/jobs/<string:replyTo>/reply')
 def reply_annoucement(an_id):
@@ -1045,26 +1177,6 @@ def view_an_applicant(job_id, list_id, app_id):
 # =======================================
 #    INCOMPLETED / SUSPENDED ROUTES
 # =======================================
-
-
-def save_picture(form_picture):
-    """
-    A utility function which helps save the profile picture in 'static/profile_pics',
-    and return the new name of the profile picture
-    """
-    # Rename the profile picture
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-
-    # Resize the picture and save it in the path
-    img = pltimg.imread(form_picture)
-    img = cv2.resize(img, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
-    cv2.imwrite(picture_path, cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
-
-    return picture_fn
-
 
 
 # @ROUTE DEFINTION

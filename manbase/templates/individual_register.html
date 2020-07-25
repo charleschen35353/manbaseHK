@@ -616,6 +616,7 @@
                 <label for="ind_register_agree_tos" class="text-break ind-reg-confirm form-check-label">我已經閱讀並同意<a
                         href="#" class="text-primary" data-toggle="modal" data-target="#tos">《使用條款及細則》</a>。</label>
             </div>
+            {{ render_field(form.recaptcha) }}
             <!-- Sections Button -->
             <div class="form-group row">
                 <button class="btn btn-outline-primary col-5 col-md-3 offset-1 offset-md-5 text-nowrap"
