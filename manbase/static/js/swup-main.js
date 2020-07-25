@@ -1,6 +1,6 @@
 import individual_register_on_load from './modules/individual_register.js';
 import business_register_on_load from './modules/business_register.js';
-import business_post_job_on_load from './modules/business_post_job.js';
+import add_job_listing from './modules/add_job_listing.js';
 
 const init = () => {
     $('#spinner').css('visibility', 'visible');
@@ -13,7 +13,10 @@ const init = () => {
         individual_register_on_load();
     }
     if (document.querySelector('#business_post_job')) {
-        business_post_job_on_load();
+        add_job_listing();
+    }
+    if (document.querySelector('#add_listing_form')) {
+        add_job_listing();
     }
     $('#spinner').css('visibility', 'hidden');
 

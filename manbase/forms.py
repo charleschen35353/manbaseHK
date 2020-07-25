@@ -229,7 +229,13 @@ class JobListForm(BaseForm): # subform only
                                
     salary_type = RadioField('薪資類別', choices=[(1, "option1"), (2, "option 2"), (3, "option3")], coerce=int)       
                                   
-    
+class AddListingForm(BaseForm):
+    lists = FieldList(
+        FormField(JobListForm),
+        min_entries=0,
+        max_entries=20
+    )
+    submit = SubmitField('Confirm')
     
 class PostJobForm(BaseForm):
     job_title = StringField('職位名稱',

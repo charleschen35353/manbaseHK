@@ -810,9 +810,7 @@ def business_post_job():
         db.session.commit()
         flash('您的工作已成功發布!', 'success')
         return redirect(url_for('home'))
-    else:
-        app.logger.debug(form.errors)
-        flash('Failed validation')
+
     return render_template('business_post_job.html', title = '發布工作', form = form)
 
 # @ROUTE DEFINTION
@@ -837,13 +835,41 @@ def business_view_jobs_posted():
 # METHOD:   GET
 # DESC.:    The page where the business user view a specific job posted
 #TODO: separate specific job into business/individual view.
-@app.route('/jobs/<string:job_id>')
+@app.route('/jobs/<string:job_id>',methods=['GET', 'POST'])
 #@login_required
 def job(job_id):
     job = Jobs.query.get_or_404(job_id)
     listings = JobListings.query.filter_by(li_jb_id=job.jb_id).all()
     job_type = JobType.query.filter_by(jt_id = job.jb_jt_id).first()
-    
+    form = None
+    if current_user.is_authenticated and current_user.ur_id == job.jb_bu_id:   
+        form = AddListingForm()
+        if form.validate_on_submit():
+            app.logger.info('[INFO] User {} added job listings. '.format(current_user.ur_id))
+            
+            for subform in form.lists.data:
+                # Ensure the generated job listing ID is unique
+                liid = ''
+                validate_liid = True
+                while validate_liid:
+                    liid = str(uuid4())
+                    validate_liid = JobListings.query.filter_by(li_id = liid).first()
+
+                job_list = JobListings(
+                        li_id = liid,
+                        li_jb_id = job_id,
+                        li_starttime = subform['start_time'],
+                        li_endtime = subform['end_time'],
+                        li_salary_amt = subform['salary'],
+                        li_salary_type = subform['salary_type'],
+                        li_quota = subform['quota']
+                )
+
+                db.session.add(job_list)
+            
+            db.session.commit()
+            flash('您的工作已成功發布!', 'success')
+            return redirect(url_for('job', job_id = job_id))
     '''
     announcement_listings = []
     announcements = []
@@ -910,10 +936,10 @@ def job(job_id):
 
         #TODO: specific job individual user and business user validation without importing the db to html
         #TODO: listing reply under each comment using an_replyTo
-        '''
+       
         return render_template('specific_job.html', title=job.jb_title, job = job, listings = listings)
-
-    return render_template('specific_job.html',title=job.jb_title, job = job, listings = listings)
+        ''' 
+    return render_template('specific_job.html', form = form, title=job.jb_title, job = job, listings = listings)
 
 @app.route('/jobs/<string:replyTo>/reply')
 def reply_annoucement(an_id):

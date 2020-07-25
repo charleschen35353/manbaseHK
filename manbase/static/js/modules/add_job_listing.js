@@ -30,23 +30,31 @@ function removeForm() {
     
     var $removedForm = $(this).closest('.subform');
     var removedIndex = parseInt($removedForm.data('index'));
-    //console.log("[INFO] index being removed: " + removedIndex);
     
-    var $form = $(this);
-    var index = $form.data('index');
-    console.log("[INFO] current index " + index);
     
     $removedForm.remove();
 
     // Update indices
     adjustIndices(removedIndex);
+    
+    var $forms = $('.subform')
+
+    if ($forms){
+        var $add_confirm_bt = $('#add_confirm');
+        
+        if (!$add_confirm_bt) {
+            console.log('[ERROR] Cannot find add confirm botton');
+            return;
+        }
+        $add_confirm_bt.addClass('is-hidden');
+    }
 }
 
 /**
 * Add a new form.
 */
 function addForm(){
-    console.log('[INFO] Add bottom activated!!!!!');
+    console.log('[INFO] Add bottom activated.');
     var $templateForm = $('#list-_-form');
 
     if (!$templateForm) {
@@ -88,12 +96,21 @@ function addForm(){
     $newForm.removeClass('is-hidden');
 
     $newForm.find('.remove').click(removeForm);
+    
+    var $add_confirm_bt = $('#add_confirm');
+
+    if (!$add_confirm_bt) {
+        console.log('[ERROR] Cannot find add confirm botton');
+        return;
+    }
+    $add_confirm_bt.removeClass('is-hidden');
 }
 
-const business_post_job_on_load = () => {
+
+const add_job_listing = () => {
     $('#add').click(addForm);
     $('.remove').click(removeForm);
 };
 
-export default business_post_job_on_load;
+export default add_job_listing;
 
