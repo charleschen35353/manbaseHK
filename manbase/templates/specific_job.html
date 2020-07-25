@@ -1,109 +1,186 @@
 {% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
 
-
 {% block content %}
 <article class="media content-section">
   <div class="media-body">
+    <h2 class="article-title">{{ job.jb_title }}</h2>
+    <p class="article-content">{{ job.jb_description }}</p>
+    <p> The expected payment days is {{job.jb_expected_payment_days}} </p>
     <div class="article-metadata">
       {% if not listings %} 
         <p> no listings at all</p>
       {% endif%}
+      
       {% for listing in listings%}
+      <div>
           <a class="mr-2" href="#"> Quota: {{ listing.li_quota }}</a>
           <small class="text-muted">Start: {{ listing.li_starttime }}</small>
           <small class="text-muted">End: {{ listing.li_endtime }}</small>
           <small class="text-muted">Salary: {{ listing.li_salary_amt }}</small>
           <small class="text-muted">Salary Type: {{ listing.li_salary_type }}</small>
-          {% if job.jb_bu_id == current_user.get_id() %}
-            <a href="{{url_for('job_list_applicants', job_id = job.jb_id, list_id = listing.li_id)}}" class="btn btn-secondary btn-large p-2">
-              <h4 class="m-0">查看工作申請</h4>
-            </a>
-            <a href="{{url_for('job_list_enrolled', job_id = job.jb_id, list_id = listing.li_id)}}" class="btn btn-secondary btn-large p-2">
-              <h4 class="m-0">查看已錄取的員工</h4>
-            </a>
-          {% endif %}
-      {% endfor %}
-
-      {% if job.jb_bu_id == current_user.ur_id %}
-        <div>
-          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('business_job_update', job_id=job.jb_id) }}">更新工作詳情</a>
-          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('business_job_delete', job_id=job.jb_id) }}">刪除工作</a>
-        </div>
-      <!--
-      {% elif IndividualUsers.query.filter_by(iu_id = current_user.ur_id).first()%}
-        <div>
-          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('apply_job', job_id=job.jb_id) }}">申請工作</a>
-        </div>Specific -->
-      {% endif %}
-
-      <div>
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('report_job_abnormality', job_id = job.jb_id) }}">報錯</a>
       </div>
-    </div>
-    
-    <div class = 'content-section'> 
-      <form method = 'POST' action = ''>
-          {{ commentForm.hidden_tag() }}
-          <fieldset class='form-group'>
-              <legend class = 'border-bottom mb-4'>留言</legend>
-
-              <div class="form-group">
-                {{ commentForm.comment.label(class="form-control-label") }}
-                {% if commentForm.comment.errors %}
-                {{ render_field(commentForm.comment, class="form-control form-control-lg is-invalid")}}
-                <div class="invalid-feedback">
-                    {% for error in commentForm.comment.errors %}
-                    <small class='error'> {{error}} </small>
-                    {% endfor %}
-                </div>
-                {% else %}
-                  {{ render_field(commentForm.comment,class="form-control form-control-lg" )}}
-                {% endif %}
-              </div>
-
-          </fieldset>
-          <div class="form-group">
-              {{ render_field(commentForm.submit, class="btn btn-primary btn-large btn-block")
-              }}
-          </div>
-      </form>
-    </div>
-    <!--
-    {% if job.jb_bu_id == current_user.get_id() or IndividualUsers.query.filter_by(iu_id = current_user.get_id()).first()%}
-      
-      {% if annoucements %}
-        {% for annoucement in annoucements %}
-          <p> sender: {{announcement.an_sender_id}} </p>
-          <p> message: {{announcement.an_message}} </p>
-          <p> isFromEmployer: {{announcement.an_isFromEmployer}} </p>
-          <p> reply to: {{announcement.an_replyTo}} </p>
-          <a href="{{url_for('reply_annoucement',an_id=annoucement.an_id)}}" class="btn btn-primary btn-large p-2">
-            <h4 class="m-0">註冊工作帳戶</h4>
-        </a>
-        {% endfor %}
-      {% else %}
-        <p> no comments yet </p>
-      {% endif %}
-      
-    {% endif %}
-
-    {% if annoucements %}
-      {% for annoucement in annoucements %}
-        <p> sender: {{announcement.an_sender_id}} </p>
-        <p> message: {{announcement.an_message}} </p>
-        <p> isFromEmployer: {{announcement.an_isFromEmployer}} </p>
-        <p> reply to: {{announcement.an_replyTo}} </p>
-        <a href="{{url_for('reply_annoucement',an_id=annoucement.an_id)}}" class="btn btn-primary btn-large p-2">
-          <h4 class="m-0">註冊工作帳戶</h4>
-      </a>
       {% endfor %}
-    {% else %}
-      <p> no comments yet </p>
+    </div>
+    {% if form %}
+        <form method = 'POST' action = '' role ='form'
+             id="add_listing_form" data-swup-form="add_listing_form">
+            {{ form.hidden_tag() }}
+            <fieldset class='form-group'>
+                
+                <a id="add" href="#">Add List</a>
+                
+                <form id="list-form" action="" method="POST" role="form">
+
+                    <div id="subforms-container">
+                        {% for subform in form.lists %}
+                            <div id="list-{{loop.index0}}-form" class="subform" data-index="{{loop.index0}}">
+                                <div class="form-group">
+                                    {{ subform.start_time.label(class="form-control-label") }}
+                                    {% if subform.start_time.errors %}
+                                        {{  render_field(subform.start_time, 
+                                                        class="form-control form-control-lg is-invalid", 
+                                                        id="lists-"+ loop.index0|string + "-start_time",
+                                                        type="datetime-local") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in subform.start_time.errors %}
+                                                <small class='error'> {{error}} </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ render_field(subform.start_time,
+                                                        class="form-control form-control-lg", 
+                                                        id="lists-"+ loop.index0|string + "-start_time",
+                                                        type="datetime-local") }}
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ subform.end_time.label(class="form-control-label") }}
+                                    {% if subform.end_time.errors %}
+                                        {{  render_field(subform.end_time,
+                                                        class="form-control form-control-lg is-invalid", 
+                                                        id="lists-"+ loop.index0|string + "-end_time",
+                                                        type="datetime-local") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in subform.end_time.errors %}
+                                                <small class='error'> {{error}} </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ render_field(subform.end_time, 
+                                                        class="form-control form-control-lg", 
+                                                        id="lists-"+ loop.index0|string + "-end_time",
+                                                        type="datetime-local")}}
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ subform.salary.label(class="form-control-label") }}
+                                    {% if subform.salary.errors %}
+                                        {{  render_field(subform.salary,class=" is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in subform.salary.errors %}
+                                                <small class='error'> {{error}} </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ render_field(subform.salary,class="") }}
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ subform.salary_type.label(class="form-control-label") }}
+                                    
+                                     <div class="row mx-md-n1">
+                                        {% for subfield in subform.salary_type %}
+                                        <div class="col-12 col-md-4 px-md-1 my-2">
+                                            <div class="d-grid p-2 align-items-center rounded-lg  bg-white border">
+                                                {{ subfield }} {{ render_field(subfield.label, class="m-0", id = "list-"+loop.index0|string + "-end_time") }}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="invalid-feedback d-block" id="list-{{loop.index0}}-end_time">
+                                        {% if subform.salary_type.errors %}
+                                            {% for error in subform.salary_type.errors %}
+                                            <p class='error'> {{error}} </p>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                
+                                </div>
+
+                                <div class="form-group">
+                                    {{ subform.quota.label(class="form-control-label") }}
+                                    {% if subform.quota.errors %}
+                                        {{  render_field(subform.quota,class="is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in subform.quota.errors %}
+                                                <small class='error'> {{error}} </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ render_field(subform.quota,class="") }}
+                                    {% endif %}
+                                </div>
+                                <a class="remove" href="#">Remove</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                <div class="form-group">
+                        {{ render_field(form.submit, class="btn btn-primary btn-large btn-block is-hidden", id = "add_confirm")}}
+                </div>
+                </form>
+                
+                
+                
+                {# Template #}
+            
+                <div id="list-_-form" class="is-hidden" data-index="_">
+                    <div class="form-group">
+                        <label class="form-control-label" for="lists-_-start_time">工作開始時間</label>
+                        <input class="form-control form-control-lg" id="lists-_-start_time" name="lists-_-start_time" type="datetime-local" value="">       
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="lists-_-end_time">工作完成時間</label>               
+                        <input class="form-control form-control-lg" id="lists-_-end_time" name="lists-_-end_time" type="datetime-local" value="">        
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="lists-_-salary">薪資</label>               
+                        <input class="" id="lists-_-salary" name="lists-_-salary" type="text" value="">    
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="lists-_-salary_type">薪資類別</label>              
+                        <div class="row mx-md-n1">                      
+                            <div class="col-12 col-md-4 px-md-1 my-2">
+                              <div class="d-grid p-2 align-items-center rounded-lg  bg-white border">
+                                <input id="lists-_-salary_type-0" name="lists-_-salary_type" type="radio" value="1">  <label class="m-0" for="lists-_-salary_type-0" id="list-0-end_time">option1</label> 
+                              </div>
+                            </div>                        
+                            <div class="col-12 col-md-4 px-md-1 my-2">
+                              <div class="d-grid p-2 align-items-center rounded-lg  bg-white border">
+                                <input id="lists-_-salary_type-1" name="lists-_-salary_type" type="radio" value="2">  <label class="m-0" for="lists-_-salary_type-1" id="list-1-end_time">option 2</label> 
+                              </div>
+                            </div>                       
+                            <div class="col-12 col-md-4 px-md-1 my-2">
+                              <div class="d-grid p-2 align-items-center rounded-lg  bg-white border">
+                                <input id="lists-_-salary_type-2" name="lists-_-salary_type" type="radio" value="3">  <label class="m-0" for="lists-_-salary_type-2" id="list-2-end_time">option3</label> 
+                              </div>
+                            </div>                      
+                    </div>
+                    <div class="invalid-feedback d-block" id="list-_-end_time"></div>                          
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="lists-_-quota">職缺數量</label>
+                    <input class="" id="lists-_-quota" name="lists-_-quota" type="text" value="1"> 
+                </div>
+                           
+                <a class="remove" href="#">Remove</a>
+                         
+              </div>
+            </fieldset>
+        </form>
     {% endif %}
-    -->
-    <h2 class="article-title">{{ job.jb_title }}</h2>
-    <p class="article-content">{{ job.jb_description }}</p>
-    <p> The expected payment days is {{job.jb_expected_payment_days}} </p>
-  </div>
 </article>
 {% endblock content %}

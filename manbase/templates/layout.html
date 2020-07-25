@@ -80,8 +80,7 @@
         </div>
       </nav>
       <div
-        class="navbar-height bg-light navbar-bottom clip-bottom d-flex justify-content-around justify-content-md-center align-items-center p-2"
-        style="">
+        class="navbar-height bg-light navbar-bottom clip-bottom d-flex justify-content-around justify-content-md-center align-items-center p-2">
         <!-- Item 1 -->
         <div class="d-flex flex-column justify-content-center p-2 rounded shadow-sm navbar-bottom-item mx-md-4">
           <div class="w-100 d-flex justify-content-center">
@@ -178,7 +177,10 @@
         src="{{ url_for('static', filename='node_modules/@swup/ga-plugin/dist/SwupGaPlugin.min.js') | replace('%40', '@') }}"></script>
 
       <!-- Custom JS - Swup Init -->
+      <!-- TODO: Remove add_job_listing.js as it is already included in swup-main.js -->
+      <script type="module" src="{{ url_for('static', filename='js/modules/add_job_listing.js') }}"></script>
       <script type="module" src="{{ url_for('static', filename='js/swup-main.js') }}"></script>
+
 </body>
 
 </html>

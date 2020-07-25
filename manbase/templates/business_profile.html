@@ -1,6 +1,33 @@
 {% extends "layout.html" %} {% from "_formhelpers.html" import render_field %}
 
 {% block content %}
+    <div class = "form-group">
+        {% if not user.ur_isEmailVerified%} <h2>Email Not Verified </h2>
+        {% if user.ur_id == current_user.ur_id %}
+        <a href= {{url_for('request_confirmation_email', uid = current_user.get_id())}} class="btn btn-primary btn-large p-2">
+            <h4 class="m-0">Verify Email</h4>
+        </a> 
+        {%endif%}
+        {% else %}<h2> Email Verified </h2>{%endif%}
+    </div> 
+    <div class = "form-group">
+        {%if not user.ur_isSMSVerified%} <h2>SMS Not Verified </h2>
+        {% if user.ur_id == current_user.get_id() %}
+        <a href= {{url_for('request_confirmation_SMS', uid = current_user.get_id())}} class="btn btn-primary btn-large p-2">
+            <h4 class="m-0">Verify SMS</h4>
+        </a> 
+        {%endif%}
+        {% else %}<h2> SMS Verified </h2>{%endif%}
+    </div> 
+    <div class = "form-group">
+        {%if not user.ur_isIdentityVerified%} <h2>Identity Not Verified </h2>
+        {% if user.ur_id == current_user.get_id() %}
+        <a href="#" class="btn btn-primary btn-large p-2">
+            <h4 class="m-0"> Verify Identity </h4>
+        </a> 
+        {%endif%}
+        {% else %}<h2> Identity Verified </h2>{%endif%}
+    </div>  
     <h1> 公司中文名字: {{profile.bu_CName}} </h1>>
     <h1> 公司英文名字: {{profile.bu_ind_id}} </h1>>
     <h1> 業務產業: {{profile.bu_ind_id}} </h1>>
@@ -27,5 +54,11 @@
             <h4 class="m-0">更新公司檔案</h4>
         </a>
     {% endif %}
+
+    <div class = "form-group">
+        <a href="{{url_for('home')}}" class="btn btn-primary btn-large p-2">
+            <h4 class="m-0">prev</h4>
+        </a>            
+    </div>  
 
 {% endblock content %}

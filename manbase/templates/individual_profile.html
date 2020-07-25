@@ -10,7 +10,15 @@
         {%endif%}
         {% else %}<h2> Email Verified </h2>{%endif%}
     </div> 
-    
+    <div class = "form-group">
+        {%if not user.ur_isSMSVerified%} <h2>SMS Not Verified </h2>
+        {% if user.ur_id == current_user.get_id() %}
+        <a href= {{url_for('request_confirmation_SMS', uid = current_user.get_id())}} class="btn btn-primary btn-large p-2">
+            <h4 class="m-0">Verify SMS</h4>
+        </a> 
+        {%endif%}
+        {% else %}<h2> SMS Verified </h2>{%endif%}
+    </div> 
     <div class = "form-group">
         {%if not user.ur_isIdentityVerified%} <h2>Identity Not Verified </h2>
         {% if user.ur_id == current_user.get_id() %}
@@ -20,20 +28,12 @@
         {%endif%}
         {% else %}<h2> Identity Verified </h2>{%endif%}
     </div>  
-    <div class = "form-group">
-        {%if not user.ur_isSMSVerified%} <h2>SMS Not Verified </h2>
-        {% if user.ur_id == current_user.get_id() %}
-        <a href="#" class="btn btn-primary btn-large p-2">
-            <h4 class="m-0">Verify SMS</h4>
-        </a> 
-        {%endif%}
-        {% else %}<h2> SMS Verified </h2>{%endif%}
-    </div> 
+    
     
     <h1> 中文名字: {{profile.iu_CName}} </h1>
     <h1> 英文名字: {{profile.iu_EName}} </h1>
-    <h1> 電話號碼: {{profile.iu_phone}} </h1>
-    <h1> 電子郵箱: {{profile.iu_email}} </h1>
+    <h1> 電話號碼: {{user.ur_phone}} </h1>
+    <h1> 電子郵箱: {{user.ur_email}} </h1>
     <h1> 稱呼: {{profile.iu_alias}} </h1>
     <h1> 性別: {% if profile.iu_gender == 0%} 女性  {% elif profile.iu_gender == 1 %} 男性 {% else %} 保密 {% endif %} </h1>
     <h1> 生日: {{profile.iu_birthday}} </h1>

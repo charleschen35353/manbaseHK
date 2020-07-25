@@ -1,9 +1,10 @@
+import secrets
+import nexmo
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
 from flask_wtf import CSRFProtect
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-import secrets
 from flask_uuid import FlaskUUID
 # TODO: Add support for flask_assets for JS Bundling
 # TODO: Add support for flask_minify for HTML and CSS Minifying
@@ -32,6 +33,12 @@ app.config['MAIL_DEFAULT_SENDER'] = 'manbasehk@gmail.com'
 # Using default error message translation
 app.config['WTF_I18N_ENABLED'] = False
 app.config['DEFAULT_STRING'] = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%'
+app.config['RECAPTCHA_USE_SSL']= False
+app.config['RECAPTCHA_PUBLIC_KEY']='6LftibMZAAAAAETVT1059c9ue_KF7Ftbt7LSl7rW'
+app.config['RECAPTCHA_PRIVATE_KEY']='6LftibMZAAAAAGmClcZ6jgqhmGl-2Pceuo8OZVBs'
+app.config['RECAPTCHA_OPTIONS']= {'theme':'black'}
+app.config['SMS_PROVIDER'] = nexmo.Client(key='e23983df', secret='5u0gzHpvJgKnNpJ1')
+
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)

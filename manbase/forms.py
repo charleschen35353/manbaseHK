@@ -1,12 +1,15 @@
 from flask_wtf import FlaskForm
+from flask_wtf.recaptcha import RecaptchaField, Recaptcha
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateTimeField, RadioField, DateField, TextAreaField
+from wtforms import FieldList, FormField, StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateTimeField, RadioField, DateField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
 from manbase.models import Users, BusinessUsers, IndividualUsers
 from uuid import uuid4
 from flask_login import current_user
+# TODO: remove Markup as it is no longer necessary
 from markupsafe import Markup
-
+from datetime import datetime
+import string
 
 # setting base error language as chinese
 class BaseForm(FlaskForm):
@@ -25,6 +28,7 @@ class CommentForm(BaseForm):
     comment = StringField('留言',
                            validators=[DataRequired(message = '留言不能為空'), Length(min=5, max=20)])
     submit = SubmitField('遞交留言')
+    
 class ResetPasswordForm(BaseForm):
     otp = PasswordField('one time password',
                              validators=[DataRequired()])
@@ -33,17 +37,18 @@ class ResetPasswordForm(BaseForm):
     confirm_password = PasswordField('重新輸入密碼',
                                      validators=[DataRequired(), EqualTo('password', message="必須與已輸入密碼相同")])
     submit = SubmitField('重置密碼')
+   
 
 class ForgetPasswordSelectionForm(BaseForm):
-    selection =  RadioField('Retrieval Method', choices=[(1, "Login ID"), (2, "Contact Phone Number(Verified)"), (3, "Contact Us")],  
+    selection =  RadioField('尋回密碼方法', choices=[(1, "登入 ID"), (2, "已驗證之手機號碼"), (3, "聯絡我們")],  
                             validators=[DataRequired()], coerce=int, default = 1)
    
-    submit = SubmitField('Select')
+    submit = SubmitField('選擇')
 
 
 class ForgetPasswordFormAccount(BaseForm):
     data = StringField('', validators=[DataRequired()])
-    submit = SubmitField('Reset Password')
+    submit = SubmitField('重置密碼')
     
     def validate_data(form, data):
         user = Users.query.filter_by(ur_login=data.data).first()
@@ -52,7 +57,7 @@ class ForgetPasswordFormAccount(BaseForm):
 
 class ForgetPasswordFormPhone(BaseForm):
     data = StringField('', validators=[DataRequired()])
-    submit = SubmitField('Reset Password')
+    submit = SubmitField('重置密碼')
     
     def validate_data(form, data):
         user = Users.query.filter_by(ur_phone=data.data).first()
@@ -95,9 +100,16 @@ class IndividualRegistrationForm(BaseForm):
     individual_language_Putonghua = BooleanField('普通話', validators=[])
     individual_language_Other = StringField('其他', validators=[])
     individual_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
+<<<<<<< .merge_file_JZiKfS
     submit_value = Markup('註冊個人帳戶 <i class=\'las la-check-circle\'></i>')
     submit = SubmitField(submit_value)
+=======
+    recaptcha = RecaptchaField(validators=[Recaptcha(message='您必須證明您不是機器人。請刷新頁面重新輸入。')])
+    submit = SubmitField('註冊個人帳戶')
+>>>>>>> .merge_file_aKbcZV
 
+
+        
     def validate_user_login(form, user_login):
         user = Users.query.filter_by(ur_login=user_login.data).first()
         if user:
@@ -127,6 +139,7 @@ class IndividualUpdateProfileForm(BaseForm):
     individual_language_Putonghua = BooleanField('普通話')
     individual_language_Other = StringField('其他')
     individual_intro = TextAreaField('自我介紹')
+    
     submit = SubmitField('更新個人帳戶')
 
 
@@ -173,6 +186,7 @@ class BusinessRegistrationForm(BaseForm):
     company_email = StringField('公司電子郵箱',
                                 validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
     business_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
+    recaptcha = RecaptchaField(validators=[Recaptcha(message='您必須證明您不是機器人。請刷新頁面重新輸入。')])
     submit = SubmitField('註冊商業帳戶')
 
     def validate_user_login(self, user_login):
@@ -206,6 +220,30 @@ class BusinessUpdateProfileForm(BusinessRegistrationForm):
                              validators=[EqualTo('password', message="must match password")])
     submit = SubmitField('更新商業帳戶資料')
 
+class JobListForm(BaseForm): # subform only
+
+    def __init__(self, *args, **kwargs):
+        kwargs['csrf_enabled'] = False
+        BaseForm.__init__(self, *args, **kwargs)
+        
+    quota = IntegerField('職缺數量', default = 1)
+                               
+    start_time = DateTimeField('工作開始時間', format = "%Y-%m-%dT%H:%M")
+                                    
+    end_time = DateTimeField('工作完成時間', format = "%Y-%m-%dT%H:%M")
+                                    
+    salary = IntegerField('薪資')
+                               
+    salary_type = RadioField('薪資類別', choices=[(1, "option1"), (2, "option 2"), (3, "option3")], coerce=int)       
+                                  
+class AddListingForm(BaseForm):
+    lists = FieldList(
+        FormField(JobListForm),
+        min_entries=0,
+        max_entries=20
+    )
+    submit = SubmitField('Confirm')
+    
 class PostJobForm(BaseForm):
     job_title = StringField('職位名稱',
                             validators=[DataRequired(message = '職位名稱不能為空')])
@@ -213,18 +251,14 @@ class PostJobForm(BaseForm):
                             validators=[DataRequired(message = '工作內容不能為空')])
     job_type = StringField('工作類型',
                             validators=[DataRequired(message = '工作類型不能為空')])
-    job_expected_payment_days = IntegerField('預計出糧日期',
-                                            validators=[DataRequired(message = '預計出糧日期不能為空')])
-    list_start_time = DateTimeField('工作開始時間',
-                                    validators=[DataRequired(message = '工作開始時間不能為空')])
-    list_end_time = DateTimeField('工作完成時間',
-                                    validators=[DataRequired(message = '工作完成時間不能為空')])
-    list_salary = IntegerField('薪資',
-                               validators=[DataRequired(message = '薪資不能為空')])
-    list_salary_type = RadioField('薪資類別',
-                                validators=[DataRequired(message = '薪資類別不能為空')])
-    list_quota = IntegerField('職位空缺數目',
-                            validators=[DataRequired(message = '職位空缺數目不能為空')])
+    job_expected_payment_days = IntegerField('預計出糧時間',
+                                            validators=[DataRequired(message = '預計出糧時間不能為空')])
+    lists = FieldList(
+        FormField(JobListForm),
+        min_entries=1,
+        max_entries=20
+    )
+    
     submit = SubmitField('遞交工作')
     
 class AcceptApplicationForm():
@@ -252,33 +286,21 @@ class RateAndReviewOnBusinessForm():
     administration_score = RadioField('管理人員評分',
                         validators = [DataRequired(message = '管理人員不能為空')])
     submit = SubmitField('遞交評論')
+    
+class SMSForm(BaseForm):
+    otp = PasswordField('一次性密碼',
+                             validators=[DataRequired()])
+    
+    submit = SubmitField('遞交')
+
+class ContactUsSelectionForm(BaseForm):
+    selection = SelectField('請選擇服務', choices = [(1,'忘記密碼'),(2,'提供意見'), (3,'檢舉非法使用'), (4,'其他')],
+                             validators=[DataRequired()])
+    
+    submit = SubmitField('遞交')
+
 
 class ReportAbnormalityForm():
     message = StringField('問題描述',
                         validators = [DataRequired(message = '問題描述不能為空')])
     submit = SubmitField('錯誤報吿')
-
-'''
-class UpdateAccountForm(BaseForm):
-
-    username = StringField('Username',
-                           validators=[DataRequired(), Length(min=5, max=20)])
-    email = StringField('Email',
-                        validators=[DataRequired(), Email()])
-    picture = FileField('Updtae Profile Picture', validators=[
-                        FileAllowed(['jpg', 'png', 'jpeg'])])
-    submit = SubmitField('Update')
-
-    def validate_username(self, username):
-        if username.data != current_user.username:
-            user = Users.query.filter_by(username=username.data).first()
-            if user:
-                raise ValidationError(
-                    'Username is taken. Please choose a different one')
-
-    def validate_email(self, email):
-        if email.data != current_user.email:
-            user = Users.query.filter_by(email=email.data).first()
-            if user:
-                raise ValidationError(
-                    'Email is taken. Please choose a different one')'''

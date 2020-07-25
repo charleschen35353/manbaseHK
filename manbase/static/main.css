@@ -137,3 +137,8 @@ input[type="password"] {
     transform: translateY(calc(-.5 * var(--nav-height)));
   }
 }
+
+/* TODO: Use the `d-none` class of Bootstrap instead */
+.is-hidden {
+  display: none;
+}
