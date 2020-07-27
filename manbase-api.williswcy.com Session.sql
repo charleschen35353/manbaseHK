@@ -1,6 +1,6 @@
 SET foreign_key_checks = 0;
 -- Drop tables
-drop table if exists users, districts, job_type, industry, business_users, individual_users, jobs, job_listings, business_address, abnormality, job_applications, enrollments, announcement, announcement_listings, verification, rating_category, review, rating, review_followup;
+drop table if exists users, districts, job_type, industry, business_users, individual_users, jobs, job_listings, business_address, abnormality, job_applications, enrollments, announcement, announcement_listings, verification, rating_category, review, rating, review_followup,job_nature;
 SET foreign_key_checks = 1;
 
 CREATE TABLE users(
@@ -52,6 +52,17 @@ CREATE TABLE business_users(
     FOREIGN KEY(bu_ind_id) REFERENCES industry(ind_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
+CREATE TABLE business_address(
+    bads_id VARCHAR(255) PRIMARY KEY,
+    bads_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
+    bads_detail TEXT(20000) NOT NULL,
+    bads_bu_id VARCHAR(255) NOT NULL,
+    bads_district_id VARCHAR(255) NOT NULL,
+
+    FOREIGN KEY (bads_bu_id) REFERENCES business_users(bu_id),
+    FOREIGN KEY (bads_district_id) REFERENCES districts(district_id)
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
 CREATE TABLE individual_users(
     iu_id VARCHAR(255) PRIMARY KEY,
     iu_profilePicture VARCHAR(2048),
@@ -79,7 +90,7 @@ CREATE TABLE job_nature(
     jbna_id VARCHAR(255) PRIMARY KEY,
     jbna_name VARCHAR(255) NOT NULL,
     jbna_description VARCHAR(255)
-)
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE jobs(
     jb_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
@@ -113,17 +124,6 @@ CREATE TABLE job_listings(
     FOREIGN KEY(li_jb_id) REFERENCES jobs(jb_id),
     CONSTRAINT li_salary_type CHECK(
         li_salary_type IN ('hour rate','lump sum'))
-)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-
-CREATE TABLE business_address(
-    bads_id VARCHAR(255) PRIMARY KEY,
-    bads_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
-    bads_detail TEXT(20000) NOT NULL,
-    bads_jb_id VARCHAR(255) NOT NULL,
-    bads_district_id VARCHAR(255) NOT NULL,
-
-    FOREIGN KEY (bads_jb_id) REFERENCES jobs(jb_id),
-    FOREIGN KEY (bads_district_id) REFERENCES districts(district_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE abnormality(
