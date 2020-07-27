@@ -15,7 +15,7 @@ CREATE TABLE users(
     ur_sms_key VARCHAR(255),
     ur_reset_key VARCHAR(255),
     ur_isSMSVerified TINYINT(1) DEFAULT 0,
-    ur_isEmailVerified TINYINT(1) DEFAULT 0,
+    i TINYINT(1) DEFAULT 0,
     ur_otp_hash VARCHAR(255)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
@@ -39,7 +39,6 @@ CREATE TABLE industry(
 CREATE TABLE business_users(
     bu_id VARCHAR(255) PRIMARY KEY,
     bu_ind_id VARCHAR(255),
-    bu_address VARCHAR(255),
     bu_CName VARCHAR(36) NOT NULL,
     bu_EName VARCHAR(36), #optional
     bu_picName VARCHAR(36) NOT NULL, 
@@ -58,6 +57,7 @@ CREATE TABLE business_address(
     bads_detail TEXT(20000) NOT NULL,
     bads_bu_id VARCHAR(255) NOT NULL,
     bads_district_id VARCHAR(255) NOT NULL,
+    bads_isMajorAddress BOOLEAN NOT NULL DEFAULT FALSE;
 
     FOREIGN KEY (bads_bu_id) REFERENCES business_users(bu_id),
     FOREIGN KEY (bads_district_id) REFERENCES districts(district_id)
