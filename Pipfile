@@ -19,6 +19,7 @@ flask-uuid = "*"
 flask-migrate = "*"
 pymysql = "*"
 flask-mail = "*"
+nexmo = "*"
 
 [requires]
 python_version = "3.8"
