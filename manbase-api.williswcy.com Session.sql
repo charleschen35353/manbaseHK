@@ -15,7 +15,7 @@ CREATE TABLE users(
     ur_sms_key VARCHAR(255),
     ur_reset_key VARCHAR(255),
     ur_isSMSVerified TINYINT(1) DEFAULT 0,
-    i TINYINT(1) DEFAULT 0,
+    ur_isEmailVerified TINYINT(1) DEFAULT 0,
     ur_otp_hash VARCHAR(255)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
@@ -57,7 +57,7 @@ CREATE TABLE business_address(
     bads_detail TEXT(20000) NOT NULL,
     bads_bu_id VARCHAR(255) NOT NULL,
     bads_district_id VARCHAR(255) NOT NULL,
-    bads_isMajorAddress BOOLEAN NOT NULL DEFAULT FALSE;
+    bads_isMajorAddress BOOLEAN NOT NULL,
 
     FOREIGN KEY (bads_bu_id) REFERENCES business_users(bu_id),
     FOREIGN KEY (bads_district_id) REFERENCES districts(district_id)
@@ -101,23 +101,23 @@ CREATE TABLE jobs(
     jb_expected_payment_days INT(36) NOT NULL,
     jb_bu_id VARCHAR(255) NOT NULL,
     jb_jt_id VARCHAR(255) NOT NULL,
-    jb_address VARCHAR(255) NOT NULL,
+    jb_bads_id VARCHAR(255) NOT NULL,
     jb_ind_id VARCHAR(255) NOT NULL,
-    jb_nature VARCHAR(255) NOT NULL,
+    jb_jbna_id VARCHAR(255) NOT NULL,
 
     FOREIGN KEY(jb_jt_id) REFERENCES job_type(jt_id),
     FOREIGN KEY (jb_bu_id) REFERENCES business_users(bu_id),
-    FOREIGN KEY (jb_address) REFERENCES business_address(bads_id),
+    FOREIGN KEY (jb_bads_id) REFERENCES business_address(bads_id),
     FOREIGN KEY(jb_ind_id) REFERENCES industry(ind_id),
-    FOREIGN KEY(jb_nature) REFERENCES job_nature(jbna_id)
+    FOREIGN KEY(jb_jbna_id) REFERENCES job_nature(jbna_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE job_listings(
     li_id VARCHAR(255) PRIMARY KEY,
     li_jb_id VARCHAR(255) NOT NULL,
-    li_starttime DATETIME NOT NULL,
-    li_endtime DATETIME NOT NULL,
     li_salary_amt INT(255) NOT NULL,
+	li_endtime TIMESTAMP DEFAULT current_timestamp,
+    li_starttime DATETIME DEFAULT current_timestamp,
     li_salary_type TINYTEXT NOT NULL,
     li_quota INT(36) NOT NULL,
 
