@@ -95,7 +95,7 @@
 
 ## SSH
 
-- Server: `manbase-api.williswcy.com` or `test.manbasehk.com`
+- Server: `test.manbasehk.com`
 - Account: root
 - Password: eqh49-v3bnb
 - Location: ~/manbase
@@ -111,7 +111,7 @@ gunicorn run:app
 
 ## MySQL
 
-- Server Host: `manbase-api.williswcy.com` or `test.manbasehk.com`
+- Server Host: `www.manbasehk.com` or `test.manbasehk.com`
 - Account: charlescly / lancetpk / williswcy
 - Password: Same as the account name
 - Note: Please update your password with the following SQL command -
@@ -337,7 +337,7 @@ The individual user of the system. A sub-class of `user`.
 | `iu_HKID` | VARCHAR(9) | Not null |   | The letter(s) and the first 4 digit of the HKID of the individual user. TODO: Potential data privacy problem? |
 | `iu_gender` | TINYINT | Not null |   | The gender of the individual user. `0` represents female and `1` represents male. |
 | `iu_birthday` | DATE | Not null |   | The birthdate of the individual user. |
-| `iu_educationLevel` | TINYTEXT | Not null |   | The education level of the individual user. Currently, a number between '0' and '5' inclusive is used to represent the education level. The conversion are as follow - 0: 小學畢業或以下; 1: 完成中三; 2: 中學畢業; 3: 大學（本科）畢業; 4: 大學（碩士或以上）畢業; 5: 保密. TODO: Update the front-end such that it uses a string instead of a number for easier reading on database. |
+| `iu_educationLevel` | TINYTEXT | Not null |   | The education level of the individual user. Currently, a number between '0' and '5' inclusive is used to represent the education level. The conversion are as follow -<br /><br /> 0: 小學畢業或以下; <br />1: 完成中三; <br />2: 中學畢業; <br />3: 大學（本科）畢業; <br />4: 大學（碩士或以上）畢業; <br />5: 保密. <br /><br />TODO: Update the front-end such that it uses a string instead of a number for easier reading on database. |
 | `iu_selfIntroduction` | TEXT |  | `NULL` | The self-introduction of an individual user. TODO: Is this introduction shown to the business user when the individual user applys a job? |
 | `iu_language_Cantonese` | TINYINT | Not null |   | A flag signaling whether the individual user knows Cantonese. |
 | `iu_language_English` | TINYINT | Not null |   | A flag signaling whether the individual user knows English. |
@@ -618,9 +618,9 @@ The user of the system.
 | --- | --- | --- | --- | ---  |
 | `ur_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of the registration of the user. |
 | `ur_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the user. |
-| `ur_login` | VARCHAR(36) | Not null |   | The username of the user. \n\nTODO: Is there a lower limit on the length of the username? |
+| `ur_login` | VARCHAR(36) | Not null |   | The username of the user. <br /><br />TODO: Is there a lower limit on the length of the username? |
 | `ur_password_hash` | VARCHAR(255) | Not null |   | The hashed password of the user. |
-| `ur_isDeleted` | TINYINT |  | `'0'` | A flag signalling whether this account is deleted. Default to '0'.\n\nTODO: Do we need to include a button on the setting page to allow deletion of the account? |
+| `ur_isDeleted` | TINYINT |  | `'0'` | A flag signalling whether this account is deleted. Default to '0'.<br /><br />TODO: Do we need to include a button on the setting page to allow deletion of the account? |
 | `ur_phone` | VARCHAR(8) | Not null |   | The phone number of the user. The phone number must be a valid Hong Kong phone number. Area code ('+852') is not stored. |
 | `ur_email` | VARCHAR(255) | Not null |   | The email address of the user. |
 | `ur_email_key` | VARCHAR(255) |  | `NULL` | A key used to verify the email address provided. |
