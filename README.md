@@ -432,7 +432,7 @@ A relation on sessions of a job.
 
 ### Description: 
 
-The nature of the job. The nature is defined as the main role the individual user should do in a job.
+The nature of the job (contract, part-time, temporary job etc.)
 
 ### Columns: 
 
@@ -454,7 +454,7 @@ The nature of the job. The nature is defined as the main role the individual use
 
 ### Description: 
 
-The type of the job. The type refers to the frequency & salary of the job (e.g. part-time, one-off, etc.).
+The type of the job (referring to worker, office, sales etc.)
 
 ### Columns: 
 
