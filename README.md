@@ -95,7 +95,7 @@
 
 ## SSH
 
-- Server: `test.manbasehk.com`
+- Server: `www.manbasehk.com` or `test.manbasehk.com`
 - Account: root
 - Password: eqh49-v3bnb
 - Location: ~/manbase
