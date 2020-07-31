@@ -1,6 +1,6 @@
 SET foreign_key_checks = 0;
 -- Drop tables
-drop table if exists users, districts, job_type, industry, business_users, individual_users, jobs, job_listings, business_address, abnormality, job_applications, enrollments, announcement, announcement_listings, verification, rating_category, review, rating, review_followup;
+drop table if exists users, districts, job_type, industry, business_users, individual_users, jobs, job_listings, business_address, abnormality, job_applications, enrollments, announcement, announcement_listings, verification, rating_category, review, rating, review_followup,job_nature;
 SET foreign_key_checks = 1;
 
 CREATE TABLE users(
@@ -16,6 +16,7 @@ CREATE TABLE users(
     ur_reset_key VARCHAR(255),
     ur_isSMSVerified TINYINT(1) DEFAULT 0,
     ur_isEmailVerified TINYINT(1) DEFAULT 0,
+    ur_otp_hash VARCHAR(255)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE districts(
@@ -26,7 +27,8 @@ CREATE TABLE districts(
 CREATE TABLE job_type(
     jt_id VARCHAR(255) PRIMARY KEY,
     jt_name VARCHAR(36) NOT NULL,
-    jt_description VARCHAR(20000) NOT NULL
+    jt_description VARCHAR(20000) NOT NULL,
+    jt_isApproved BOOLEAN NOT NULL
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE industry(
@@ -34,11 +36,9 @@ CREATE TABLE industry(
     ind_name TEXT(36) NOT NULL
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
-
 CREATE TABLE business_users(
     bu_id VARCHAR(255) PRIMARY KEY,
     bu_ind_id VARCHAR(255),
-    bu_address VARCHAR(255),
     bu_CName VARCHAR(36) NOT NULL,
     bu_EName VARCHAR(36), #optional
     bu_picName VARCHAR(36) NOT NULL, 
@@ -49,6 +49,18 @@ CREATE TABLE business_users(
 
     FOREIGN KEY(bu_id) REFERENCES users(ur_id),
     FOREIGN KEY(bu_ind_id) REFERENCES industry(ind_id)
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+CREATE TABLE business_address(
+    bads_id VARCHAR(255) PRIMARY KEY,
+    bads_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
+    bads_detail TEXT(20000) NOT NULL,
+    bads_bu_id VARCHAR(255) NOT NULL,
+    bads_district_id VARCHAR(255) NOT NULL,
+    bads_isMajorAddress BOOLEAN NOT NULL,
+
+    FOREIGN KEY (bads_bu_id) REFERENCES business_users(bu_id),
+    FOREIGN KEY (bads_district_id) REFERENCES districts(district_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE individual_users(
@@ -74,6 +86,12 @@ CREATE TABLE individual_users(
         (iu_educationLevel IN ('primary school graduate','secondary school graduate', 'undergraduate or above'))
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
+CREATE TABLE job_nature(
+    jbna_id VARCHAR(255) PRIMARY KEY,
+    jbna_name VARCHAR(255) NOT NULL,
+    jbna_description VARCHAR(255)
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
 CREATE TABLE jobs(
     jb_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
     jb_id VARCHAR(255) PRIMARY KEY,
@@ -83,34 +101,29 @@ CREATE TABLE jobs(
     jb_expected_payment_days INT(36) NOT NULL,
     jb_bu_id VARCHAR(255) NOT NULL,
     jb_jt_id VARCHAR(255) NOT NULL,
+    jb_bads_id VARCHAR(255) NOT NULL,
+    jb_ind_id VARCHAR(255) NOT NULL,
+    jb_jbna_id VARCHAR(255) NOT NULL,
 
     FOREIGN KEY(jb_jt_id) REFERENCES job_type(jt_id),
-    FOREIGN KEY (jb_bu_id) REFERENCES business_users(bu_id)
+    FOREIGN KEY (jb_bu_id) REFERENCES business_users(bu_id),
+    FOREIGN KEY (jb_bads_id) REFERENCES business_address(bads_id),
+    FOREIGN KEY(jb_ind_id) REFERENCES industry(ind_id),
+    FOREIGN KEY(jb_jbna_id) REFERENCES job_nature(jbna_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE job_listings(
     li_id VARCHAR(255) PRIMARY KEY,
     li_jb_id VARCHAR(255) NOT NULL,
-    li_starttime TIME NOT NULL,
-    li_endtime TIME NOT NULL,
     li_salary_amt INT(255) NOT NULL,
+	li_endtime TIMESTAMP DEFAULT current_timestamp,
+    li_starttime DATETIME DEFAULT current_timestamp,
     li_salary_type TINYTEXT NOT NULL,
     li_quota INT(36) NOT NULL,
 
     FOREIGN KEY(li_jb_id) REFERENCES jobs(jb_id),
     CONSTRAINT li_salary_type CHECK(
         li_salary_type IN ('hour rate','lump sum'))
-)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-
-CREATE TABLE business_address(
-    bads_id VARCHAR(255) PRIMARY KEY,
-    bads_creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP on UPDATE CURRENT_TIMESTAMP,
-    bads_detail TEXT(20000) NOT NULL,
-    bads_jb_id VARCHAR(255) NOT NULL,
-    bads_district_id VARCHAR(255) NOT NULL,
-
-    FOREIGN KEY (bads_jb_id) REFERENCES jobs(jb_id),
-    FOREIGN KEY (bads_district_id) REFERENCES districts(district_id)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE abnormality(
