@@ -1,89 +1,93 @@
-# Manbase API Server
+# Manbase Web Server
 
 <!-- TOC -->
 
-- [Manbase API Server](#manbase-api-server)
+- [Manbase Web Server](#manbase-web-server)
 - [Server Connection Info](#server-connection-info)
-  - [SSH](#ssh)
-  - [MySQL](#mysql)
+    - [SSH](#ssh)
+    - [MySQL](#mysql)
 - [Class Diagram](#class-diagram)
-- [Schema documentation](#schema-documentation)
-  - [Table: `abnormality`](#table-abnormality)
-    - [Description:](#description)
-    - [Columns:](#columns)
-    - [Indices:](#indices)
-  - [Table: `announcement`](#table-announcement)
-    - [Description:](#description-1)
-    - [Columns:](#columns-1)
-    - [Indices:](#indices-1)
-  - [Table: `announcement_listings`](#table-announcement_listings)
-    - [Description:](#description-2)
-    - [Columns:](#columns-2)
-    - [Indices:](#indices-2)
-  - [Table: `business_address`](#table-business_address)
-    - [Description:](#description-3)
-    - [Columns:](#columns-3)
-    - [Indices:](#indices-3)
-  - [Table: `business_users`](#table-business_users)
-    - [Description:](#description-4)
-    - [Columns:](#columns-4)
-    - [Indices:](#indices-4)
-  - [Table: `districts`](#table-districts)
-    - [Description:](#description-5)
-    - [Columns:](#columns-5)
-    - [Indices:](#indices-5)
-  - [Table: `enrollments`](#table-enrollments)
-    - [Description:](#description-6)
-    - [Columns:](#columns-6)
-    - [Indices:](#indices-6)
-  - [Table: `individual_users`](#table-individual_users)
-    - [Description:](#description-7)
-    - [Columns:](#columns-7)
-    - [Indices:](#indices-7)
-  - [Table: `industry`](#table-industry)
-    - [Description:](#description-8)
-    - [Columns:](#columns-8)
-    - [Indices:](#indices-8)
-  - [Table: `job_applications`](#table-job_applications)
-    - [Description:](#description-9)
-    - [Columns:](#columns-9)
-    - [Indices:](#indices-9)
-  - [Table: `job_listings`](#table-job_listings)
-    - [Description:](#description-10)
-    - [Columns:](#columns-10)
-    - [Indices:](#indices-10)
-  - [Table: `job_type`](#table-job_type)
-    - [Description:](#description-11)
-    - [Columns:](#columns-11)
-    - [Indices:](#indices-11)
-  - [Table: `jobs`](#table-jobs)
-    - [Description:](#description-12)
-    - [Columns:](#columns-12)
-    - [Indices:](#indices-12)
-  - [Table: `rating`](#table-rating)
-    - [Description:](#description-13)
-    - [Columns:](#columns-13)
-    - [Indices:](#indices-13)
-  - [Table: `rating_category`](#table-rating_category)
-    - [Description:](#description-14)
-    - [Columns:](#columns-14)
-    - [Indices:](#indices-14)
-  - [Table: `review`](#table-review)
-    - [Description:](#description-15)
-    - [Columns:](#columns-15)
-    - [Indices:](#indices-15)
-  - [Table: `review_followup`](#table-review_followup)
-    - [Description:](#description-16)
-    - [Columns:](#columns-16)
-    - [Indices:](#indices-16)
-  - [Table: `users`](#table-users)
-    - [Description:](#description-17)
-    - [Columns:](#columns-17)
-    - [Indices:](#indices-17)
-  - [Table: `verification`](#table-verification)
-    - [Description:](#description-18)
-    - [Columns:](#columns-18)
-    - [Indices:](#indices-18)
+- [Schema documentation [As of 31st July 2020]](#schema-documentation-as-of-31st-july-2020)
+    - [Table: `abnormality`](#table-abnormality)
+        - [Description:](#description)
+        - [Columns:](#columns)
+        - [Indices:](#indices)
+    - [Table: `announcement`](#table-announcement)
+        - [Description:](#description-1)
+        - [Columns:](#columns-1)
+        - [Indices:](#indices-1)
+    - [Table: `announcement_listings`](#table-announcement_listings)
+        - [Description:](#description-2)
+        - [Columns:](#columns-2)
+        - [Indices:](#indices-2)
+    - [Table: `business_address`](#table-business_address)
+        - [Description:](#description-3)
+        - [Columns:](#columns-3)
+        - [Indices:](#indices-3)
+    - [Table: `business_users`](#table-business_users)
+        - [Description:](#description-4)
+        - [Columns:](#columns-4)
+        - [Indices:](#indices-4)
+    - [Table: `districts`](#table-districts)
+        - [Description:](#description-5)
+        - [Columns:](#columns-5)
+        - [Indices:](#indices-5)
+    - [Table: `enrollments`](#table-enrollments)
+        - [Description:](#description-6)
+        - [Columns:](#columns-6)
+        - [Indices:](#indices-6)
+    - [Table: `individual_users`](#table-individual_users)
+        - [Description:](#description-7)
+        - [Columns:](#columns-7)
+        - [Indices:](#indices-7)
+    - [Table: `industry`](#table-industry)
+        - [Description:](#description-8)
+        - [Columns:](#columns-8)
+        - [Indices:](#indices-8)
+    - [Table: `job_applications`](#table-job_applications)
+        - [Description:](#description-9)
+        - [Columns:](#columns-9)
+        - [Indices:](#indices-9)
+    - [Table: `job_listings`](#table-job_listings)
+        - [Description:](#description-10)
+        - [Columns:](#columns-10)
+        - [Indices:](#indices-10)
+    - [Table: `job_nature`](#table-job_nature)
+        - [Description:](#description-11)
+        - [Columns:](#columns-11)
+        - [Indices:](#indices-11)
+    - [Table: `job_type`](#table-job_type)
+        - [Description:](#description-12)
+        - [Columns:](#columns-12)
+        - [Indices:](#indices-12)
+    - [Table: `jobs`](#table-jobs)
+        - [Description:](#description-13)
+        - [Columns:](#columns-13)
+        - [Indices:](#indices-13)
+    - [Table: `rating`](#table-rating)
+        - [Description:](#description-14)
+        - [Columns:](#columns-14)
+        - [Indices:](#indices-14)
+    - [Table: `rating_category`](#table-rating_category)
+        - [Description:](#description-15)
+        - [Columns:](#columns-15)
+        - [Indices:](#indices-15)
+    - [Table: `review`](#table-review)
+        - [Description:](#description-16)
+        - [Columns:](#columns-16)
+        - [Indices:](#indices-16)
+    - [Table: `review_followup`](#table-review_followup)
+        - [Description:](#description-17)
+        - [Columns:](#columns-17)
+        - [Indices:](#indices-17)
+    - [Table: `users`](#table-users)
+        - [Description:](#description-18)
+        - [Columns:](#columns-18)
+        - [Indices:](#indices-18)
+    - [Table: `verification`](#table-verification)
+        - [Description:](#description-19)
+        - [Columns:](#columns-19)
+        - [Indices:](#indices-19)
 
 <!-- /TOC -->
 
@@ -125,502 +129,538 @@ UPDATE mysql.user SET Password = PASSWORD('{your_new_password}') WHERE user = '{
 ![Class Diagram](img/CLASS_DIAGRAM.png)
 
 
-# Schema documentation
+# Schema documentation [As of 31st July 2020]
 
 Generated by MySQL Workbench Model Documentation v1.0.0 - Copyright (c) 2015 Hieu Le
 
 ## Table: `abnormality`
 
 ### Description: 
-The abnormality reported by the users, which requires further follow-up by us.
 
+TBC.
 
 ### Columns: 
 
-| Column             | Data type    | Attributes        | Default                                         | Description                                                |
-| ------------------ | ------------ | ----------------- | ----------------------------------------------- | ---------------------------------------------------------- |
-| `abn_creationTime` | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The Timestamp the abnormality is submitted.                |
-| `abn_id`           | VARCHAR(255) | PRIMARY, Not null |                                                 | A unique identifier of the abnormality                     |
-| `abn_type`         | TINYTEXT     | Not null          |                                                 | **TBC**                                                    |
-| `abn_status`       | TINYTEXT     | Not null          |                                                 | **TBC**                                                    |
-| `abn_jb_id`        | VARCHAR(255) | Not null          |                                                 | **foreign key** to column `jb_id` on table `jobs`.         |
-| `abn_li_id`        | VARCHAR(255) | Not null          |                                                 | **foreign key** to column `li_id` on table `job_listings`. |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `abn_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |   |
+| `abn_id` | VARCHAR(255) | PRIMARY, Not null |   |   |
+| `abn_type` | TINYTEXT | Not null |   |   |
+| `abn_status` | TINYTEXT | Not null |   |   |
+| `abn_jb_id` | VARCHAR(255) | Not null |   |  **foreign key** to column `jb_id` on table `jobs`. |
+| `abn_li_id` | VARCHAR(255) |  | `NULL` |  **foreign key** to column `li_id` on table `job_listings`. |
+| `abn_message` | VARCHAR(255) | Not null |   |   |
+| `abn_ur_id` | VARCHAR(255) | Not null |   |  **foreign key** to column `ur_id` on table `users`. |
 
 
 ### Indices: 
 
-| Name      | Columns     | Type    | Description |
-| --------- | ----------- | ------- | ----------- |
-| PRIMARY   | `abn_id`    | PRIMARY |             |
-| abn_li_id | `abn_li_id` | INDEX   |             |
-| abn_jb_id | `abn_jb_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `abn_id` | PRIMARY |   |
+| abn_li_id | `abn_li_id` | INDEX |   |
+| abn_jb_id | `abn_jb_id` | INDEX |   |
+| abn_ur_id | `abn_ur_id` | INDEX |   |
 
 
 ## Table: `announcement`
 
 ### Description: 
-The announcement made by the business users on a particular job
 
+TBC.
 
 ### Columns: 
 
-| Column            | Data type    | Attributes        | Default                                         | Description                                                                                   |
-| ----------------- | ------------ | ----------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `an_creationTime` | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp the announcement is posted                                                      |
-| `an_id`           | VARCHAR(255) | PRIMARY, Not null |                                                 | A unique identifier of the announcement                                                       |
-| `an_message`      | TEXT         | Not null          |                                                 | The content of the announcement                                                               |
-| `an_isDeleted`    | TINYINT      |                   | `'0'`                                           | A flag which indicates whether this announcement is "deleted". `0`: Not deleted; `1`: Deleted |
-| `an_sender_id`    | VARCHAR(255) | Not null          |                                                 | **foreign key** to column `ur_id` on table `users`.                                           |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `an_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |   |
+| `an_id` | VARCHAR(255) | PRIMARY, Not null |   |   |
+| `an_message` | TEXT | Not null |   |   |
+| `an_isDeleted` | TINYINT |  | `'0'` |   |
+| `an_sender_id` | VARCHAR(255) | Not null |   |  **foreign key** to column `ur_id` on table `users`. |
+| `an_isFromEmployer` | TINYINT | Not null | `'0'` |   |
+| `an_replyTo` | VARCHAR(255) |  | `NULL` |  **foreign key** to column `an_id` on table `announcement`. |
 
 
 ### Indices: 
 
-| Name         | Columns        | Type    | Description |
-| ------------ | -------------- | ------- | ----------- |
-| PRIMARY      | `an_id`        | PRIMARY |             |
-| an_sender_id | `an_sender_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `an_id` | PRIMARY |   |
+| an_sender_id | `an_sender_id` | INDEX |   |
+| an_replyTo | `an_replyTo` | INDEX |   |
 
 
 ## Table: `announcement_listings`
 
 ### Description: 
-TBC.
 
-**TODO: Incorrect Mapping (Should Capture M-M relationship between `announcement` and `job_listings`; Captured M-M relationship between `job_applications` and `job_listings` instead.)
+TBC.
 
 ### Columns: 
 
-| Column              | Data type    | Attributes        | Default                                         | Description                                                    |
-| ------------------- | ------------ | ----------------- | ----------------------------------------------- | -------------------------------------------------------------- |
-| `anli_an_id`        | VARCHAR(255) | PRIMARY, Not null |                                                 | **foreign key** to column `ap_id` on table `job_applications`. |
-| `anli_li_id`        | VARCHAR(255) | PRIMARY, Not null |                                                 | **foreign key** to column `li_id` on table `job_listings`.     |
-| `anli_creationTime` | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |                                                                |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `anli_an_id` | VARCHAR(255) | PRIMARY, Not null |   |  **foreign key** to column `an_id` on table `announcement`. |
+| `anli_li_id` | VARCHAR(255) | PRIMARY, Not null |   |  **foreign key** to column `li_id` on table `job_listings`. |
+| `anli_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |   |
 
 
 ### Indices: 
 
-| Name       | Columns                    | Type    | Description |
-| ---------- | -------------------------- | ------- | ----------- |
-| PRIMARY    | `anli_an_id`, `anli_li_id` | PRIMARY |             |
-| anli_li_id | `anli_li_id`               | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `anli_an_id`, `anli_li_id` | PRIMARY |   |
+| anli_li_id | `anli_li_id` | INDEX |   |
 
 
 ## Table: `business_address`
 
 ### Description: 
-TBC.
 
-**TODO**: Did not consider this relation in registration.
-
+The busienss address of the business user/job.
 
 ### Columns: 
 
-| Column              | Data type    | Attributes        | Default                                         | Description                                                   |
-| ------------------- | ------------ | ----------------- | ----------------------------------------------- | ------------------------------------------------------------- |
-| `bads_id`           | VARCHAR(255) | PRIMARY, Not null |                                                 |                                                               |
-| `bads_creationTime` | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |                                                               |
-| `bads_detail`       | TEXT         | Not null          |                                                 |                                                               |
-| `bads_jb_id`        | VARCHAR(255) | Not null          |                                                 | **foreign key** to column `jb_id` on table `jobs`.            |
-| `bads_district_id`  | VARCHAR(255) | Not null          |                                                 | **foreign key** to column `district_id` on table `districts`. |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `bads_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the business address. |
+| `bads_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of the insertion of the business address. |
+| `bads_detail` | TEXT | Not null |   | The detailed address of the business, excluding the district. |
+| `bads_bu_id` | VARCHAR(255) | Not null |   | The unique identifier of a business user.<br /><br />**foreign key** to column `bu_id` on table `business_users`. |
+| `bads_district_id` | VARCHAR(255) | Not null |   | The unique identifier of the district.<br /><br />**foreign key** to column `district_id` on table `districts`. |
+| `bads_isMajorAddress` | TINYINT | Not null |   | A flag singaling whether this address is the default address for the business user. |
 
 
 ### Indices: 
 
-| Name             | Columns            | Type    | Description |
-| ---------------- | ------------------ | ------- | ----------- |
-| PRIMARY          | `bads_id`          | PRIMARY |             |
-| bads_jb_id       | `bads_jb_id`       | INDEX   |             |
-| bads_district_id | `bads_district_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `bads_id` | PRIMARY |   |
+| business_address_ibfk_1 | `bads_bu_id` | INDEX |   |
+| business_address_ibfk_2 | `bads_district_id` | INDEX |   |
 
 
 ## Table: `business_users`
 
 ### Description: 
-The relation that captures the information of a business user.
+
+The busienss user of the system. A sub-class of `user`.
 
 ### Columns: 
 
-| Column                          | Data type    | Attributes        | Default                                         | Description                                                                                                  |
-| ------------------------------- | ------------ | ----------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `bu_id`                         | VARCHAR(255) | PRIMARY, Not null |                                                 | **foreign key** to column `ur_id` on table `users`.                                                          |
-| `bu_ind_id`                     | VARCHAR(255) |                   | `NULL`                                          | **foreign key** to column `ind_id` on table `industry`. **TODO**: Did not consider this on the registrations |
-| `bu_address`                    | VARCHAR(255) |                   | `NULL`                                          | The address of the business user. **TODO**: Did not consider this on the registrations                       |
-| `bu_email`                      | VARCHAR(255) |                   | `NULL`                                          | The email address of the business user's company.                                                            |
-| `bu_CName`                      | VARCHAR(36)  | Not null          |                                                 | The Chinese name of the business user's company.                                                             |
-| `bu_EName`                      | VARCHAR(36)  |                   | `NULL`                                          | The English name of the business user's company.                                                             |
-| `bu_picName`                    | VARCHAR(36)  | Not null          | The name of the person-in-charge of the company |
-| `bu_phone`                      | VARCHAR(8)   | Not null          | The phone number of the business user           |
-| `bu_isSMSVerified`              | TINYINT      |                   | `'0'`                                           | A flag of whether the phone number is verified                                                               |
-| `bu_businessLogo`               | VARCHAR(255) |                   | `NULL`                                          | The file name of the Logo of the business user's company                                                     |
-| `bu_isDeleted`                  | TINYINT      |                   | `'0'`                                           | A flag of whether this business user is deleted                                                              |
-| `bu_BusinessVerificationStatus` | VARCHAR(1)   |                   | `'0'`                                           | A flag of whether this business user is verified                                                             |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `bu_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the business user.<br /><br />**foreign key** to column `ur_id` on table `users`. |
+| `bu_ind_id` | VARCHAR(255) |  | `NULL` | the unique identifier of the industry of the business user.<br /><br />**foreign key** to column `ind_id` on table `industry`. |
+| `bu_CName` | VARCHAR(36) | Not null |   | The Chinese name of the company. TODO: Is it possible a company only have an English name but not a Chinese one (in HK)? |
+| `bu_EName` | VARCHAR(36) |  | `NULL` | The English name of the company. |
+| `bu_picName` | VARCHAR(36) | Not null |   | The name of the person-in-charge of the company account. |
+| `bu_confirmation_sent_on` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of sending the confirmation to the business user. TODO: Confirmation of? |
+| `bu_businessLogo` | VARCHAR(255) |  | `NULL` | The URL of the logo of the business user. |
+| `bu_isDeleted` | TINYINT |  | `'0'` | A flag singaling whether this business user account is deleted. |
+| `bu_BusinessVerificationStatus` | VARCHAR(1) |  | `'0'` | A flag singaling whether the Business Registration Certificate is verified through the verification class. |
 
 
 ### Indices: 
 
-| Name      | Columns     | Type    | Description |
-| --------- | ----------- | ------- | ----------- |
-| PRIMARY   | `bu_id`     | PRIMARY |             |
-| bu_ind_id | `bu_ind_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `bu_id` | PRIMARY |   |
+| business_users_ibfk_2 | `bu_ind_id` | INDEX |   |
 
 
 ## Table: `districts`
 
 ### Description: 
-To capture the possible district of a job.
+
+The district of a business address. The district here does not refer to the 18 adminstrative districts; rather, it's a geographical place of Hong Kong (similar to MTR stations).
 
 ### Columns: 
 
-| Column          | Data type    | Attributes        | Default | Description                         |
-| --------------- | ------------ | ----------------- | ------- | ----------------------------------- |
-| `district_id`   | VARCHAR(255) | PRIMARY, Not null |         | A unique identifier of the district |
-| `district_name` | VARCHAR(36)  | Not null          |         | The name of the district            |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `district_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the district. |
+| `district_name` | VARCHAR(36) | Not null |   | The name of the district. |
 
 
 ### Indices: 
 
-| Name    | Columns       | Type    | Description |
-| ------- | ------------- | ------- | ----------- |
-| PRIMARY | `district_id` | PRIMARY |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `district_id` | PRIMARY |   |
 
 
 ## Table: `enrollments`
 
 ### Description: 
-The relation that captures the enrollment of a job by an individual user.
 
+The enrollment of a job. An enrollment is a job application that is approved by the business user.
 
 ### Columns: 
 
-| Column              | Data type    | Attributes        | Default                                                              | Description                                                    |
-| ------------------- | ------------ | ----------------- | -------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `en_creationTime`   | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`                      | The time the enrollment is submitted                           |
-| `en_id`             | VARCHAR(255) | PRIMARY, Not null | A unique identifier of the enrollment                                |
-| `en_is_paid`        | TINYINT      | Not null          | A flag of whether the enrollment is paid                             |
-| `en_present_status` | TINYTEXT     | Not null          | The status of the enrollment. **TODO**: Define the possible statuses |
-| `en_li_id`          | VARCHAR(255) | Not null          |                                                                      | **foreign key** to column `li_id` on table `job_listings`.     |
-| `en_ap_id`          | VARCHAR(255) | Not null          |                                                                      | **foreign key** to column `ap_id` on table `job_applications`. |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `en_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of the creation of the job enrollment. |
+| `en_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the enrollment. |
+| `en_is_paid` | TINYINT |  | `NULL` | A flag signaling whether the salary for this enrollment is paid. TODO: How do we allow user to change this status? On which page? By whom? |
+| `en_present_status` | TINYTEXT |  | `NULL` | TODO: What are the possible statuses? |
+| `en_li_id` | VARCHAR(255) | Not null |   | The unique identifier of a job listing.<br /><br />**foreign key** to column `li_id` on table `job_listings`. |
+| `en_ap_id` | VARCHAR(255) | Not null |   | The unqiue identifier of a job application.<br /><br />**foreign key** to column `ap_id` on table `job_applications`. |
 
 
 ### Indices: 
 
-| Name     | Columns    | Type    | Description |
-| -------- | ---------- | ------- | ----------- |
-| PRIMARY  | `en_id`    | PRIMARY |             |
-| en_li_id | `en_li_id` | INDEX   |             |
-| en_ap_id | `en_ap_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `en_id` | PRIMARY |   |
+| enrollments_ibfk_1 | `en_li_id` | INDEX |   |
+| enrollments_ibfk_2 | `en_ap_id` | INDEX |   |
 
 
 ## Table: `individual_users`
 
 ### Description: 
-The relation that store the informaiton of individual users.
 
+The individual user of the system. A sub-class of `user`.
 
 ### Columns: 
 
-| Column                   | Data type     | Attributes        | Default                                                              | Description                                                                                                                 |
-| ------------------------ | ------------- | ----------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `iu_id`                  | VARCHAR(255)  | PRIMARY, Not null |                                                                      | **foreign key** to column `ur_id` on table `users`.                                                                         |
-| `iu_phone`               | INT           | Not null          | The mobile phone number of the individual user.                      |
-| `iu_isSMSVerified`       | TINYINT       |                   | `'0'`                                                                | A flag of whether the phone is verified by SMS                                                                              |
-| `iu_profilePicture`      | VARCHAR(2048) |                   | `NULL`                                                               | The file name of the profile picture of the individual user                                                                 |
-| `iu_isIndentityVerified` | TINYINT       |                   | `'0'`                                                                | A flag of whether the identity of the individual user is verified                                                           |
-| `iu_email`               | VARCHAR(255)  |                   | `NULL`                                                               | The email address of the individual user                                                                                    |
-| `iu_CName`               | VARCHAR(36)   | Not null          | The Chinese name of the individual user                              |
-| `iu_EName`               | VARCHAR(36)   | Not null          | The English name of the individual user                              |
-| `iu_alias`               | VARCHAR(36)   | Not null          | The nick name of the individual user                                 |
-| `iu_HKID_head`           | VARCHAR(1)    | Not null          | The first letter of the HKID                                         |
-| `iu_HKID_tail`           | VARCHAR(3)    | Not null          | The last three digit of the HKID (excluding the bracket check digit) |
-| `iu_gender`              | TINYINT       | Not null          | The gender of the individual user. **TODO**: `0` stands for what?    |
-| `iu_birthday`            | DATE          | Not null          | The birthdate of the individual user                                 |
-| `iu_educationLevel`      | TINYTEXT      | Not null          |                                                                      | The education level of the individual user. **TODO**: `0` stands for what?                                                  |
-| `iu_selfIntroduction`    | TEXT          |                   | `NULL`                                                               | The self-introduction of the individual user. **TODO**: No default value may mean that most users have a empty introduction |
-| `iu_language_Cantonese`  | TINYINT       | Not null          |                                                                      | A flag indicating the individual user's ability of using Cantonese                                                          |
-| `iu_language_English`    | TINYINT       | Not null          |                                                                      | A flag indicating the individual user's ability of using English                                                            |
-| `iu_language_Putonghua`  | TINYINT       | Not null          |                                                                      | A flag indicating the individual user's ability of using Mandarin                                                           |
-| `iu_isDeleted`           | TINYINT       |                   | `'0'`                                                                | A flag singalling the individual user is deleted                                                                            |
-| `iu_language_Other`      | VARCHAR(36)   |                   | `NULL`                                                               | A string of other languages the individual user can speak                                                                   |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `iu_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of a user.<br /><br />**foreign key** to column `ur_id` on table `users`. |
+| `iu_profilePicture` | VARCHAR(2048) |  | `NULL` | The URL of the profile picture of the individual user. |
+| `iu_confirmation_sent_on` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of sending the confirmation to the individual user. TODO: Confirmation of? |
+| `iu_CName` | VARCHAR(36) | Not null |   | The Chinese name of individual user. |
+| `iu_EName` | VARCHAR(36) | Not null |   | The English name of the individual user. |
+| `iu_alias` | VARCHAR(36) | Not null |   | The nickname of the individual user. |
+| `iu_HKID` | VARCHAR(9) | Not null |   | The letter(s) and the first 4 digit of the HKID of the individual user. TODO: Potential data privacy problem? |
+| `iu_gender` | TINYINT | Not null |   | The gender of the individual user. `0` represents female and `1` represents male. |
+| `iu_birthday` | DATE | Not null |   | The birthdate of the individual user. |
+| `iu_educationLevel` | TINYTEXT | Not null |   | The education level of the individual user. Currently, a number between '0' and '5' inclusive is used to represent the education level. The conversion are as follow - 0: 小學畢業或以下; 1: 完成中三; 2: 中學畢業; 3: 大學（本科）畢業; 4: 大學（碩士或以上）畢業; 5: 保密. TODO: Update the front-end such that it uses a string instead of a number for easier reading on database. |
+| `iu_selfIntroduction` | TEXT |  | `NULL` | The self-introduction of an individual user. TODO: Is this introduction shown to the business user when the individual user applys a job? |
+| `iu_language_Cantonese` | TINYINT | Not null |   | A flag signaling whether the individual user knows Cantonese. |
+| `iu_language_English` | TINYINT | Not null |   | A flag signaling whether the individual user knows English. |
+| `iu_language_Putonghua` | TINYINT | Not null |   | A flag signaling whether the individual user knows Putonghua. |
+| `iu_language_Other` | VARCHAR(36) |  | `NULL` | Other languages that the individual user knows. TODO: Is this field **really** useful? |
+| `iu_isDeleted` | TINYINT |  | `'0'` | A flag singaling whether this individual user account is deleted. |
 
 
 ### Indices: 
 
-| Name    | Columns | Type    | Description |
-| ------- | ------- | ------- | ----------- |
-| PRIMARY | `iu_id` | PRIMARY |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `iu_id` | PRIMARY |   |
 
 
 ## Table: `industry`
 
 ### Description: 
-The relation that captures the possible industry of a business user.
 
+The industry of a business user.
 
 ### Columns: 
 
-| Column     | Data type    | Attributes        | Default | Description                          |
-| ---------- | ------------ | ----------------- | ------- | ------------------------------------ |
-| `ind_id`   | VARCHAR(255) | PRIMARY, Not null |         | An unique identifier of the industry |
-| `ind_name` | TINYTEXT     | Not null          |         | The name of the industry             |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `ind_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the industry. |
+| `ind_name` | TINYTEXT | Not null |   | The name of the industry. TODO: Define the possible industries. |
 
 
 ### Indices: 
 
-| Name    | Columns  | Type    | Description |
-| ------- | -------- | ------- | ----------- |
-| PRIMARY | `ind_id` | PRIMARY |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `ind_id` | PRIMARY |   |
 
 
 ## Table: `job_applications`
 
 ### Description: 
-The relation that captures the application of a job listing by an individual user.
 
+Job applications submitted by individual user, and approved by business user.
 
 ### Columns: 
 
-| Column            | Data type    | Attributes        | Default                                                               | Description                                                    |
-| ----------------- | ------------ | ----------------- | --------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `ap_creationTime` | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`                       |                                                                |
-| `ap_id`           | VARCHAR(255) | PRIMARY, Not null |                                                                       | A unique identifier of the application.                        |
-| `ap_status`       | TINYTEXT     | Not null          | The status of the application. **TODO**: Define the possible statuses |
-| `ap_isDeleted`    | TINYINT      |                   | `'0'`                                                                 | A flag that indicates the application is deleted               |
-| `ap_li_id`        | VARCHAR(255) | Not null          |                                                                       | **foreign key** to column `li_id` on table `job_listings`.     |
-| `ap_iu_id`        | VARCHAR(255) | Not null          |                                                                       | **foreign key** to column `iu_id` on table `individual_users`. |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `ap_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of the job application. |
+| `ap_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the job application. |
+| `ap_status` | TINYTEXT | Not null |   | The status of the job application. TODO: Define the possible statuses. |
+| `ap_isDeleted` | TINYINT |  | `'0'` | A flag signaling whether this applciation is deleted. TODO: Why don't we use the `ap_status` column instead? Is there business meaning? |
+| `ap_li_id` | VARCHAR(255) | Not null |   | The unique identifier of the job listing.<br /><br />**foreign key** to column `li_id` on table `job_listings`. |
+| `ap_iu_id` | VARCHAR(255) | Not null |   | The unique identifier of the individual user.<br /><br />**foreign key** to column `iu_id` on table `individual_users`. |
 
 
 ### Indices: 
 
-| Name     | Columns    | Type    | Description |
-| -------- | ---------- | ------- | ----------- |
-| PRIMARY  | `ap_id`    | PRIMARY |             |
-| ap_li_id | `ap_li_id` | INDEX   |             |
-| ap_iu_id | `ap_iu_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `ap_id` | PRIMARY |   |
+| job_applications_ibfk_1 | `ap_li_id` | INDEX |   |
+| job_applications_ibfk_2 | `ap_iu_id` | INDEX |   |
 
 
 ## Table: `job_listings`
 
 ### Description: 
-A relation that captures the possible shifts of a particular job.
 
+A relation on sessions of a job.
 
 ### Columns: 
 
-| Column           | Data type    | Attributes        | Default | Description                                             |
-| ---------------- | ------------ | ----------------- | ------- | ------------------------------------------------------- |
-| `li_id`          | VARCHAR(255) | PRIMARY, Not null |         | A unique identifier of the job listing                  |
-| `li_jb_id`       | VARCHAR(255) | Not null          |         | **foreign key** to column `jb_id` on table `jobs`.      |
-| `li_starttime`   | TIME         | Not null          |         | The start time of the shift                             |
-| `li_endtime`     | TIME         | Not null          |         | The end time of the shift                               |
-| `li_salary_amt`  | INT          | Not null          |         | The amount of salary (HKD)                              |
-| `li_salary_type` | TINYTEXT     | Not null          |         | The type of salary. **TODO**: Define the possible types |
-| `li_quota`       | INT          | Not null          |         | The quota of enrollment of the shift                    |
-| `li_jt_id`       | VARCHAR(255) | Not null          |         | **foreign key** to column `jt_id` on table `job_type`.  |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `li_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of a job listing. |
+| `li_jb_id` | VARCHAR(255) | Not null |   | The unique identifier of the job.<br /><br />**foreign key** to column `jb_id` on table `jobs`. |
+| `li_salary_amt` | INT | Not null |   | The salary of the job listing. Presumed the currency as `HKD`. |
+| `li_endtime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP` | The end time of the job. TODO: What happen if the job is a part-time one? |
+| `li_starttime` | DATETIME |  | `CURRENT_TIMESTAMP` | The start time of the job. TODO: What happen if the job is a part-time one? |
+| `li_salary_type` | TINYTEXT | Not null |   | The type of the salary. TODO: Define the possible values. |
+| `li_quota` | INT | Not null |   | The quota of the listing. |
 
 
 ### Indices: 
 
-| Name     | Columns    | Type    | Description |
-| -------- | ---------- | ------- | ----------- |
-| PRIMARY  | `li_id`    | PRIMARY |             |
-| li_jb_id | `li_jb_id` | INDEX   |             |
-| li_jt_id | `li_jt_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `li_id` | PRIMARY |   |
+| job_listings_ibfk_1 | `li_jb_id` | INDEX |   |
+
+
+## Table: `job_nature`
+
+### Description: 
+
+The nature of the job. The nature is defined as the main role the individual user should do in a job.
+
+### Columns: 
+
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `jbna_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the job nature. |
+| `jbna_name` | VARCHAR(255) | Not null |   | The name of the job nature. TODO: Define the possible job natures. |
+| `jbna_description` | VARCHAR(255) |  | `NULL` | The description of the job nature. TODO: Whether do we show this information? |
+
+
+### Indices: 
+
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `jbna_id` | PRIMARY |   |
 
 
 ## Table: `job_type`
 
 ### Description: 
-The relation that store the possible types of a job.
 
+The type of the job. The type refers to the frequency & salary of the job (e.g. part-time, one-off, etc.).
 
 ### Columns: 
 
-| Column           | Data type      | Attributes        | Default | Description                         |
-| ---------------- | -------------- | ----------------- | ------- | ----------------------------------- |
-| `jt_id`          | VARCHAR(255)   | PRIMARY, Not null |         | A unique identifier of the job type |
-| `jt_name`        | VARCHAR(36)    | Not null          |         | The name of the job type            |
-| `jt_description` | VARCHAR(20000) | Not null          |         | The description of the job type     |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `jt_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the job type. |
+| `jt_name` | VARCHAR(36) | Not null |   | The name of the job type. |
+| `jt_description` | VARCHAR(20000) | Not null |   | The description of the job type description. TODO: Where do we show this information? |
+| `jt_isApproved` | TINYINT | Not null |   | TODO: TBD |
 
 
 ### Indices: 
 
-| Name    | Columns | Type    | Description |
-| ------- | ------- | ------- | ----------- |
-| PRIMARY | `jt_id` | PRIMARY |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `jt_id` | PRIMARY |   |
 
 
 ## Table: `jobs`
 
 ### Description: 
-The relation that store the jobs created by the business users.
 
+The job posted by the business user. Each job can have multiple sessions, which are defined in the `job_listings` table.
 
 ### Columns: 
 
-| Column                     | Data type    | Attributes        | Default                                         | Description                                                                      |
-| -------------------------- | ------------ | ----------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
-| `jb_creationTime`          | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp the job is created                                                 |
-| `jb_id`                    | VARCHAR(255) | PRIMARY, Not null |                                                 | A unique identifier of the job                                                   |
-| `jb_decription`            | TEXT         | Not null          |                                                 | The description of the job                                                       |
-| `jb_isDeleted`             | TINYINT      |                   | `'0'`                                           | A flag signaling the job is deleted                                              |
-| `jb_expected_payment_days` | INT          | Not null          |                                                 | The number of days (after the shifts) that the business user must pay the salary |
-| `jb_bu_id`                 | VARCHAR(255) | Not null          |                                                 | **foreign key** to column `bu_id` on table `business_users`.                     |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `jb_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of the creation of a job. |
+| `jb_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the job. |
+| `jb_title` | VARCHAR(255) | Not null |   | The name/title of the job. |
+| `jb_description` | TEXT | Not null |   | The description of the job. The description should be a plain text and should not allow any formatting. |
+| `jb_isDeleted` | TINYINT |  | `'0'` | A flag singalling whether this job is deleted. TODO: Are there any other statuses? |
+| `jb_expected_payment_days` | INT | Not null |   | The number of days the business user promises to pay the salary. TODO: Did we factor this function in SRS? |
+| `jb_bu_id` | VARCHAR(255) | Not null |   | The unique identifier of a business user.<br /><br />**foreign key** to column `bu_id` on table `business_users`. |
+| `jb_jt_id` | VARCHAR(255) | Not null |   | The unique identifier of a job type.<br /><br />**foreign key** to column `jt_id` on table `job_type`. |
+| `jb_bads_id` | VARCHAR(255) | Not null |   | The unqiue identifier of the business address.<br /><br />**foreign key** to column `bads_id` on table `business_address`. |
+| `jb_ind_id` | VARCHAR(255) | Not null |   | The unqiue identifier of the industry.<br /><br />**foreign key** to column `ind_id` on table `industry`. |
+| `jb_jbna_id` | VARCHAR(255) | Not null |   | The unique identifier of the job nature.<br /><br />**foreign key** to column `jbna_id` on table `job_nature`. |
 
 
 ### Indices: 
 
-| Name     | Columns    | Type    | Description |
-| -------- | ---------- | ------- | ----------- |
-| PRIMARY  | `jb_id`    | PRIMARY |             |
-| jb_bu_id | `jb_bu_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `jb_id` | PRIMARY |   |
+| jobs_ibfk_1 | `jb_jt_id` | INDEX |   |
+| jobs_ibfk_2 | `jb_bu_id` | INDEX |   |
+| jobs_ibfk_3 | `jb_bads_id` | INDEX |   |
+| jobs_ibfk_4 | `jb_ind_id` | INDEX |   |
+| jobs_ibfk_5 | `jb_jbna_id` | INDEX |   |
 
 
 ## Table: `rating`
 
 ### Description: 
-The relation that store the rating of a job listing (associated through review).
 
+The rating provided by user. Each rating is linked to a review, and each review is linked to a job listing.
 
 ### Columns: 
 
-| Column       | Data type    | Attributes        | Default | Description                                                   |
-| ------------ | ------------ | ----------------- | ------- | ------------------------------------------------------------- |
-| `rate_re_id` | VARCHAR(255) | PRIMARY, Not null |         | **foreign key** to column `re_id` on table `review`.          |
-| `rate_rc_id` | VARCHAR(255) | PRIMARY, Not null |         | **foreign key** to column `rc_id` on table `rating_category`. |
-| `rate_score` | INT          | Not null          |         | The score of the rating                                       |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `rate_re_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of a review.<br /><br />**foreign key** to column `re_id` on table `review`. |
+| `rate_rc_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of a rating category.<br /><br />**foreign key** to column `rc_id` on table `rating_category`. |
+| `rate_score` | INT | Not null |   | The score of the rating. TODO: Define the range of the score. |
 
 
 ### Indices: 
 
-| Name       | Columns                    | Type    | Description |
-| ---------- | -------------------------- | ------- | ----------- |
-| PRIMARY    | `rate_re_id`, `rate_rc_id` | PRIMARY |             |
-| rate_rc_id | `rate_rc_id`               | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `rate_re_id`, `rate_rc_id` | PRIMARY |   |
+| rating_ibfk_2 | `rate_rc_id` | INDEX |   |
 
 
 ## Table: `rating_category`
 
 ### Description: 
-The relation that store the possible rating category of the system.
 
+The possible categories of the rating. TODO: How do we differentiate between category against business user and against individual user?
 
 ### Columns: 
 
-| Column    | Data type    | Attributes        | Default | Description                         |
-| --------- | ------------ | ----------------- | ------- | ----------------------------------- |
-| `rc_id`   | VARCHAR(255) | PRIMARY, Not null |         | A unique identifier of the category |
-| `rc_name` | VARCHAR(36)  | Not null          |         | The name of the category            |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `rc_id` | VARCHAR(255) | PRIMARY, Not null |   | A unique identifier of the rating category. |
+| `rc_name` | VARCHAR(36) | Not null |   | The name of the rating category. TODO: Define the possible categories. |
 
 
 ### Indices: 
 
-| Name    | Columns | Type    | Description |
-| ------- | ------- | ------- | ----------- |
-| PRIMARY | `rc_id` | PRIMARY |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `rc_id` | PRIMARY |   |
 
 
 ## Table: `review`
 
 ### Description: 
-The relation that store the rating of a user by another user, associated by a job listing.
 
-**TODO**: `re_receiver_id` and `re_sender_id` should be a Foreign Key references `Users`, but did not appear so in the current database.
+The review of a job listing. The review can be made by a business user for an individual user, and vice versa.
 
 ### Columns: 
 
-| Column                | Data type    | Attributes        | Default                                         | Description                                               |
-| --------------------- | ------------ | ----------------- | ----------------------------------------------- | --------------------------------------------------------- |
-| `re_id`               | VARCHAR(255) | PRIMARY, Not null |                                                 | A unique identifier of the review                         |
-| `re_creationTIME`     | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |                                                           |
-| `re_receiver_id`      | INT          | Not null          |                                                 |                                                           |
-| `re_sender_id`        | INT          | Not null          |                                                 |                                                           |
-| `re_comment`          | TEXT         | Not null          |                                                 |                                                           |
-| `re_isFollowUpNeeded` | TINYINT      | Not null          |                                                 |                                                           |
-| `re_isDeleted`        | TINYINT      |                   | `'0'`                                           |                                                           |
-| `re_en_id`            | VARCHAR(255) | Not null          |                                                 | **foreign key** to column `en_id` on table `enrollments`. |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `re_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the review. |
+| `re_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of the creation of the review. |
+| `re_receiver_id` | VARCHAR(255) | Not null |   | The unique identifier of the user receiving the review.<br /><br />**foreign key** to column `ur_id` on table `users`. |
+| `re_sender_id` | VARCHAR(255) | Not null |   | The unique identifier of the user sending the review.<br /><br />**foreign key** to column `ur_id` on table `users`. |
+| `re_comment` | TEXT | Not null |   | The message body of the review. The message body should contain plain text with no formatting allowed. |
+| `re_isDeleted` | TINYINT |  | `'0'` | A flag signalling whether is comment is deleted. |
+| `re_en_id` | VARCHAR(255) | Not null |   | The unique identifier of a job enrollment.<br /><br />**foreign key** to column `en_id` on table `enrollments`. |
 
 
 ### Indices: 
 
-| Name     | Columns    | Type    | Description |
-| -------- | ---------- | ------- | ----------- |
-| PRIMARY  | `re_id`    | PRIMARY |             |
-| re_en_id | `re_en_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `re_id` | PRIMARY |   |
+| review_ibfk_1 | `re_en_id` | INDEX |   |
+| review_ibfk_2 | `re_receiver_id` | INDEX |   |
+| review_ibfk_3 | `re_sender_id` | INDEX |   |
 
 
 ## Table: `review_followup`
 
 ### Description: 
-**TBC**.
+
 
 
 ### Columns: 
 
-| Column             | Data type    | Attributes        | Default                                         | Description                                          |
-| ------------------ | ------------ | ----------------- | ----------------------------------------------- | ---------------------------------------------------- |
-| `rf_creationTIME`  | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |                                                      |
-| `rf_id`            | VARCHAR(255) | PRIMARY, Not null |                                                 |                                                      |
-| `rf_followup_time` | TIME         | Not null          |                                                 |                                                      |
-| `rf_comment`       | TEXT         | Not null          |                                                 |                                                      |
-| `rf_re_id`         | VARCHAR(255) | Not null          |                                                 | **foreign key** to column `re_id` on table `review`. |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `rf_creationTIME` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |   |
+| `rf_id` | VARCHAR(255) | PRIMARY, Not null |   |   |
+| `rf_followup_time` | TIME | Not null |   |   |
+| `rf_comment` | TEXT | Not null |   |   |
+| `rf_re_id` | VARCHAR(255) | Not null |   |  **foreign key** to column `re_id` on table `review`. |
 
 
 ### Indices: 
 
-| Name     | Columns    | Type    | Description |
-| -------- | ---------- | ------- | ----------- |
-| PRIMARY  | `rf_id`    | PRIMARY |             |
-| rf_re_id | `rf_re_id` | INDEX   |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `rf_id` | PRIMARY |   |
+| rf_re_id | `rf_re_id` | INDEX |   |
 
 
 ## Table: `users`
 
 ### Description: 
-A super class of `business_users` and `individual_users`. 
 
+The user of the system.
 
 ### Columns: 
 
-| Column             | Data type    | Attributes        | Default                                         | Description                           |
-| ------------------ | ------------ | ----------------- | ----------------------------------------------- | ------------------------------------- |
-| `ur_creationTime`  | TIMESTAMP    | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp the user is registered  |
-| `ur_id`            | VARCHAR(255) | PRIMARY, Not null |                                                 | A unique identifier of each user      |
-| `ur_login`         | VARCHAR(36)  | Not null          |                                                 | The login name of the user            |
-| `ur_password_hash` | VARCHAR(255) | Not null          |                                                 | The password hash of the user         |
-| `ur_isDeleted`     | TINYINT      |                   | `'0'`                                           | A flag signalling the user is deleted |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `ur_creationTime` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of the registration of the user. |
+| `ur_id` | VARCHAR(255) | PRIMARY, Not null |   | The unique identifier of the user. |
+| `ur_login` | VARCHAR(36) | Not null |   | The username of the user. \n\nTODO: Is there a lower limit on the length of the username? |
+| `ur_password_hash` | VARCHAR(255) | Not null |   | The hashed password of the user. |
+| `ur_isDeleted` | TINYINT |  | `'0'` | A flag signalling whether this account is deleted. Default to '0'.\n\nTODO: Do we need to include a button on the setting page to allow deletion of the account? |
+| `ur_phone` | VARCHAR(8) | Not null |   | The phone number of the user. The phone number must be a valid Hong Kong phone number. Area code ('+852') is not stored. |
+| `ur_email` | VARCHAR(255) | Not null |   | The email address of the user. |
+| `ur_email_key` | VARCHAR(255) |  | `NULL` | A key used to verify the email address provided. |
+| `ur_sms_key` | VARCHAR(255) |  | `NULL` | A key used to validate the phone number provided. An individual user must provide a mobile phone nubmer which SMS can be sent to, however a business user may provide a valid landline or mobile number. |
+| `ur_reset_key` | VARCHAR(255) |  | `NULL` | A key used to reset the password of the user. |
+| `ur_isSMSVerified` | TINYINT |  | `'0'` | A flag singalling whether the phone number is verified. |
+| `ur_isEmailVerified` | TINYINT |  | `'0'` | A flag singalling whether the email address is verified. |
+| `ur_otp_hash` | VARCHAR(255) |  | `NULL` | A one-time password used for resetting password. |
 
 
 ### Indices: 
 
-| Name    | Columns | Type    | Description |
-| ------- | ------- | ------- | ----------- |
-| PRIMARY | `ur_id` | PRIMARY |             |
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `ur_id` | PRIMARY |   |
 
 
 ## Table: `verification`
 
 ### Description: 
-A relation that stores the need for verification for both types of users.
 
+The verification submitted by the user. TODO: How do we label the user if a verification is done?
 
 ### Columns: 
 
-| Column              | Data type     | Attributes        | Default                                         | Description                                                       |
-| ------------------- | ------------- | ----------------- | ----------------------------------------------- | ----------------------------------------------------------------- |
-| `veri_creationTIME` | TIMESTAMP     | Not null          | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |                                                                   |
-| `veri_id`           | VARCHAR(255)  | PRIMARY, Not null |                                                 | A unique identifier of the verification task                      |
-| `veri_type`         | TINYTEXT      | Not null          |                                                 | The type of the verification. **TODO**: Define the possible types |
-| `veri_doc`          | VARCHAR(2048) | Not null          |                                                 | The filename of the document to be verified                       |
-| `veri_ur_id`        | VARCHAR(255)  | Not null          |                                                 | **foreign key** to column `ur_id` on table `users`.               |
+| Column | Data type | Attributes | Default | Description |
+| --- | --- | --- | --- | ---  |
+| `veri_creationTIME` | TIMESTAMP | Not null | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | The timestamp of the verification request. |
+| `veri_id` | VARCHAR(255) | PRIMARY, Not null |   | A unique identifier for each verification request. |
+| `veri_type` | TINYTEXT | Not null |   | The type of the verification. TODO: Define the possible types. |
+| `veri_doc` | VARCHAR(2048) | Not null |   | The URL of the verification file. TODO: What file formats should we allow? |
+| `veri_ur_id` | VARCHAR(255) | Not null |   | The user requesting the verification.<br /><br />**foreign key** to column `ur_id` on table `users`. |
+| `veri_isApproved` | TINYINT |  | `'0'` | A flag signalling whether the verification is approved. Default to '0'. |
 
 
 ### Indices: 
 
-| Name       | Columns      | Type    | Description |
-| ---------- | ------------ | ------- | ----------- |
-| PRIMARY    | `veri_id`    | PRIMARY |             |
-| veri_ur_id | `veri_ur_id` | INDEX   |             |
-
-
+| Name | Columns | Type | Description |
+| --- | --- | --- | --- |
+| PRIMARY | `veri_id` | PRIMARY |   |
+| verification_ibfk_1 | `veri_ur_id` | INDEX |   |
 
 
