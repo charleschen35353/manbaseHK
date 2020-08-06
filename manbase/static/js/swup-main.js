@@ -9,9 +9,24 @@ const init = () => {
 
     if (document.querySelector('#business_register')) {
         business_register_on_load();
+
+        // Delay the script by 1 second so it avoids the race condition on FIREFOX
+        setTimeout(() => {
+            grecaptcha.render('recaptcha', {
+                sitekey: '6LftibMZAAAAAETVT1059c9ue_KF7Ftbt7LSl7rW'
+            })
+        }, 1000);
     }
+
     if (document.querySelector('#individual_register')) {
         individual_register_on_load();
+
+        // Delay the script by 1 second so it avoids the race condition on FIREFOX
+        setTimeout(() => {
+            grecaptcha.render('recaptcha', {
+                sitekey: '6LftibMZAAAAAETVT1059c9ue_KF7Ftbt7LSl7rW'
+            })
+        }, 1000);
     }
 
     if (document.querySelector('#form_login')) {

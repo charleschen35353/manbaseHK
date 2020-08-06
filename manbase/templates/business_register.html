@@ -33,7 +33,7 @@
                     </div>
                     <div class="w-100">
                         {% for field, errors in form.errors.items() %}
-                        <p class="text-danger p-0 m-0 my-2" style="line-height: 0.8em;">
+                        <p class="text-danger p-0 m-0 my-2">
                             <strong>{{form[field].label}}</strong>: {{', '.join(errors)}}</p>
                         {% endfor %}
                     </div>
@@ -332,7 +332,10 @@
                 <label for="agree_tos" class="text-secondary text-break bus-reg-confirm form-check-label">我已經閱讀並同意<a
                         href="#" data-toggle="modal" data-target="#tos">《使用條款及細則》</a>。</label>
             </div>
-            {{ render_field(form.recaptcha) }}
+
+            <div class="d-flex my-3 align-items-center" id="recaptcha">
+            </div>
+
             <div class="form-group row">
                 <button class="btn btn-outline-secondary col-5 col-md-3 offset-1 offset-md-5" id="bus_reg_sec_4_prev"
                     type="button"><i class="las la-arrow-circle-left"></i>

@@ -385,6 +385,7 @@ const individual_register_on_load = () => {
       }
     });
 
+
     scrollTop();
 
     $('#ind_reg_sec_4').fadeToggle({
