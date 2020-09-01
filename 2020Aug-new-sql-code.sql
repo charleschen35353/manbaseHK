@@ -159,6 +159,16 @@ CREATE TABLE external_transactions(
         )
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
+CREATE TABLE extra_payments(
+    extra_id VARCHAR(255) PRIMARY KEY,
+    extra_jbap_id VARCHAR(255) NOT NULL,
+    extra_paymentAmount float NOT NULL,
+    extra_hourRate float,
+    extra_hour float,
+    
+    FOREIGN KEY(extra_jbap_id) REFERENCES job_applications(jbap_id)
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
 CREATE TABLE chatrooms(
     chrm_id VARCHAR(255) PRIMARY KEY,
     chrm_jbse_id VARCHAR(255) NOT NULL,
@@ -282,11 +292,12 @@ CREATE TABLE internal_transactions(
     intr_to VARCHAR(255) NOT NULL,
     intr_paymentAmount FLOAT NOT NULL,
     intr_transactionType TINYINT(1) NOT NULL,
-    intr_paymentInfo TEXT(200),
+    intr_jbap_id VARCHAR(255),
     intr_status TINYTEXT NOT NULL,
     
     FOREIGN KEY(intr_from) REFERENCES users(ur_id),
     FOREIGN KEY(intr_to) REFERENCES users(ur_id),
+    FOREIGN KEY(intr_jbap_id) REFERENCES job_applications(jbap_id),
     
     CONSTRAINT intr_status CHECK(
         extr_status IN ('tbc1','tbc2','tbc3')
