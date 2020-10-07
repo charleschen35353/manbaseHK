@@ -2,7 +2,7 @@
 
 Run program in your local device:
 
-$python run.py
+```$python run.py```
 
 <!-- TOC -->
 
