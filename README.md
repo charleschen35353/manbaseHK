@@ -1,5 +1,9 @@
 # Manbase Web Server
 
+Run program in your local device:
+
+$python run.py
+
 <!-- TOC -->
 
 - [Manbase Web Server](#manbase-web-server)
