@@ -95,15 +95,6 @@ Run program in your local device:
 
 <!-- /TOC -->
 
-# Server Connection Info
-
-## SSH
-
-- Server: `www.manbasehk.com` or `test.manbasehk.com`
-- Account: root
-- Password: eqh49-v3bnb
-- Location: ~/manbase
-- Start the testing server by -
 
 ```
 cd manbase
