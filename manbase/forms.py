@@ -100,7 +100,7 @@ class IndividualRegistrationForm(BaseForm):
     individual_language_Putonghua = BooleanField('普通話', validators=[])
     individual_language_Other = StringField('其他', validators=[])
     individual_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
-    recaptcha = RecaptchaField('Recaptcha', validators=[Recaptcha(message='您必須證明您不是機器人。請刷新頁面重新輸入。')])
+    #recaptcha = RecaptchaField('Recaptcha', validators=[Recaptcha(message='您必須證明您不是機器人。請刷新頁面重新輸入。')])
     submit = SubmitField('註冊個人帳戶')
 
 
@@ -181,7 +181,7 @@ class BusinessRegistrationForm(BaseForm):
     company_email = StringField('公司電子郵箱',
                                 validators=[DataRequired(message = '公司電子郵箱不能為空'), Email()])
     business_tos = BooleanField('使用條款及細則', validators=[DataRequired(message='您必須同意《使用條款及細則》。')])
-    recaptcha = RecaptchaField('Recaptcha', validators=[Recaptcha(message='您必須證明您不是機器人。請刷新頁面重新輸入。')])
+    #recaptcha = RecaptchaField('Recaptcha', validators=[Recaptcha(message='您必須證明您不是機器人。請刷新頁面重新輸入。')])
     submit = SubmitField('註冊商業帳戶')
 
     def validate_user_login(self, user_login):
