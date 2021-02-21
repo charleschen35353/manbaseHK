@@ -15,6 +15,7 @@ csrf = CSRFProtect()
 
 app = Flask(__name__)
 
+csrf.init_app(app)
 # TODO: Convert the URI and SECRET_KEY into Environment Variables
 #       Use 'localhost' instead for deployment
 uri = 'mysql://rd7xjv93n4p0lc83:wjrjg70zvmcp1437@aqx5w9yc5brambgl.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/x9nybanwqn103iy7'

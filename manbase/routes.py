@@ -680,7 +680,6 @@ def business_register():
 
         business_user = BusinessUsers(
                                     bu_id = uid,
-                                    bu_address = 'NS', #not specified
                                     bu_CName = form.company_CName.data,
                                     bu_EName = form.company_EName.data,
                                     bu_picName = form.company_contact_person.data
