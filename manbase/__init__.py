@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 # TODO: Convert the URI and SECRET_KEY into Environment Variables
 #       Use 'localhost' instead for deployment
-uri = 'mysql+pymysql://public:b05qv-x4xca@manbasehk.org:3306/manbasedb'
+uri = 'mysql://rd7xjv93n4p0lc83:wjrjg70zvmcp1437@aqx5w9yc5brambgl.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/x9nybanwqn103iy7'
 app.config['SECRET_KEY'] = secrets.token_hex(16)
 app.config['KEY_LENGTH'] = len(app.config['SECRET_KEY'])
 app.config['SECURITY_PASSWORD_SALT'] = 'P@ssWoRdSaltManb@seHK'

@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 
 Base = automap_base(db.Model)
 # Reflect the tables
-engine = create_engine("mysql+pymysql://public:b05qv-x4xca@test.manbasehk.com:3306/manbasedb")
+engine = create_engine("mysql://rd7xjv93n4p0lc83:wjrjg70zvmcp1437@aqx5w9yc5brambgl.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/x9nybanwqn103iy7")
 
 # Inherit UserMixin Property and redefine get_id due to different id name
 class Users(Base, UserMixin):
